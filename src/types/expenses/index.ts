@@ -33,7 +33,7 @@ export interface ExpenseFormData {
   amount: number;
   category_id: string;
   date: string;
-  description?: string;
+  description?: string | null;
 }
 
 export interface CategoryFormData {
