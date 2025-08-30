@@ -1,17 +1,9 @@
 'use client';
 
+import { ExpenseCalendarProps } from '@/types/expenses';
 import { format, isSameMonth, isToday } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-interface ExpenseCalendarProps {
-  currentDate: Date;
-  calendarDays: (Date | null)[];
-  dailyTotals: { [key: string]: number };
-  onMonthChange: (direction: 'prev' | 'next') => void;
-  onDateSelect: (date: Date) => void;
-  formatDateString: (date: Date) => string;
-}
 
 export default function ExpenseCalendar({
   currentDate,
@@ -30,13 +22,13 @@ export default function ExpenseCalendar({
         <div className="flex gap-1 mobile:gap-2">
           <button
             onClick={() => onMonthChange('prev')}
-            className="p-1 mobile:p-2 hover:bg-gray-100 rounded-lg"
+            className="p-1 mobile:p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ChevronLeft className="w-4 h-4 mobile:w-5 mobile:h-5" />
           </button>
           <button
             onClick={() => onMonthChange('next')}
-            className="p-1 mobile:p-2 hover:bg-gray-100 rounded-lg"
+            className="p-1 mobile:p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ChevronRight className="w-4 h-4 mobile:w-5 mobile:h-5" />
           </button>

@@ -1,5 +1,6 @@
 'use client';
 
+import { ExpenseChartProps } from '@/types/expenses/ui';
 import { Calendar } from 'lucide-react';
 import {
   Cell,
@@ -10,26 +11,6 @@ import {
   Tooltip,
 } from 'recharts';
 
-interface ChartData {
-  name: string;
-  value: number;
-}
-
-interface ExpenseChartProps {
-  chartData: ChartData[];
-  isFixedEnabled: boolean;
-  onFixedToggle: (enabled: boolean) => void;
-  totals: {
-    fixed: number;
-    variable: number;
-    total: number;
-  };
-  fixedCategories: Array<{ id: string; name: string; type: string }>;
-  variableCategories: Array<{ id: string; name: string; type: string }>;
-  fixedExpenses: Array<{ category: string; amount: number }>;
-  variableExpenses: Array<{ category: string; amount: number }>;
-}
-
 const CHART_COLORS = [
   '#14b8a6',
   '#0d9488',
@@ -37,7 +18,11 @@ const CHART_COLORS = [
   '#115e59',
   '#134e4a',
   '#f59e0b',
-]; // 그런데 항목 갯수가 많아지면 더 추가되어야 하지 않을까?
+  '#dc2626',
+  '#7c3aed',
+  '#2563eb',
+  '#059669',
+] as const;
 
 export default function ExpenseChart({
   chartData,
@@ -68,7 +53,7 @@ export default function ExpenseChart({
                     `${name} ${((percent as number) * 100).toFixed(0)}%`
                   }
                 >
-                  {chartData.map((entry, index) => (
+                  {chartData.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={CHART_COLORS[index % CHART_COLORS.length]}
@@ -108,10 +93,16 @@ export default function ExpenseChart({
               className="sr-only"
             />
             <div
-              className={`w-10 h-5 mobile:w-12 mobile:h-6 rounded-full transition-colors ${isFixedEnabled ? 'bg-accent-500' : 'bg-gray-300'}`}
+              className={`w-10 h-5 mobile:w-12 mobile:h-6 rounded-full transition-colors ${
+                isFixedEnabled ? 'bg-accent-500' : 'bg-gray-300'
+              }`}
             >
               <div
-                className={`w-4 h-4 mobile:w-5 mobile:h-5 bg-white rounded-full shadow transform transition-transform mt-0.5 ${isFixedEnabled ? 'translate-x-5 mobile:translate-x-6 ml-0.5' : 'translate-x-0.5'}`}
+                className={`w-4 h-4 mobile:w-5 mobile:h-5 bg-white rounded-full shadow transform transition-transform mt-0.5 ${
+                  isFixedEnabled
+                    ? 'translate-x-5 mobile:translate-x-6 ml-0.5'
+                    : 'translate-x-0.5'
+                }`}
               />
             </div>
             <span className="ml-2 text-xs mobile:text-sm font-medium">

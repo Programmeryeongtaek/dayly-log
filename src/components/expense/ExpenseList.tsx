@@ -1,27 +1,7 @@
 'use client';
 
+import { ExpenseListProps } from '@/types/expenses';
 import { Trash2 } from 'lucide-react';
-
-interface ExpenseItem {
-  id: string;
-  name: string;
-  amount: number;
-  category: string;
-  date: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  type: string;
-}
-
-interface ExpenseListProps {
-  expenses: ExpenseItem[];
-  fixedCategories: Category[];
-  onDeleteExpense: (id: string) => void;
-  title: string;
-}
 
 export default function ExpenseList({
   expenses,
@@ -30,6 +10,10 @@ export default function ExpenseList({
   title,
 }: ExpenseListProps) {
   if (expenses.length === 0) return null;
+
+  // 카테고리가 고정지출인지 확인하는 함수
+  const isFixedCategory = (categoryName: string) =>
+    fixedCategories.some((cat) => cat.name === categoryName);
 
   return (
     <div className="mt-4 mobile:mt-6 pt-4 mobile:pt-6 border-t">
@@ -49,7 +33,7 @@ export default function ExpenseList({
               <div className="flex items-center gap-2 mobile:gap-3 flex-1 min-w-0">
                 <span
                   className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                    fixedCategories.some((cat) => cat.name === expense.category)
+                    isFixedCategory(expense.category)
                       ? 'bg-accent-100 text-accent-700'
                       : 'bg-blue-100 text-blue-700'
                   }`}
@@ -65,7 +49,7 @@ export default function ExpenseList({
               </div>
               <button
                 onClick={() => onDeleteExpense(expense.id)}
-                className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
+                className="text-red-500 hover:text-red-700 p-1 flex-shrink-0 transition-colors"
               >
                 <Trash2 className="w-3 h-3 mobile:w-4 mobile:h-4" />
               </button>
