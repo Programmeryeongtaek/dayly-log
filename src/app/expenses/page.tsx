@@ -13,103 +13,40 @@ import ExpenseChart from '@/components/expense/ExpenseChart';
 import ExpenseCalendar from '@/components/expense/ExpenseCalendar';
 import { ko } from 'date-fns/locale';
 import { Calendar } from 'lucide-react';
+import { useCategories, useExpenses } from '@/hooks/expenses';
 
-// 인터페이스들
-interface ExpenseItem {
-  id: string;
-  name: string;
-  amount: number;
-  category: string;
-  date: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  type: 'fixed' | 'variable';
-}
+// 임시 사용자 ID (인증 구현 후 실제 사용자 ID로 교체 예정)
+const TEMP_USER_ID = 'temp-user-1';
 
 export default function ExpensesPage() {
   const router = useRouter();
 
-  // 기본 카테고리 (추후 Supabase에서 가져올 데이터)
-  const [categories, setCategories] = useState<Category[]>([
-    { id: '1', name: '통신비', type: 'fixed' },
-    { id: '2', name: '교통비', type: 'variable' },
-  ]);
-
-  // 모든 지출 항목 (추후 Supabase에서 가져올 데이터)
-  const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
+  // 날짜 상태
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [isFixedEnabled, setIsFixedEnabled] = useState(true);
 
-  // 날짜 관련 상태
-  const [currentDate, setCurrentDate] = useState(new Date());
+  // 현재 월 문자열 생성
+  const currentMonth = format(currentDate, 'yyyy-MM');
+
+  // 데이터 hooks
+  const {
+    expenses,
+    statistics,
+    categoryTotals,
+    isLoading: isLoadingExpenses,
+  } = useExpenses({
+    userId: TEMP_USER_ID,
+    month: currentMonth,
+  });
+
+  const {
+    fixedCategories,
+    variableCategories,
+    isLoading: isLoadingCategories,
+  } = useCategories(TEMP_USER_ID);
 
   // 날짜 포맷 함수
   const formatDateString = (date: Date) => format(date, 'yyyy-MM-dd');
-
-  // 월별 지출 필터링
-  const monthlyExpenses = useMemo(() => {
-    const monthStart = startOfMonth(currentDate);
-    const monthEnd = endOfMonth(currentDate);
-    const monthStartStr = formatDateString(monthStart);
-    const monthEndStr = formatDateString(monthEnd);
-
-    return expenses.filter(
-      (expense) => expense.date >= monthStartStr && expense.date <= monthEndStr
-    );
-  }, [expenses, currentDate]);
-
-  // 카테고리별 분류
-  const fixedCategories = categories.filter((cat) => cat.type === 'fixed');
-  const variableCategories = categories.filter(
-    (cat) => cat.type === 'variable'
-  );
-
-  const fixedExpenses = monthlyExpenses.filter((expense) =>
-    fixedCategories.some((cat) => cat.name === expense.category)
-  );
-  const variableExpenses = monthlyExpenses.filter((expense) =>
-    variableCategories.some((cat) => cat.name === expense.category)
-  );
-
-  // 총액 계산
-  const totals = useMemo(() => {
-    const fixedTotal = fixedExpenses.reduce(
-      (sum, item) => sum + item.amount,
-      0
-    );
-    const variableTotal = variableExpenses.reduce(
-      (sum, item) => sum + item.amount,
-      0
-    );
-    return {
-      fixed: isFixedEnabled ? fixedTotal : 0,
-      variable: variableTotal,
-      total: (isFixedEnabled ? fixedTotal : 0) + variableTotal,
-    };
-  }, [fixedExpenses, variableExpenses, isFixedEnabled]);
-
-  // 차트 데이터
-  const chartData = useMemo(() => {
-    const categoryTotals: { [key: string]: number } = {};
-
-    monthlyExpenses.forEach((expense) => {
-      if (
-        !isFixedEnabled &&
-        fixedCategories.some((cat) => cat.name === expense.category)
-      ) {
-        return;
-      }
-      categoryTotals[expense.category] =
-        (categoryTotals[expense.category] || 0) + expense.amount;
-    });
-
-    return Object.entries(categoryTotals).map(([category, amount]) => ({
-      name: category,
-      value: amount,
-    }));
-  }, [monthlyExpenses, isFixedEnabled, fixedCategories]);
 
   // 캘린더 날짜 생성
   const calendarDays = useMemo(() => {
@@ -118,21 +55,64 @@ export default function ExpensesPage() {
     const days = eachDayOfInterval({ start, end });
 
     const firstDayOfWeek = start.getDay();
-    const emptyDays = Array.from({ length: firstDayOfWeek }, (_, i) => null);
+    const emptyDays = Array.from({ length: firstDayOfWeek }, () => null);
 
     return [...emptyDays, ...days];
   }, [currentDate]);
 
   // 날짜별 지출 총액 계산
   const dailyTotals = useMemo(() => {
-    const totals: { [key: string]: number } = {};
-    monthlyExpenses.forEach((expense) => {
-      totals[expense.date] = (totals[expense.date] || 0) + expense.amount;
-    });
-    return totals;
-  }, [monthlyExpenses]);
+    const totals: Record<string, number> = {};
 
-  // 핸들러 함수들
+    expenses.forEach((expense) => {
+      const dateKey = expense.date;
+      totals[dateKey] = (totals[dateKey] || 0) + expense.amount;
+    });
+
+    return totals;
+  }, [expenses]);
+
+  // 차트 데이터 생성 (UI 컴포넌트용)
+  const chartData = useMemo(() => {
+    return categoryTotals
+      .filter((category) => {
+        if (!isFixedEnabled && category.type === 'fixed') return false;
+        return category.amount > 0;
+      })
+      .map((category) => ({
+        name: category.name,
+        value: category.amount,
+      }));
+  }, [categoryTotals, isFixedEnabled]);
+
+  // ExpenseChart 컴포넌트용 props 준비
+  const fixedExpenses = useMemo(
+    () =>
+      expenses
+        .filter((e) => e.category?.type === 'fixed')
+        .map((e) => ({ category: e.category?.name || '', amount: e.amount })),
+    [expenses]
+  );
+
+  const variableExpenses = useMemo(
+    () =>
+      expenses
+        .filter((e) => e.category?.type === 'variable')
+        .map((e) => ({ category: e.category?.name || '', amount: e.amount })),
+    [expenses]
+  );
+
+  // 통계 계산 (UI 용)
+  const totals = useMemo(
+    () => ({
+      fixed: isFixedEnabled ? statistics.fixed : 0,
+      variable: statistics.variable,
+      total: (isFixedEnabled ? statistics.fixed : 0) + statistics.variable,
+    }),
+    [statistics, isFixedEnabled]
+  );
+
+  // 핸들러들
   const handleFixedToggle = (enabled: boolean) => {
     setIsFixedEnabled(enabled);
   };
@@ -149,16 +129,24 @@ export default function ExpensesPage() {
     });
   };
 
-  // 날짜 선택 시 동적 라우팅으로 이동
   const handleDateSelect = (date: Date) => {
     const dateStr = formatDateString(date);
     router.push(`/expenses/${dateStr}`);
   };
 
-  // 지출 삭제 (월별 보기에서)
-  const handleDeleteExpense = (id: string) => {
-    setExpenses((prev) => prev.filter((item) => item.id !== id));
-  };
+  // 로딩 상태
+  if (isLoadingExpenses || isLoadingCategories) {
+    return (
+      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+          <div className="h-96 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
@@ -169,8 +157,16 @@ export default function ExpensesPage() {
           isFixedEnabled={isFixedEnabled}
           onFixedToggle={handleFixedToggle}
           totals={totals}
-          fixedCategories={fixedCategories}
-          variableCategories={variableCategories}
+          fixedCategories={fixedCategories.map((cat) => ({
+            id: cat.id,
+            name: cat.name,
+            type: cat.type,
+          }))}
+          variableCategories={variableCategories.map((cat) => ({
+            id: cat.id,
+            name: cat.name,
+            type: cat.type,
+          }))}
           fixedExpenses={fixedExpenses}
           variableExpenses={variableExpenses}
         />
@@ -187,62 +183,53 @@ export default function ExpensesPage() {
       />
 
       {/* 월별 지출 목록 */}
-      {monthlyExpenses.length > 0 && (
+      {expenses.length > 0 && (
         <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
           <div className="flex items-center justify-between mb-3 mobile:mb-4">
             <h2 className="text-base mobile:text-lg font-semibold">
               이번 달 지출 내역
             </h2>
             <div className="text-xs mobile:text-sm text-gray-500">
-              총 {monthlyExpenses.length}건 • {totals.total.toLocaleString()}원
+              총 {expenses.length}건 • {totals.total.toLocaleString()}원
             </div>
           </div>
 
-          {/* 간단한 월별 리스트 */}
           <div className="space-y-2">
-            {monthlyExpenses
-              .sort(
-                (a, b) =>
-                  new Date(b.date).getTime() - new Date(a.date).getTime()
-              )
-              .slice(0, 10) // 최근 10개만 미리보기
-              .map((expense) => (
-                <div
-                  key={expense.id}
-                  className="flex items-center justify-between p-2 mobile:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
-                  onClick={() => router.push(`/expenses/${expense.date}`)}
-                >
-                  <div className="flex items-center gap-2 mobile:gap-3 flex-1 min-w-0">
-                    <span className="text-xs mobile:text-sm text-gray-500 flex-shrink-0">
-                      {format(parseISO(expense.date), 'M/d', { locale: ko })}
-                    </span>
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                        fixedCategories.some(
-                          (cat) => cat.name === expense.category
-                        )
-                          ? 'bg-accent-100 text-accent-700'
-                          : 'bg-blue-100 text-blue-700'
-                      }`}
-                    >
-                      {expense.category}
-                    </span>
-                    <span className="font-medium text-sm mobile:text-base truncate">
-                      {expense.name}
-                    </span>
-                  </div>
-                  <span className="text-accent-600 font-semibold text-sm mobile:text-base flex-shrink-0">
-                    {expense.amount.toLocaleString()}원
+            {expenses.slice(0, 10).map((expense) => (
+              <div
+                key={expense.id}
+                className="flex items-center justify-between p-2 mobile:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                onClick={() => router.push(`/expenses/${expense.date}`)}
+              >
+                <div className="flex items-center gap-2 mobile:gap-3 flex-1 min-w-0">
+                  <span className="text-xs mobile:text-sm text-gray-500 flex-shrink-0">
+                    {format(parseISO(expense.date), 'M/d', { locale: ko })}
+                  </span>
+                  <span
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                      expense.category?.type === 'fixed'
+                        ? 'bg-accent-100 text-accent-700'
+                        : 'bg-blue-100 text-blue-700'
+                    }`}
+                  >
+                    {expense.category?.name}
+                  </span>
+                  <span className="font-medium text-sm mobile:text-base truncate">
+                    {expense.name}
                   </span>
                 </div>
-              ))}
+                <span className="text-accent-600 font-semibold text-sm mobile:text-base flex-shrink-0">
+                  {expense.amount.toLocaleString()}원
+                </span>
+              </div>
+            ))}
           </div>
 
-          {monthlyExpenses.length > 10 && (
+          {expenses.length > 10 && (
             <div className="mt-4 text-center">
               <p className="text-sm text-gray-500">
-                {monthlyExpenses.length - 10}개 항목이 더 있습니다. 날짜를
-                클릭해서 자세히 보세요.
+                {expenses.length - 10}개 항목이 더 있습니다. 날짜를 클릭해서
+                자세히 보세요.
               </p>
             </div>
           )}
@@ -250,7 +237,7 @@ export default function ExpensesPage() {
       )}
 
       {/* 지출이 없을 때 안내 */}
-      {monthlyExpenses.length === 0 && (
+      {expenses.length === 0 && (
         <div className="bg-white rounded-lg p-8 mobile:p-12 shadow-sm border text-center">
           <div className="text-gray-400 mb-4">
             <Calendar className="w-12 h-12 mx-auto" />
