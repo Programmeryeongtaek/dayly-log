@@ -46,7 +46,7 @@ const ChallengeModal = ({
 }: ChallengeModalProps) => {
   // 폼 상태 관리
   const [formData, setFormData] = useState<ChallengeFormData>({
-    title: '',
+    title: `${expenseData.name} 챌린지`,
     description: '',
     reason: '',
     targetAmount: '',
@@ -107,10 +107,10 @@ const ChallengeModal = ({
   // 모달이 닫힐 때 폼 초기화
   const handleClose = () => {
     setFormData({
-      title: '',
+      title: `${expenseData.name} 줄이기 챌린지`,
       description: '',
       reason: '',
-      targetAmount: '',
+      targetAmount: Math.floor(expenseData.amount * 0.5).toString(),
       duration: '1month',
       targetDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
     });
@@ -134,8 +134,8 @@ const ChallengeModal = ({
         </div>
       </Modal.Header>
 
-      <form onSubmit={handleSubmit}>
-        <Modal.Body className="space-y-6">
+      <Modal.Body className="space-y-6">
+        <form onSubmit={handleSubmit} id="challenge-form">
           {/* 기존 지출 정보 표시 */}
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
@@ -156,7 +156,7 @@ const ChallengeModal = ({
           {/* 챌린지 제목 */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              챌린지 제목 *
+              제목 *
             </label>
             <input
               type="text"
@@ -171,7 +171,7 @@ const ChallengeModal = ({
           {/* 챌린지 이유 */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              챌린지를 시작하는 이유 *
+              이유 *
             </label>
             <textarea
               value={formData.reason}
@@ -204,19 +204,12 @@ const ChallengeModal = ({
                 원
               </span>
             </div>
-            <div className="text-xs text-gray-500">
-              현재 지출의{' '}
-              {Math.round(
-                (Number(formData.targetAmount) / expenseData.amount) * 100
-              )}
-              % 절약 목표
-            </div>
           </div>
 
           {/* 챌린지 기간 */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700">
-              챌린지 기간 *
+              기간 *
             </label>
 
             {/* 기간 프리셋 선택 */}
@@ -262,7 +255,7 @@ const ChallengeModal = ({
             <div className="text-sm text-gray-600 bg-blue-50 rounded-lg p-3 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-blue-600" />
               <span>
-                목표 종료일:{' '}
+                종료일:{' '}
                 <strong>
                   {format(
                     new Date(formData.targetDate),
@@ -289,20 +282,21 @@ const ChallengeModal = ({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base resize-none"
             />
           </div>
-        </Modal.Body>
+        </form>
+      </Modal.Body>
 
-        <Modal.Footer>
-          <Modal.CloseButton>취소</Modal.CloseButton>
-          <Modal.Button
-            type="submit"
-            disabled={!isFormValid()}
-            loading={isSubmitting}
-            className="mobile:order-first"
-          >
-            챌린지 시작하기
-          </Modal.Button>
-        </Modal.Footer>
-      </form>
+      <Modal.Footer>
+        <Modal.CloseButton>취소</Modal.CloseButton>
+        <Modal.Button
+          type="submit"
+          form="challenge-form"
+          disabled={!isFormValid()}
+          loading={isSubmitting}
+          className="mobile:order-first"
+        >
+          시작
+        </Modal.Button>
+      </Modal.Footer>
     </Modal>
   );
 };
