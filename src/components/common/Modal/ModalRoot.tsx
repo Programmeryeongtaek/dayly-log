@@ -66,7 +66,7 @@ const ModalRoot = ({
 
   return (
     <ModalContext.Provider value={contextValue}>
-      {/* Backdrop - X 버튼으로만 닫기 */}
+      {/* Backdrop - X 버튼으로만 */}
       <div
         className="fixed inset-0 z-50 flex items-start mobile:items-center justify-center p-0 mobile:p-4 pt-4 mobile:pt-0"
         role="dialog"
@@ -76,7 +76,7 @@ const ModalRoot = ({
       >
         {/* Overlay */}
         <div
-          className="absolute inset-0 bg-black bg-opacity-25 backdrop-blur-sm"
+          className="absolute inset-0 bg-gray bg-opacity-25 backdrop-blur-sm"
           aria-hidden="true"
         />
 
