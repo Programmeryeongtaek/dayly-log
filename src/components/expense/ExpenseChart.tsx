@@ -1,7 +1,7 @@
 'use client';
 
 import { ExpenseChartProps } from '@/types/expenses/ui';
-import { Calendar } from 'lucide-react';
+import { Calendar, Target } from 'lucide-react';
 import {
   Cell,
   Legend,
@@ -24,6 +24,15 @@ const CHART_COLORS = [
   '#059669',
 ] as const;
 
+interface ExpenseChartEnhancedProps extends ExpenseChartProps {
+  onChallengeClick?: (
+    categoryName: string,
+    amount: number,
+    type: 'fixed' | 'variable'
+  ) => void;
+  showChallengeButtons?: boolean;
+}
+
 export default function ExpenseChart({
   chartData,
   isFixedEnabled,
@@ -33,7 +42,19 @@ export default function ExpenseChart({
   variableCategories,
   fixedExpenses,
   variableExpenses,
-}: ExpenseChartProps) {
+  onChallengeClick,
+  showChallengeButtons = true,
+}: ExpenseChartEnhancedProps) {
+  const handleChallengeClick = (
+    categoryName: string,
+    amount: number,
+    type: 'fixed' | 'variable'
+  ) => {
+    if (onChallengeClick) {
+      onChallengeClick(categoryName, amount, type);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mobile:gap-6">
       {/* 차트 영역 */}
@@ -123,11 +144,28 @@ export default function ExpenseChart({
                   .filter((item) => item.category === category.name)
                   .reduce((sum, item) => sum + item.amount, 0);
                 return amount > 0 ? (
-                  <div key={category.id} className="flex justify-between">
-                    <span>{category.name}:</span>
-                    <span className="font-medium">
-                      {amount.toLocaleString()}원
-                    </span>
+                  <div
+                    key={category.id}
+                    className="flex justify-between items-center"
+                  >
+                    <div className="flex items-center gap-2 flex-1">
+                      <span>{category.name}:</span>
+                      <span className="font-medium">
+                        {amount.toLocaleString()}원
+                      </span>
+                    </div>
+                    {/* 챌린지 버튼 */}
+                    {showChallengeButtons && onChallengeClick && (
+                      <button
+                        onClick={() =>
+                          handleChallengeClick(category.name, amount, 'fixed')
+                        }
+                        className="ml-2 p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-md transition-colors group"
+                        title="챌린지 만들기"
+                      >
+                        <Target className="w-3 h-3 group-hover:scale-110 transition-transform" />
+                      </button>
+                    )}
                   </div>
                 ) : null;
               })}
@@ -147,11 +185,32 @@ export default function ExpenseChart({
                   .filter((item) => item.category === category.name)
                   .reduce((sum, item) => sum + item.amount, 0);
                 return amount > 0 ? (
-                  <div key={category.id} className="flex justify-between">
-                    <span>{category.name}:</span>
-                    <span className="font-medium">
-                      {amount.toLocaleString()}원
-                    </span>
+                  <div
+                    key={category.id}
+                    className="flex justify-between items-center"
+                  >
+                    <div className="flex items-center gap-2 flex-1">
+                      <span>{category.name}:</span>
+                      <span className="font-medium">
+                        {amount.toLocaleString()}원
+                      </span>
+                    </div>
+                    {/* 챌린지 버튼 */}
+                    {showChallengeButtons && onChallengeClick && (
+                      <button
+                        onClick={() =>
+                          handleChallengeClick(
+                            category.name,
+                            amount,
+                            'variable'
+                          )
+                        }
+                        className="ml-2 p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-md transition-colors group"
+                        title="챌린지 만들기"
+                      >
+                        <Target className="w-3 h-3 group-hover:scale-110 transition-transform" />
+                      </button>
+                    )}
                   </div>
                 ) : null;
               })}

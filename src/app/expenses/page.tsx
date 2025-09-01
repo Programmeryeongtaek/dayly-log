@@ -15,27 +15,51 @@ import { ko } from 'date-fns/locale';
 import { Calendar } from 'lucide-react';
 import { useCategories, useExpenses } from '@/hooks/expenses';
 import { useAuth } from '@/hooks/auth';
-import AuthGuard from '@/components/auth/AuthGuard';
+import { useChallenge } from '@/hooks/expenses/useChallenge';
+import ChallengeModal from '@/components/expense/ChallengeModal';
+
+interface ChallengeFormData {
+  title: string;
+  description: string;
+  reason: string;
+  targetAmount: string; // TODO: 카테고리에 따라 필요하지 않을 수도 있음. 검토바람
+  duration: string;
+  targetDate: string;
+}
+
+interface ExpenseForChallenge {
+  name: string;
+  amount: number;
+  category: string;
+}
 
 const ExpensesPage = () => {
+  const { user } = useAuth();
+  const { createChallenge, isCreatingChallenge } = useChallenge();
   const router = useRouter();
-  const { user, isLoading: isAuthLoading } = useAuth();
 
   // 날짜 상태
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isFixedEnabled, setIsFixedEnabled] = useState(true);
 
+  // 챌린지 모달 상태
+  const [selectedExpense, setSelectedExpense] =
+    useState<ExpenseForChallenge | null>(null);
+  const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false);
+
   // 현재 월 문자열 생성
   const currentMonth = format(currentDate, 'yyyy-MM');
 
-  // 데이터 hooks
+  // 데이터 hooks - 사용자 인증 확인
+  const shouldFetchData = !!user?.id;
+
   const {
     expenses,
     statistics,
     categoryTotals,
     isLoading: isLoadingExpenses,
   } = useExpenses({
-    userId: user?.id,
+    userId: shouldFetchData ? user.id : undefined,
     month: currentMonth,
   });
 
@@ -43,7 +67,7 @@ const ExpensesPage = () => {
     fixedCategories,
     variableCategories,
     isLoading: isLoadingCategories,
-  } = useCategories(user?.id);
+  } = useCategories(shouldFetchData ? user?.id : undefined);
 
   // 날짜 포맷 함수
   const formatDateString = (date: Date) => format(date, 'yyyy-MM-dd');
@@ -134,39 +158,99 @@ const ExpensesPage = () => {
     router.push(`/expenses/${dateStr}`);
   };
 
-  // 인증 확인 및 로딩 상태
-  if (isAuthLoading || !user) {
+  // 차트에서 챌린지 버튼 클릭
+  const handleChartChallengeClick = (
+    categoryName: string,
+    amount: number,
+    type: 'fixed' | 'variable'
+  ) => {
+    if (!user?.id) return;
+
+    const expenseForChallenge: ExpenseForChallenge = {
+      name: `${categoryName} 줄이기`,
+      amount: amount,
+      category: categoryName,
+    };
+
+    setSelectedExpense(expenseForChallenge);
+    setIsChallengeModalOpen(true);
+  };
+
+  // 챌린지 버튼 클릭
+  const handleChallengeClick = (expense: (typeof expenses)[0]) => {
+    if (!user?.id) return;
+
+    const expenseForChallenge: ExpenseForChallenge = {
+      name: expense.name,
+      amount: expense.amount,
+      category: expense.category?.name || 'Unknown',
+    };
+
+    setSelectedExpense(expenseForChallenge);
+    setIsChallengeModalOpen(true);
+  };
+
+  // 챌린지 생성 핸들러
+  const handleChallengeSubmit = (
+    data: ChallengeFormData & { category: string }
+  ) => {
+    if (!user?.id) return;
+
+    createChallenge({
+      title: data.title,
+      description: data.description,
+      reason: data.reason,
+      targetAmount: data.targetAmount,
+      targetDate: data.targetDate,
+      category: data.category,
+      userId: user.id,
+    });
+
+    // 모달 닫기
+    setIsChallengeModalOpen(false);
+    setSelectedExpense(null);
+  };
+
+  // 챌린지 모달 닫기 핸들러
+  const handleChallengeModalClose = () => {
+    setIsChallengeModalOpen(false);
+    setSelectedExpense(null);
+  };
+
+  // 사용자 인증 확인
+  if (!user?.id) {
     return (
-      <AuthGuard>
-        <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
-            <div className="h-64 bg-gray-200 rounded"></div>
-          </div>
+      <div className="max-w-7xl mx-auto p-2 mobile:p-4 text-center py-8">
+        <div className="bg-white rounded-lg p-8 shadow-sm border">
+          <h3 className="text-lg font-medium text-gray-600 mb-2">
+            로그인이 필요합니다
+          </h3>
+          <p className="text-gray-500">
+            지출을 관리하려면 먼저 로그인해주세요.
+          </p>
         </div>
-      </AuthGuard>
+      </div>
     );
   }
 
   // 로딩 상태
-  if (isLoadingExpenses || isLoadingCategories) {
+  if (shouldFetchData && (isLoadingExpenses || isLoadingCategories)) {
     return (
-      <AuthGuard>
-        <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
-            <div className="h-64 bg-gray-200 rounded"></div>
-          </div>
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
-            <div className="h-96 bg-gray-200 rounded"></div>
-          </div>
+      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+          <div className="h-64 bg-gray-200 rounded"></div>
         </div>
-      </AuthGuard>
+        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+          <div className="h-96 bg-gray-200 rounded"></div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <AuthGuard>
+    <>
       <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-        {/* 차트와 통계 */}
+        {/* 차트와 통계 - 챌린지 기능 포함 */}
         <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
           <ExpenseChart
             chartData={chartData}
@@ -185,6 +269,8 @@ const ExpensesPage = () => {
             }))}
             fixedExpenses={fixedExpenses}
             variableExpenses={variableExpenses}
+            onChallengeClick={handleChartChallengeClick}
+            showChallengeButtons={true}
           />
         </div>
 
@@ -268,7 +354,18 @@ const ExpensesPage = () => {
           </div>
         )}
       </div>
-    </AuthGuard>
+
+      {/* 챌린지 생성 모달 */}
+      {selectedExpense && (
+        <ChallengeModal
+          isOpen={isChallengeModalOpen}
+          onClose={handleChallengeModalClose}
+          onSubmit={handleChallengeSubmit}
+          expenseData={selectedExpense}
+          isSubmitting={isCreatingChallenge}
+        />
+      )}
+    </>
   );
 };
 
