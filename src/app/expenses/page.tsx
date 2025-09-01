@@ -14,12 +14,12 @@ import ExpenseCalendar from '@/components/expense/ExpenseCalendar';
 import { ko } from 'date-fns/locale';
 import { Calendar } from 'lucide-react';
 import { useCategories, useExpenses } from '@/hooks/expenses';
+import { useAuth } from '@/hooks/auth';
+import AuthGuard from '@/components/auth/AuthGuard';
 
-// 임시 사용자 ID (인증 구현 후 실제 사용자 ID로 교체 예정)
-const TEMP_USER_ID = 'temp-user-1';
-
-export default function ExpensesPage() {
+const ExpensesPage = () => {
   const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   // 날짜 상태
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -35,7 +35,7 @@ export default function ExpensesPage() {
     categoryTotals,
     isLoading: isLoadingExpenses,
   } = useExpenses({
-    userId: TEMP_USER_ID,
+    userId: user?.id,
     month: currentMonth,
   });
 
@@ -43,7 +43,7 @@ export default function ExpensesPage() {
     fixedCategories,
     variableCategories,
     isLoading: isLoadingCategories,
-  } = useCategories(TEMP_USER_ID);
+  } = useCategories(user?.id);
 
   // 날짜 포맷 함수
   const formatDateString = (date: Date) => format(date, 'yyyy-MM-dd');
@@ -134,123 +134,142 @@ export default function ExpensesPage() {
     router.push(`/expenses/${dateStr}`);
   };
 
+  // 인증 확인 및 로딩 상태
+  if (isAuthLoading || !user) {
+    return (
+      <AuthGuard>
+        <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+            <div className="h-64 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </AuthGuard>
+    );
+  }
+
   // 로딩 상태
   if (isLoadingExpenses || isLoadingCategories) {
     return (
-      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
-          <div className="h-64 bg-gray-200 rounded"></div>
+      <AuthGuard>
+        <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+            <div className="h-64 bg-gray-200 rounded"></div>
+          </div>
+          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+            <div className="h-96 bg-gray-200 rounded"></div>
+          </div>
         </div>
-        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
-          <div className="h-96 bg-gray-200 rounded"></div>
-        </div>
-      </div>
+      </AuthGuard>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-      {/* 차트와 통계 */}
-      <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
-        <ExpenseChart
-          chartData={chartData}
-          isFixedEnabled={isFixedEnabled}
-          onFixedToggle={handleFixedToggle}
-          totals={totals}
-          fixedCategories={fixedCategories.map((cat) => ({
-            id: cat.id,
-            name: cat.name,
-            type: cat.type,
-          }))}
-          variableCategories={variableCategories.map((cat) => ({
-            id: cat.id,
-            name: cat.name,
-            type: cat.type,
-          }))}
-          fixedExpenses={fixedExpenses}
-          variableExpenses={variableExpenses}
-        />
-      </div>
-
-      {/* 캘린더 */}
-      <ExpenseCalendar
-        currentDate={currentDate}
-        calendarDays={calendarDays}
-        dailyTotals={dailyTotals}
-        onMonthChange={handleMonthChange}
-        onDateSelect={handleDateSelect}
-        formatDateString={formatDateString}
-      />
-
-      {/* 월별 지출 목록 */}
-      {expenses.length > 0 && (
+    <AuthGuard>
+      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+        {/* 차트와 통계 */}
         <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
-          <div className="flex items-center justify-between mb-3 mobile:mb-4">
-            <h2 className="text-base mobile:text-lg font-semibold">
-              이번 달 지출 내역
-            </h2>
-            <div className="text-xs mobile:text-sm text-gray-500">
-              총 {expenses.length}건 • {totals.total.toLocaleString()}원
-            </div>
-          </div>
+          <ExpenseChart
+            chartData={chartData}
+            isFixedEnabled={isFixedEnabled}
+            onFixedToggle={handleFixedToggle}
+            totals={totals}
+            fixedCategories={fixedCategories.map((cat) => ({
+              id: cat.id,
+              name: cat.name,
+              type: cat.type,
+            }))}
+            variableCategories={variableCategories.map((cat) => ({
+              id: cat.id,
+              name: cat.name,
+              type: cat.type,
+            }))}
+            fixedExpenses={fixedExpenses}
+            variableExpenses={variableExpenses}
+          />
+        </div>
 
-          <div className="space-y-2">
-            {expenses.slice(0, 10).map((expense) => (
-              <div
-                key={expense.id}
-                className="flex items-center justify-between p-2 mobile:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
-                onClick={() => router.push(`/expenses/${expense.date}`)}
-              >
-                <div className="flex items-center gap-2 mobile:gap-3 flex-1 min-w-0">
-                  <span className="text-xs mobile:text-sm text-gray-500 flex-shrink-0">
-                    {format(parseISO(expense.date), 'M/d', { locale: ko })}
-                  </span>
-                  <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                      expense.category?.type === 'fixed'
-                        ? 'bg-accent-100 text-accent-700'
-                        : 'bg-blue-100 text-blue-700'
-                    }`}
-                  >
-                    {expense.category?.name}
-                  </span>
-                  <span className="font-medium text-sm mobile:text-base truncate">
-                    {expense.name}
+        {/* 캘린더 */}
+        <ExpenseCalendar
+          currentDate={currentDate}
+          calendarDays={calendarDays}
+          dailyTotals={dailyTotals}
+          onMonthChange={handleMonthChange}
+          onDateSelect={handleDateSelect}
+          formatDateString={formatDateString}
+        />
+
+        {/* 월별 지출 목록 */}
+        {expenses.length > 0 && (
+          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
+            <div className="flex items-center justify-between mb-3 mobile:mb-4">
+              <h2 className="text-base mobile:text-lg font-semibold">
+                이번 달 지출 내역
+              </h2>
+              <div className="text-xs mobile:text-sm text-gray-500">
+                총 {expenses.length}건 • {totals.total.toLocaleString()}원
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {expenses.slice(0, 10).map((expense) => (
+                <div
+                  key={expense.id}
+                  className="flex items-center justify-between p-2 mobile:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                  onClick={() => router.push(`/expenses/${expense.date}`)}
+                >
+                  <div className="flex items-center gap-2 mobile:gap-3 flex-1 min-w-0">
+                    <span className="text-xs mobile:text-sm text-gray-500 flex-shrink-0">
+                      {format(parseISO(expense.date), 'M/d', { locale: ko })}
+                    </span>
+                    <span
+                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                        expense.category?.type === 'fixed'
+                          ? 'bg-accent-100 text-accent-700'
+                          : 'bg-blue-100 text-blue-700'
+                      }`}
+                    >
+                      {expense.category?.name}
+                    </span>
+                    <span className="font-medium text-sm mobile:text-base truncate">
+                      {expense.name}
+                    </span>
+                  </div>
+                  <span className="text-accent-600 font-semibold text-sm mobile:text-base flex-shrink-0">
+                    {expense.amount.toLocaleString()}원
                   </span>
                 </div>
-                <span className="text-accent-600 font-semibold text-sm mobile:text-base flex-shrink-0">
-                  {expense.amount.toLocaleString()}원
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {expenses.length > 10 && (
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-500">
-                {expenses.length - 10}개 항목이 더 있습니다. 날짜를 클릭해서
-                자세히 보세요.
-              </p>
+              ))}
             </div>
-          )}
-        </div>
-      )}
 
-      {/* 지출이 없을 때 안내 */}
-      {expenses.length === 0 && (
-        <div className="bg-white rounded-lg p-8 mobile:p-12 shadow-sm border text-center">
-          <div className="text-gray-400 mb-4">
-            <Calendar className="w-12 h-12 mx-auto" />
+            {expenses.length > 10 && (
+              <div className="mt-4 text-center">
+                <p className="text-sm text-gray-500">
+                  {expenses.length - 10}개 항목이 더 있습니다. 날짜를 클릭해서
+                  자세히 보세요.
+                </p>
+              </div>
+            )}
           </div>
-          <h3 className="text-lg font-medium text-gray-600 mb-2">
-            {format(currentDate, 'M월', { locale: ko })}에는 아직 지출이
-            없습니다
-          </h3>
-          <p className="text-gray-500">
-            캘린더에서 날짜를 선택해서 지출을 추가해보세요
-          </p>
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* 지출이 없을 때 안내 */}
+        {expenses.length === 0 && (
+          <div className="bg-white rounded-lg p-8 mobile:p-12 shadow-sm border text-center">
+            <div className="text-gray-400 mb-4">
+              <Calendar className="w-12 h-12 mx-auto" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-600 mb-2">
+              {format(currentDate, 'M월', { locale: ko })}에는 아직 지출이
+              없습니다
+            </h3>
+            <p className="text-gray-500">
+              캘린더에서 날짜를 선택해서 지출을 추가해보세요
+            </p>
+          </div>
+        )}
+      </div>
+    </AuthGuard>
   );
-}
+};
+
+export default ExpensesPage;

@@ -10,14 +10,14 @@ import ExpenseForm from '@/components/expense/ExpenseForm';
 import ExpenseList from '@/components/expense/ExpenseList';
 import { CategoryType } from '@/types/expenses';
 import { useCategories, useExpenses } from '@/hooks/expenses';
+import { useAuth } from '@/hooks/auth';
+import AuthGuard from '@/components/auth/AuthGuard';
 
-// 임시 사용자 ID (인증 구현 후 실제 사용자 ID로 교체 예정)
-const TEMP_USER_ID = 'temp-user-1';
-
-export default function ExpenseDatePage() {
+const ExpenseDatePage = () => {
   const params = useParams();
   const router = useRouter();
   const dateParam = params.date as string;
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   // URL 날짜 유효성 검증
   const selectedDate = useMemo(() => {
@@ -47,7 +47,7 @@ export default function ExpenseDatePage() {
     isAddingExpense,
     isLoading: isLoadingExpenses,
   } = useExpenses({
-    userId: TEMP_USER_ID,
+    userId: user?.id,
     date: selectedDate || undefined,
   });
 
@@ -57,7 +57,7 @@ export default function ExpenseDatePage() {
     addCategory,
     isAddingCategory,
     isLoading: isLoadingCategories,
-  } = useCategories(TEMP_USER_ID);
+  } = useCategories(user?.id);
 
   // 선택된 날짜의 지출만 필터링
   const selectedDateExpenses = useMemo(() => {
@@ -84,6 +84,19 @@ export default function ExpenseDatePage() {
     return null;
   }
 
+  // 인증 확인 및 로딩 상태
+  if (isAuthLoading || !user) {
+    return (
+      <AuthGuard>
+        <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+            <div className="h-48 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </AuthGuard>
+    );
+  }
+
   // 핸들러 함수들
   const handleNewItemChange = (updates: Partial<typeof newItem>) => {
     setNewItem((prev) => ({ ...prev, ...updates }));
@@ -104,10 +117,10 @@ export default function ExpenseDatePage() {
   };
 
   const handleAddCategory = () => {
-    if (!newItem.newCategoryName.trim()) return;
+    if (!newItem.newCategoryName.trim() || !user?.id) return;
 
     addCategory({
-      user_id: TEMP_USER_ID,
+      user_id: user.id,
       name: newItem.newCategoryName.trim(),
       type: newItem.type,
     });
@@ -122,7 +135,13 @@ export default function ExpenseDatePage() {
   };
 
   const handleAddExpense = () => {
-    if (!newItem.name.trim() || !newItem.amount || !newItem.category) return;
+    if (
+      !newItem.name.trim() ||
+      !newItem.amount ||
+      !newItem.category ||
+      !user?.id
+    )
+      return;
 
     // 선택된 카테고리의 ID 찾기
     const selectedCategory = getCurrentCategories().find(
@@ -131,7 +150,7 @@ export default function ExpenseDatePage() {
     if (!selectedCategory) return;
 
     addExpense({
-      user_id: TEMP_USER_ID,
+      user_id: user.id,
       category_id: selectedCategory.id,
       name: newItem.name.trim(),
       amount: Number(newItem.amount),
@@ -154,72 +173,78 @@ export default function ExpenseDatePage() {
   // 로딩 상태
   if (isLoadingExpenses || isLoadingCategories) {
     return (
-      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
-          <div className="h-48 bg-gray-200 rounded"></div>
+      <AuthGuard>
+        <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+            <div className="h-48 bg-gray-200 rounded"></div>
+          </div>
         </div>
-      </div>
+      </AuthGuard>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-      {/* 지출 항목 추가 폼 */}
-      <ExpenseForm
-        selectedDate={selectedDate}
-        newItem={newItem}
-        onNewItemChange={handleNewItemChange}
-        onBackToMonth={handleBackToMonth}
-        onAddExpense={handleAddExpense}
-        onAddCategory={handleAddCategory}
-        getCurrentCategories={getCurrentCategories}
-      />
+    <AuthGuard>
+      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+        {/* 지출 항목 추가 폼 */}
+        <ExpenseForm
+          selectedDate={selectedDate}
+          newItem={newItem}
+          onNewItemChange={handleNewItemChange}
+          onBackToMonth={handleBackToMonth}
+          onAddExpense={handleAddExpense}
+          onAddCategory={handleAddCategory}
+          getCurrentCategories={getCurrentCategories}
+        />
 
-      {/* 실시간 지출 목록 */}
-      {expenseListData.length > 0 && (
-        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
-          <ExpenseList
-            expenses={expenseListData}
-            fixedCategories={fixedCategories.map((cat) => ({
-              id: cat.id,
-              name: cat.name,
-              type: cat.type,
-            }))}
-            onDeleteExpense={handleDeleteExpense}
-            title="내역"
-          />
-        </div>
-      )}
-
-      {/* 지출이 없을 때 안내 */}
-      {expenseListData.length === 0 && (
-        <div className="bg-white rounded-lg p-8 mobile:p-12 shadow-sm border text-center">
-          <div className="text-gray-400 mb-4">
-            <Calendar className="w-12 h-12 mx-auto" />
+        {/* 실시간 지출 목록 */}
+        {expenseListData.length > 0 && (
+          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
+            <ExpenseList
+              expenses={expenseListData}
+              fixedCategories={fixedCategories.map((cat) => ({
+                id: cat.id,
+                name: cat.name,
+                type: cat.type,
+              }))}
+              onDeleteExpense={handleDeleteExpense}
+              title="내역"
+            />
           </div>
-          <h3 className="text-lg font-medium text-gray-600 mb-2">
-            {format(parseISO(selectedDate), 'M월 d일', { locale: ko })}에는 아직
-            지출이 없습니다
-          </h3>
-          <p className="text-gray-500">
-            위의 폼을 사용해서 지출을 추가해보세요
-          </p>
-        </div>
-      )}
+        )}
 
-      {/* 로딩 표시 */}
-      {(isAddingExpense || isAddingCategory) && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 flex items-center gap-3">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent-500"></div>
-            <span className="text-gray-700">
-              {isAddingExpense
-                ? '지출을 추가하는 중...'
-                : '카테고리를 추가하는 중...'}
-            </span>
+        {/* 지출이 없을 때 안내 */}
+        {expenseListData.length === 0 && (
+          <div className="bg-white rounded-lg p-8 mobile:p-12 shadow-sm border text-center">
+            <div className="text-gray-400 mb-4">
+              <Calendar className="w-12 h-12 mx-auto" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-600 mb-2">
+              {format(parseISO(selectedDate), 'M월 d일', { locale: ko })}에는
+              아직 지출이 없습니다
+            </h3>
+            <p className="text-gray-500">
+              위의 폼을 사용해서 지출을 추가해보세요
+            </p>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* 로딩 표시 */}
+        {(isAddingExpense || isAddingCategory) && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 flex items-center gap-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent-500"></div>
+              <span className="text-gray-700">
+                {isAddingExpense
+                  ? '지출을 추가하는 중...'
+                  : '카테고리를 추가하는 중...'}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </AuthGuard>
   );
-}
+};
+
+export default ExpenseDatePage;
