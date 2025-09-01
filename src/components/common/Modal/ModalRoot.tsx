@@ -11,6 +11,9 @@ interface ModalRootProps {
   className?: string;
 }
 
+// 사이즈별 스타일 타입
+type SizeType = 'sm' | 'md' | 'lg' | 'xl';
+
 const ModalRoot = ({
   children,
   isOpen,
@@ -18,26 +21,33 @@ const ModalRoot = ({
   size = 'md',
   className = '',
 }: ModalRootProps) => {
-  // ESC 키 이벤트 핸들러
+  // 컨테이너 클릭 (이벤트 버블링 방지)
+  const handleContainerClick = (
+    event: React.MouseEvent<HTMLDivElement>
+  ): void => {
+    event.stopPropagation();
+  };
+
+  // 스크롤 방지 처리
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isOpen) {
-        onClose();
-      }
+    if (!isOpen) return;
+
+    // 스크롤 방지
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+
+    // 스크롤바 너비 계산
+    const scrollBarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = `${scrollBarWidth}px`;
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
     };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      // 스크롤 방지
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-
-      return () => {
-        document.removeEventListener('keydown', handleEscape);
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -56,26 +66,32 @@ const ModalRoot = ({
 
   return (
     <ModalContext.Provider value={contextValue}>
-      {/* Backdrop */}
+      {/* Backdrop - X 버튼으로만 닫기 */}
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-2 mobile:p-4"
-        onClick={onClose}
+        className="fixed inset-0 z-50 flex items-start mobile:items-center justify-center p-0 mobile:p-4 pt-4 mobile:pt-0"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
+        aria-hidden={!isOpen}
       >
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
+        <div
+          className="absolute inset-0 bg-black bg-opacity-25 backdrop-blur-sm"
+          aria-hidden="true"
+        />
 
         {/* Modal Container */}
         <div
           className={`
-            relative w-full ${sizeClasses[size]} bg-white rounded-lg shadow-2xl
+            relative w-full ${sizeClasses[size]} bg-white rounded-lg mobile:rounded-lg shadow-2xl
             animate-in fade-in-0 zoom-in-95 duration-200
-            max-h-[90vh] overflow-hidden
+            max-h-[95vh] mobile:max-h-[90vh] 
+            overflow-hidden flex flex-col
+            mx-2 mobile:mx-0
             ${className}
           `}
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleContainerClick}
+          role="document"
         >
           {children}
         </div>
