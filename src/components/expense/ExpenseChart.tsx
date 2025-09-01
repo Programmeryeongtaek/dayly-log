@@ -28,7 +28,8 @@ interface ExpenseChartEnhancedProps extends ExpenseChartProps {
   onChallengeClick?: (
     categoryName: string,
     amount: number,
-    type: 'fixed' | 'variable'
+    type: 'fixed' | 'variable',
+    count: number
   ) => void;
   showChallengeButtons?: boolean;
 }
@@ -48,10 +49,11 @@ export default function ExpenseChart({
   const handleChallengeClick = (
     categoryName: string,
     amount: number,
-    type: 'fixed' | 'variable'
+    type: 'fixed' | 'variable',
+    count: number
   ) => {
     if (onChallengeClick) {
-      onChallengeClick(categoryName, amount, type);
+      onChallengeClick(categoryName, amount, type, count);
     }
   };
 
@@ -140,9 +142,15 @@ export default function ExpenseChart({
             </h3>
             <div className="space-y-1 text-xs mobile:text-sm">
               {fixedCategories.map((category) => {
-                const amount = fixedExpenses
-                  .filter((item) => item.category === category.name)
-                  .reduce((sum, item) => sum + item.amount, 0);
+                const categoryExpenses = fixedExpenses.filter(
+                  (item) => item.category === category.name
+                );
+                const amount = categoryExpenses.reduce(
+                  (sum, item) => sum + item.amount,
+                  0
+                );
+                const count = categoryExpenses.length;
+
                 return amount > 0 ? (
                   <div
                     key={category.id}
@@ -153,12 +161,18 @@ export default function ExpenseChart({
                       <span className="font-medium">
                         {amount.toLocaleString()}원
                       </span>
+                      <span className="text-gray-400 text-xs">({count}건)</span>
                     </div>
                     {/* 챌린지 버튼 */}
                     {showChallengeButtons && onChallengeClick && (
                       <button
                         onClick={() =>
-                          handleChallengeClick(category.name, amount, 'fixed')
+                          handleChallengeClick(
+                            category.name,
+                            amount,
+                            'fixed',
+                            count
+                          )
                         }
                         className="ml-2 p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-md transition-colors group"
                         title="챌린지 만들기"
@@ -181,9 +195,15 @@ export default function ExpenseChart({
             </h3>
             <div className="space-y-1 text-xs mobile:text-sm">
               {variableCategories.map((category) => {
-                const amount = variableExpenses
-                  .filter((item) => item.category === category.name)
-                  .reduce((sum, item) => sum + item.amount, 0);
+                const categoryExpenses = variableExpenses.filter(
+                  (item) => item.category === category.name
+                );
+                const amount = categoryExpenses.reduce(
+                  (sum, item) => sum + item.amount,
+                  0
+                );
+                const count = categoryExpenses.length;
+
                 return amount > 0 ? (
                   <div
                     key={category.id}
@@ -194,6 +214,7 @@ export default function ExpenseChart({
                       <span className="font-medium">
                         {amount.toLocaleString()}원
                       </span>
+                      <span className="text-gray-400 text-xs">({count}건)</span>
                     </div>
                     {/* 챌린지 버튼 */}
                     {showChallengeButtons && onChallengeClick && (
@@ -202,7 +223,8 @@ export default function ExpenseChart({
                           handleChallengeClick(
                             category.name,
                             amount,
-                            'variable'
+                            'variable',
+                            count
                           )
                         }
                         className="ml-2 p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-md transition-colors group"
