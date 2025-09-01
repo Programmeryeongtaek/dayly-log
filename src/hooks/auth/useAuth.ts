@@ -17,7 +17,8 @@ export const useAuth = () => {
       setIsInitialized(true);
       return session;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
     retry: 1,
   });
 
@@ -31,32 +32,23 @@ export const useAuth = () => {
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
-        // 프로필이 없으면 생성
-        if (error.code === 'PGRST116') {
-          const { data: newProfile, error: createError } = await supabase
-            .from('profiles')
-            .insert([{
-              id: session.user.id,
-              email: session.user.email!,
-              name: 'Unknown',
-              nickname: null,
-            }])
-            .select()
-            .single();
-
-          if (createError) throw createError;
-          return newProfile;
-        }
+        console.error('프로필 조회 에러:', error);
         throw error;
       }
 
-      return data;
+      // 프로필이 없어도 에러로 처리하지 않음
+      return data || null;
     },
     enabled: !!session?.user?.id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    retry: false, // 재시도 완전 비활성화로 무한 루프 방지
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 
   // 로그인
@@ -76,9 +68,8 @@ export const useAuth = () => {
   });
 
   // 회원가입
-const signupMutation = useMutation({
+  const signupMutation = useMutation({
     mutationFn: async ({ email, password, name, nickname }: SignupFormData) => {
-      // 1. 사용자 생성
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -92,14 +83,11 @@ const signupMutation = useMutation({
       });
 
       if (error) throw error;
-
-      // 2. 프로필 생성 (트리거에서 자동 생성되지만 추가 정보 업데이트)
-
       return data;
     },
     onSuccess: () => {
-      // 이메일 인증 대기 상태이므로 세션 무효화 x
-      // queryClient.invalidateQueries({ queryKey: ['auth'] });
+      // 회원가입 후 즉시 세션 갱신
+      queryClient.invalidateQueries({ queryKey: ['auth'] });
     },
   });
 
@@ -110,7 +98,7 @@ const signupMutation = useMutation({
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.clear(); // 모든 캐시 클리어
+      queryClient.clear();
     },
   });
 
@@ -139,7 +127,8 @@ const signupMutation = useMutation({
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN') {
-          queryClient.invalidateQueries({ queryKey: ['auth'] });
+          // 로그인 시 프로필 쿼리만 갱신
+          queryClient.invalidateQueries({ queryKey: ['auth', 'profile'] });
         } else if (event === 'SIGNED_OUT') {
           queryClient.clear();
         }
@@ -149,12 +138,12 @@ const signupMutation = useMutation({
     return () => subscription.unsubscribe();
   }, [queryClient]);
 
-return {
+  return {
     // 상태
     user: session?.user || null,
     profile,
     session,
-    isLoading: isSessionLoading || isProfileLoading || !isInitialized,
+    isLoading: (isSessionLoading || isProfileLoading) && !isInitialized,
     isAuthenticated: !!session?.user,
     
     // 액션
