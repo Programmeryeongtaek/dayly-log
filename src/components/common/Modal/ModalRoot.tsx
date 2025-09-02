@@ -11,9 +11,6 @@ interface ModalRootProps {
   className?: string;
 }
 
-// 사이즈별 스타일 타입
-type SizeType = 'sm' | 'md' | 'lg' | 'xl';
-
 const ModalRoot = ({
   children,
   isOpen,
