@@ -53,9 +53,11 @@ const ChallengeModal = ({
     description: '',
     reason: '',
     enableAmountGoal: true,
-    enableCountGoal: true,
-    targetAmount: Math.floor(expenseData.amount * 0.1).toString(),
-    targetCount: '3',
+    enableCountGoal: (expenseData.count || 0) > 1,
+    targetAmount: Math.max(1, Math.floor(expenseData.amount * 0.1)).toString(),
+    targetCount: expenseData.count
+      ? Math.max(1, expenseData.count - 1).toString()
+      : '1',
     duration: '1month',
     targetDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
   });
@@ -112,7 +114,9 @@ const ChallengeModal = ({
       formData.enableAmountGoal || formData.enableCountGoal;
     const amountValid =
       !formData.enableAmountGoal ||
-      (formData.targetAmount && Number(formData.targetAmount) > 0);
+      (formData.targetAmount &&
+        Number(formData.targetAmount) > 0 &&
+        Number(formData.targetAmount) < expenseData.amount);
     const countValid =
       !formData.enableCountGoal ||
       (formData.targetCount && Number(formData.targetCount) > 0);
@@ -134,9 +138,14 @@ const ChallengeModal = ({
       description: '',
       reason: '',
       enableAmountGoal: true,
-      enableCountGoal: true,
-      targetAmount: Math.floor(expenseData.amount * 0.1).toString(),
-      targetCount: '3',
+      enableCountGoal: (expenseData.count || 0) > 1,
+      targetAmount: Math.max(
+        1,
+        Math.floor(expenseData.amount * 0.1)
+      ).toString(),
+      targetCount: expenseData.count
+        ? Math.max(1, expenseData.count - 1).toString()
+        : '1',
       duration: '1month',
       targetDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
     });
@@ -162,36 +171,36 @@ const ChallengeModal = ({
 
       <Modal.Body className="space-y-6">
         <form onSubmit={handleSubmit} id="challenge-form">
-          {/* 기존 지출 정보 표시 */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
-              <TrendingDown className="w-4 h-4" />
-              대상 지출
-              {expenseData.count && (
-                <div className="text-xs text-gray-500">
-                  {expenseData.count}건
-                </div>
-              )}
-            </h3>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700">{expenseData.name}</span>
-              <div className="text-right">
-                <span className="font-semibold text-accent-600">
-                  {expenseData.amount.toLocaleString()}원
-                </span>
-              </div>
-            </div>
-          </div>
-
           {/* 목표 타입 선택 */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700">
-              목표 설정 *
+              목표 *
             </label>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
-              <strong>목표 달성 방식:</strong> 아래 목표 중{' '}
+              <strong>목표 달성:</strong> 아래 목표 중{' '}
               <strong>하나만 달성해도 성공</strong>입니다. 더 도전적으로 하고
               싶다면 두 목표 모두 설정해보세요!
+            </div>
+
+            {/* 기존 지출 정보 표시 */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                <TrendingDown className="w-4 h-4" />
+                대상 지출
+                {expenseData.count && (
+                  <div className="text-xs text-gray-500">
+                    {expenseData.count}건
+                  </div>
+                )}
+              </h3>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">{expenseData.name}</span>
+                <div className="text-right">
+                  <span className="font-semibold text-accent-600">
+                    {expenseData.amount.toLocaleString()}원
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* 금액 목표 체크박스 */}
@@ -222,6 +231,7 @@ const ChallengeModal = ({
                           }
                           placeholder="35450"
                           min="1"
+                          max={expenseData.amount - 1}
                           className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
                           required={formData.enableAmountGoal}
                         />
@@ -229,17 +239,35 @@ const ChallengeModal = ({
                           원
                         </span>
                       </div>
-                      <div className="text-xs text-gray-400">
-                        현재 지출의{' '}
-                        {Math.round(
-                          (Number(formData.targetAmount) / expenseData.amount) *
-                            100
+                      <div
+                        className={`text-xs ${
+                          Number(formData.targetAmount) >= expenseData.amount
+                            ? 'text-red-500'
+                            : 'text-gray-400'
+                        }`}
+                      >
+                        {Number(formData.targetAmount) >= expenseData.amount ? (
+                          <>
+                            ⚠️ 절약 목표는 현재 지출(
+                            {expenseData.amount.toLocaleString()}원)보다 작아야
+                            합니다
+                          </>
+                        ) : (
+                          <>
+                            현재 지출의{' '}
+                            {Math.round(
+                              (Number(formData.targetAmount) /
+                                expenseData.amount) *
+                                100
+                            )}
+                            % 절약 목표 ({expenseData.amount.toLocaleString()}원
+                            →{' '}
+                            {(
+                              expenseData.amount - Number(formData.targetAmount)
+                            ).toLocaleString()}
+                            원)
+                          </>
                         )}
-                        % 절약 목표 ({expenseData.amount.toLocaleString()}원 →{' '}
-                        {(
-                          expenseData.amount - Number(formData.targetAmount)
-                        ).toLocaleString()}
-                        원)
                       </div>
                     </div>
                   )}
@@ -254,7 +282,12 @@ const ChallengeModal = ({
                   type="checkbox"
                   checked={formData.enableCountGoal}
                   onChange={handleCheckboxChange('enableCountGoal')}
-                  className="mt-1 w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 rounded focus:ring-accent-500"
+                  disabled={(expenseData.count || 0) <= 1}
+                  className={`mt-1 w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 rounded focus:ring-accent-500 ${
+                    (expenseData.count || 0) <= 1
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }`}
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -275,6 +308,7 @@ const ChallengeModal = ({
                           }
                           placeholder="5"
                           min="1"
+                          max={expenseData.count ? expenseData.count - 1 : 1}
                           className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
                           required={formData.enableCountGoal}
                         />
