@@ -28,7 +28,6 @@ interface ExpenseChartEnhancedProps extends ExpenseChartProps {
   onChallengeClick?: (
     categoryName: string,
     amount: number,
-    type: 'fixed' | 'variable',
     count: number
   ) => void;
   showChallengeButtons?: boolean;
@@ -49,11 +48,10 @@ export default function ExpenseChart({
   const handleChallengeClick = (
     categoryName: string,
     amount: number,
-    type: 'fixed' | 'variable',
     count: number
   ) => {
     if (onChallengeClick) {
-      onChallengeClick(categoryName, amount, type, count);
+      onChallengeClick(categoryName, amount, count);
     }
   };
 
@@ -167,12 +165,7 @@ export default function ExpenseChart({
                     {showChallengeButtons && onChallengeClick && (
                       <button
                         onClick={() =>
-                          handleChallengeClick(
-                            category.name,
-                            amount,
-                            'fixed',
-                            count
-                          )
+                          handleChallengeClick(category.name, amount, count)
                         }
                         className="ml-2 p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-md transition-colors group"
                         title="챌린지 만들기"
@@ -220,12 +213,7 @@ export default function ExpenseChart({
                     {showChallengeButtons && onChallengeClick && (
                       <button
                         onClick={() =>
-                          handleChallengeClick(
-                            category.name,
-                            amount,
-                            'variable',
-                            count
-                          )
+                          handleChallengeClick(category.name, amount, count)
                         }
                         className="ml-2 p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-md transition-colors group"
                         title="챌린지 만들기"

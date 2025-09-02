@@ -23,6 +23,7 @@ interface ChallengeModalProps {
     name: string;
     amount: number;
     category: string;
+    count?: number;
   };
   isSubmitting?: boolean;
 }

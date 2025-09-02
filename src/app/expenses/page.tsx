@@ -31,6 +31,7 @@ interface ExpenseForChallenge {
   name: string;
   amount: number;
   category: string;
+  count?: number;
 }
 
 const ExpensesPage = () => {
@@ -162,7 +163,7 @@ const ExpensesPage = () => {
   const handleChartChallengeClick = (
     categoryName: string,
     amount: number,
-    type: 'fixed' | 'variable'
+    count: number
   ) => {
     if (!user?.id) return;
 
@@ -170,20 +171,7 @@ const ExpensesPage = () => {
       name: `${categoryName} 줄이기`,
       amount: amount,
       category: categoryName,
-    };
-
-    setSelectedExpense(expenseForChallenge);
-    setIsChallengeModalOpen(true);
-  };
-
-  // 챌린지 버튼 클릭
-  const handleChallengeClick = (expense: (typeof expenses)[0]) => {
-    if (!user?.id) return;
-
-    const expenseForChallenge: ExpenseForChallenge = {
-      name: expense.name,
-      amount: expense.amount,
-      category: expense.category?.name || 'Unknown',
+      count: count,
     };
 
     setSelectedExpense(expenseForChallenge);
