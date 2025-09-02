@@ -161,9 +161,11 @@ const ChallengeModal = ({
             <Target className="w-5 h-5 text-accent-600" />
           </div>
           <div>
-            <Modal.Title>챌린지 만들기</Modal.Title>
+            <Modal.Title>챌린지 생성</Modal.Title>
             <Modal.Description>
-              {expenseData.name}에 대한 절약 챌린지를 시작해보세요
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+                설정한 목표 중 <strong>하나만 달성해도 성공</strong>입니다.
+              </div>
             </Modal.Description>
           </div>
         </div>
@@ -171,17 +173,26 @@ const ChallengeModal = ({
 
       <Modal.Body className="space-y-6">
         <form onSubmit={handleSubmit} id="challenge-form">
+          {/* 챌린지 제목 */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              제목 *
+            </label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) => handleFormDataChange('title', e.target.value)}
+              placeholder="예: 카페 지출 줄이기 챌린지"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base"
+              required
+            />
+          </div>
+
           {/* 목표 타입 선택 */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700">
               목표 *
             </label>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
-              <strong>목표 달성:</strong> 아래 목표 중{' '}
-              <strong>하나만 달성해도 성공</strong>입니다. 더 도전적으로 하고
-              싶다면 두 목표 모두 설정해보세요!
-            </div>
-
             {/* 기존 지출 정보 표시 */}
             <div className="bg-gray-50 rounded-lg p-4">
               <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
@@ -213,12 +224,7 @@ const ChallengeModal = ({
                   className="mt-1 w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 rounded focus:ring-accent-500"
                 />
                 <div className="flex-1">
-                  <span className="font-medium text-sm">
-                    💰 금액 줄이기 목표
-                  </span>
-                  <div className="text-xs text-gray-500">
-                    이 지출의 금액을 목표만큼 줄이기
-                  </div>
+                  <span className="font-medium text-sm">💰 금액 줄이기</span>
 
                   {formData.enableAmountGoal && (
                     <div className="mt-2 space-y-1">
@@ -275,7 +281,7 @@ const ChallengeModal = ({
               </label>
             </div>
 
-            {/* 횟수 목표 체크박스 - 항상 표시 */}
+            {/* 횟수 목표 체크박스 */}
             <div className="space-y-2">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
@@ -290,12 +296,7 @@ const ChallengeModal = ({
                   }`}
                 />
                 <div className="flex-1">
-                  <span className="font-medium text-sm">
-                    📊 횟수 줄이기 목표
-                  </span>
-                  <div className="text-xs text-gray-500">
-                    월간 지출 횟수를 제한하기
-                  </div>
+                  <span className="font-medium text-sm">📊 횟수 줄이기</span>
 
                   {formData.enableCountGoal && (
                     <div className="mt-2 space-y-1">
@@ -328,40 +329,10 @@ const ChallengeModal = ({
             </div>
           </div>
 
-          {/* 챌린지 제목 */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              챌린지 제목 *
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => handleFormDataChange('title', e.target.value)}
-              placeholder="예: 카페 지출 줄이기 챌린지"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base"
-              required
-            />
-          </div>
-
-          {/* 챌린지 이유 */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              챌린지를 시작하는 이유 *
-            </label>
-            <textarea
-              value={formData.reason}
-              onChange={(e) => handleFormDataChange('reason', e.target.value)}
-              placeholder="예: 매월 카페 지출이 너무 많아서 가계에 부담이 되고 있어요. 건강한 소비 습관을 만들고 싶습니다."
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base resize-none"
-              required
-            />
-          </div>
-
           {/* 챌린지 기간 */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700">
-              챌린지 기간 *
+              기간 *
             </label>
 
             <div className="grid grid-cols-3 mobile:grid-cols-6 gap-2">
@@ -387,7 +358,7 @@ const ChallengeModal = ({
             {isCustomDuration && (
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
-                  종료 날짜 선택
+                  종료 날짜
                 </label>
                 <input
                   type="date"
@@ -404,7 +375,7 @@ const ChallengeModal = ({
             <div className="text-sm text-gray-600 bg-blue-50 rounded-lg p-3 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-blue-600" />
               <span>
-                목표 종료일:{' '}
+                종료일:{' '}
                 <strong>
                   {format(
                     new Date(formData.targetDate),
@@ -416,10 +387,25 @@ const ChallengeModal = ({
             </div>
           </div>
 
+          {/* 챌린지 이유 */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              이유 *
+            </label>
+            <textarea
+              value={formData.reason}
+              onChange={(e) => handleFormDataChange('reason', e.target.value)}
+              placeholder="예: 매월 카페 지출이 너무 많아서 가계에 부담이 되고 있어요. 건강한 소비 습관을 만들고 싶습니다."
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base resize-none"
+              required
+            />
+          </div>
+
           {/* 추가 설명 */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              상세 설명 (선택사항)
+              계획 (선택)
             </label>
             <textarea
               value={formData.description}
@@ -443,7 +429,7 @@ const ChallengeModal = ({
           loading={isSubmitting}
           className="mobile:order-first"
         >
-          챌린지 시작하기
+          시작
         </Modal.Button>
       </Modal.Footer>
     </Modal>
