@@ -9,7 +9,7 @@ interface ModalFooterProps {
 
 const ModalFooter = ({ children, className = '' }: ModalFooterProps) => (
   <div
-    className={`flex flex-col mobile:flex-row gap-3 mobile:gap-2 mobile:justify-end p-4 mobile:p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0 ${className}`}
+    className={`flex justify-end gap-3 p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0 ${className}`}
   >
     {children}
   </div>

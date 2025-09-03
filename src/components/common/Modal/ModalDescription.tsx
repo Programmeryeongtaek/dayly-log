@@ -11,9 +11,7 @@ const ModalDescription = ({
   children,
   className = '',
 }: ModalDescriptionProps) => (
-  <div className={`text-sm mobile:text-base text-gray-600 mt-1 ${className}`}>
-    {children}
-  </div>
+  <div className={`text-sm text-gray-600 mt-1 ${className}`}>{children}</div>
 );
 
 export default ModalDescription;

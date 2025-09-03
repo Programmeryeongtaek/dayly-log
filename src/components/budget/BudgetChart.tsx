@@ -57,21 +57,17 @@ export default function BudgetChart({
               className="sr-only"
             />
             <div
-              className={`w-10 h-5 mobile:w-12 mobile:h-6 rounded-full transition-colors ${
+              className={`w-10 h-5  rounded-full transition-colors ${
                 isFixedEnabled ? 'bg-accent-500' : 'bg-gray-300'
               }`}
             >
               <div
-                className={`w-4 h-4 mobile:w-5 mobile:h-5 bg-white rounded-full shadow transform transition-transform mt-0.5 ${
-                  isFixedEnabled
-                    ? 'translate-x-5 mobile:translate-x-6 ml-0.5'
-                    : 'translate-x-0.5'
+                className={`w-4 h-4  bg-white rounded-full shadow transform transition-transform mt-0.5 ${
+                  isFixedEnabled ? 'translate-x-5  ml-0.5' : 'translate-x-0.5'
                 }`}
               />
             </div>
-            <span className="ml-2 text-xs mobile:text-sm font-medium">
-              고정항목 포함
-            </span>
+            <span className="ml-2 text-xs  font-medium">고정항목 포함</span>
           </label>
         </div>
 

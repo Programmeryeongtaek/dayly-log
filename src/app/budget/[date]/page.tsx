@@ -85,8 +85,8 @@ const BudgetDatePage = () => {
   if (isAuthLoading || !user) {
     return (
       <AuthGuard>
-        <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+        <div className="max-w-7xl mx-auto p-2space-y-4 ">
+          <div className="bg-white rounded-lg p-4  shadow-sm border animate-pulse">
             <div className="h-48 bg-gray-200 rounded"></div>
           </div>
         </div>
@@ -180,8 +180,8 @@ const BudgetDatePage = () => {
   if (isLoadingBudget || isLoadingCategories) {
     return (
       <AuthGuard>
-        <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+        <div className="max-w-7xl mx-auto p-2  space-y-4 ">
+          <div className="bg-white rounded-lg p-4 shadow-sm border animate-pulse">
             <div className="h-48 bg-gray-200 rounded"></div>
           </div>
         </div>
@@ -191,7 +191,7 @@ const BudgetDatePage = () => {
 
   return (
     <AuthGuard>
-      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+      <div className="max-w-7xl mx-auto p-2  space-y-4 ">
         {/* 가계부 항목 추가 폼 */}
         <BudgetForm
           selectedDate={selectedDate}
@@ -205,7 +205,7 @@ const BudgetDatePage = () => {
 
         {/* 수입 목록 */}
         {incomeItems.length > 0 && (
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
+          <div className="bg-white rounded-lg p-4  shadow-sm border">
             <BudgetList
               items={incomeItems}
               onDeleteItem={(id) => handleDeleteItem(id, 'income')}
@@ -217,7 +217,7 @@ const BudgetDatePage = () => {
 
         {/* 지출 목록 */}
         {expenseItems.length > 0 && (
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
             <BudgetList
               items={expenseItems}
               onDeleteItem={(id) => handleDeleteItem(id, 'expense')}
@@ -231,7 +231,7 @@ const BudgetDatePage = () => {
         {selectedDateItems.length > 0 &&
           incomeItems.length > 0 &&
           expenseItems.length > 0 && (
-            <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
+            <div className="bg-white rounded-lg p-4  shadow-sm border">
               <BudgetList
                 items={selectedDateItems}
                 onDeleteItem={(id) => {
@@ -246,7 +246,7 @@ const BudgetDatePage = () => {
 
         {/* 거래가 없을 때 안내 */}
         {selectedDateItems.length === 0 && (
-          <div className="bg-white rounded-lg p-8 mobile:p-12 shadow-sm border text-center">
+          <div className="bg-white rounded-lg p-8  shadow-sm border text-center">
             <div className="text-gray-400 mb-4">
               <Calendar className="w-12 h-12 mx-auto" />
             </div>
@@ -257,74 +257,6 @@ const BudgetDatePage = () => {
             <p className="text-gray-500">
               위의 폼을 사용해서 수입과 지출을 추가해보세요
             </p>
-          </div>
-        )}
-
-        {/* 일별 요약 */}
-        {selectedDateItems.length > 0 && (
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
-            <h3 className="text-base mobile:text-lg font-semibold mb-4">
-              {format(parseISO(selectedDate), 'M월 d일', { locale: ko })} 요약
-            </h3>
-
-            <div className="grid grid-cols-1 mobile:grid-cols-3 gap-4">
-              {/* 수입 요약 */}
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
-                  +
-                  {incomeItems
-                    .reduce((sum, item) => sum + item.amount, 0)
-                    .toLocaleString()}
-                  원
-                </div>
-                <div className="text-sm text-green-700 mt-1">
-                  수입 ({incomeItems.length}건)
-                </div>
-              </div>
-
-              {/* 지출 요약 */}
-              <div className="text-center p-4 bg-red-50 rounded-lg">
-                <div className="text-2xl font-bold text-red-600">
-                  -
-                  {expenseItems
-                    .reduce((sum, item) => sum + item.amount, 0)
-                    .toLocaleString()}
-                  원
-                </div>
-                <div className="text-sm text-red-700 mt-1">
-                  지출 ({expenseItems.length}건)
-                </div>
-              </div>
-
-              {/* 순자산 */}
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                {(() => {
-                  const totalIncome = incomeItems.reduce(
-                    (sum, item) => sum + item.amount,
-                    0
-                  );
-                  const totalExpense = expenseItems.reduce(
-                    (sum, item) => sum + item.amount,
-                    0
-                  );
-                  const net = totalIncome - totalExpense;
-
-                  return (
-                    <>
-                      <div
-                        className={`text-2xl font-bold ${net >= 0 ? 'text-green-600' : 'text-red-600'}`}
-                      >
-                        {net >= 0 ? '+' : ''}
-                        {net.toLocaleString()}원
-                      </div>
-                      <div className="text-sm text-gray-700 mt-1">
-                        순자산 ({selectedDateItems.length}건)
-                      </div>
-                    </>
-                  );
-                })()}
-              </div>
-            </div>
           </div>
         )}
 

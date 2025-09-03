@@ -16,7 +16,7 @@ const ModalTitle = ({
 }: ModalTitleProps) => (
   <h2
     id={id}
-    className={`text-lg mobile:text-xl font-semibold text-gray-900 ${className}`}
+    className={`text-lg font-semibold text-gray-900 ${className}`}
     {...rest}
   >
     {children}

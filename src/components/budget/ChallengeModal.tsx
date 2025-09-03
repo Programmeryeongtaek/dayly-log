@@ -183,7 +183,7 @@ const ChallengeModal = ({
               value={formData.title}
               onChange={(e) => handleFormDataChange('title', e.target.value)}
               placeholder="예: 카페 지출 줄이기 챌린지"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
               required
             />
           </div>
@@ -335,14 +335,14 @@ const ChallengeModal = ({
               기간 *
             </label>
 
-            <div className="grid grid-cols-3 mobile:grid-cols-6 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {DURATION_PRESETS.map((preset) => (
                 <button
                   key={preset.value}
                   type="button"
                   onClick={() => handleDurationChange(preset.value)}
                   className={`
-                    px-3 py-2 text-xs mobile:text-sm font-medium rounded-lg border transition-all duration-200
+                    px-3 py-2 text-xs font-medium rounded-lg border transition-all duration-200
                     ${
                       formData.duration === preset.value
                         ? 'bg-accent-100 border-accent-300 text-accent-700'
@@ -367,7 +367,7 @@ const ChallengeModal = ({
                     handleFormDataChange('targetDate', e.target.value)
                   }
                   min={format(new Date(), 'yyyy-MM-dd')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
                 />
               </div>
             )}
@@ -397,7 +397,7 @@ const ChallengeModal = ({
               onChange={(e) => handleFormDataChange('reason', e.target.value)}
               placeholder="예: 매월 카페 지출이 너무 많아서 가계에 부담이 되고 있어요. 건강한 소비 습관을 만들고 싶습니다."
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm resize-none"
               required
             />
           </div>
@@ -414,7 +414,7 @@ const ChallengeModal = ({
               }
               placeholder="예: 주 3회 이상 카페를 이용하지 않기, 집에서 커피 내려먹기 등 구체적인 실행 방법을 적어보세요."
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm mobile:text-base resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm resize-none"
             />
           </div>
         </form>
@@ -427,7 +427,7 @@ const ChallengeModal = ({
           form="challenge-form"
           disabled={!isFormValid()}
           loading={isSubmitting}
-          className="mobile:order-first"
+          className="order-first"
         >
           시작
         </Modal.Button>

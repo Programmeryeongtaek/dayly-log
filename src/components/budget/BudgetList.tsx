@@ -24,9 +24,9 @@ export default function BudgetList({
   const totalAmount = filteredItems.reduce((sum, item) => sum + item.amount, 0);
 
   return (
-    <div className="mt-4 mobile:mt-6 pt-4 mobile:pt-6 border-t">
-      <div className="flex items-center justify-between mb-2 mobile:mb-3">
-        <h3 className="font-medium text-gray-700 text-sm mobile:text-base flex items-center gap-2">
+    <div className="mt-4  pt-4 border-t">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="font-medium text-gray-700 text-sm flex items-center gap-2">
           {type === 'income' && (
             <TrendingUp className="w-4 h-4 text-green-600" />
           )}
@@ -57,9 +57,9 @@ export default function BudgetList({
           .map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between p-2 mobile:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center justify-between p-2  bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <div className="flex items-center gap-2 mobile:gap-3 flex-1 min-w-0">
+              <div className="flex items-center gap-2  flex-1 min-w-0">
                 {/* 수입/지출 아이콘 */}
                 <div
                   className={`p-1 rounded-full ${
@@ -91,13 +91,13 @@ export default function BudgetList({
                 </span>
 
                 {/* 항목명 */}
-                <span className="font-medium text-sm mobile:text-base truncate">
+                <span className="font-medium text-sm truncate">
                   {item.name}
                 </span>
 
                 {/* 금액 */}
                 <span
-                  className={`font-semibold text-sm mobile:text-base flex-shrink-0 ${
+                  className={`font-semibold text-sm  flex-shrink-0 ${
                     item.type === 'income' ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
@@ -112,7 +112,7 @@ export default function BudgetList({
                 className="text-red-500 hover:text-red-700 p-1 flex-shrink-0 transition-colors hover:bg-red-50 rounded"
                 title="삭제"
               >
-                <Trash2 className="w-3 h-3 mobile:w-4 mobile:h-4" />
+                <Trash2 className="w-3 h-3" />
               </button>
             </div>
           ))}
@@ -120,7 +120,7 @@ export default function BudgetList({
 
       {/* 타입별 요약 */}
       <div
-        className={`mt-2 mobile:mt-3 p-2 mobile:p-3 rounded-lg ${
+        className={`mt-2  p-2  rounded-lg ${
           type === 'income'
             ? 'bg-green-50'
             : type === 'expense'
@@ -129,7 +129,7 @@ export default function BudgetList({
         }`}
       >
         <div
-          className={`flex justify-between font-semibold text-sm mobile:text-base ${
+          className={`flex justify-between font-semibold text-sm  ${
             type === 'income'
               ? 'text-green-700'
               : type === 'expense'

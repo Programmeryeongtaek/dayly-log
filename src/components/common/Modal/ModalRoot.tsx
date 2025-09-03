@@ -65,7 +65,7 @@ const ModalRoot = ({
     <ModalContext.Provider value={contextValue}>
       {/* Backdrop - X 버튼으로만 */}
       <div
-        className="fixed inset-0 z-50 flex items-start mobile:items-center justify-center p-0 mobile:p-4 pt-4 mobile:pt-0"
+        className="fixed inset-0 z-50 flex items-start justify-center p-0 pt-4"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -80,11 +80,11 @@ const ModalRoot = ({
         {/* Modal Container */}
         <div
           className={`
-            relative w-full ${sizeClasses[size]} bg-white rounded-lg mobile:rounded-lg shadow-2xl
+            relative w-full ${sizeClasses[size]} bg-white rounded-lg shadow-2xl
             animate-in fade-in-0 zoom-in-95 duration-200
-            max-h-[95vh] mobile:max-h-[90vh] 
+            max-h-[95vh]
             overflow-hidden flex flex-col
-            mx-2 mobile:mx-0
+            mx-2
             ${className}
           `}
           onClick={handleContainerClick}

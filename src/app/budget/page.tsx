@@ -218,7 +218,7 @@ const BudgetPage = () => {
   // 사용자 인증 확인
   if (!user?.id) {
     return (
-      <div className="max-w-7xl mx-auto p-2 mobile:p-4 text-center py-8">
+      <div className="max-w-7xl mx-auto p-2  text-center py-8">
         <div className="bg-white rounded-lg p-8 shadow-sm border">
           <h3 className="text-lg font-medium text-gray-600 mb-2">
             로그인이 필요합니다
@@ -234,11 +234,11 @@ const BudgetPage = () => {
   // 로딩 상태
   if (shouldFetchData && (isLoadingBudget || isLoadingCategories)) {
     return (
-      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
-        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+      <div className="max-w-7xl mx-auto p-2 space-y-4 ">
+        <div className="bg-white rounded-lg p-4 shadow-sm border animate-pulse">
           <div className="h-64 bg-gray-200 rounded"></div>
         </div>
-        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border animate-pulse">
+        <div className="bg-white rounded-lg p-4 shadow-sm border animate-pulse">
           <div className="h-96 bg-gray-200 rounded"></div>
         </div>
       </div>
@@ -247,32 +247,32 @@ const BudgetPage = () => {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto p-2 mobile:p-4 space-y-4 mobile:space-y-6">
+      <div className="max-w-7xl mx-auto p-2  space-y-4">
         {/* 월 네비게이션 헤더 */}
-        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
+        <div className="bg-white rounded-lg p-4 shadow-sm border">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl mobile:text-2xl font-bold text-gray-900">
+            <h1 className="text-xl  font-bold text-gray-900">
               {format(currentDate, 'yyyy년 M월', { locale: ko })} 가계부
             </h1>
-            <div className="flex gap-1 mobile:gap-2">
+            <div className="flex gap-1 ">
               <button
                 onClick={() => handleMonthChange('prev')}
-                className="p-2 mobile:p-3 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2  hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <ChevronLeft className="w-5 h-5 mobile:w-6 mobile:h-6" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={() => handleMonthChange('next')}
-                className="p-2 mobile:p-3 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <ChevronRight className="w-5 h-5 mobile:w-6 mobile:h-6" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           </div>
         </div>
 
         {/* 차트와 통계 */}
-        <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
+        <div className="bg-white rounded-lg p-4 shadow-sm border">
           <BudgetChart
             incomeData={chartData.incomeData}
             expenseData={chartData.expenseData}
@@ -297,16 +297,14 @@ const BudgetPage = () => {
 
         {/* 월별 거래 목록 */}
         {budgetItems.length > 0 && (
-          <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
+          <div className="bg-white rounded-lg p-4  shadow-sm border">
             <button
               onClick={() => setIsTransactionListOpen(!isTransactionListOpen)}
-              className="w-full flex items-center justify-between mb-3 mobile:mb-4 hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              className="w-full flex items-center justify-between mb-3  hover:bg-gray-50 p-2 rounded-lg transition-colors"
             >
               <div className="flex items-center gap-2">
-                <h2 className="text-base mobile:text-lg font-semibold">
-                  이번 달 거래 내역
-                </h2>
-                <div className="text-xs mobile:text-sm text-gray-500">
+                <h2 className="text-base  font-semibold">이번 달 거래 내역</h2>
+                <div className="text-xs  text-gray-500">
                   총 {budgetItems.length}건 • 순자산{' '}
                   {totals.net >= 0 ? '+' : ''}
                   {totals.net.toLocaleString()}원
@@ -324,11 +322,11 @@ const BudgetPage = () => {
                 {budgetItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-2 mobile:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                    className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
                     onClick={() => router.push(`/budget/${item.date}`)}
                   >
-                    <div className="flex items-center gap-2 mobile:gap-3 flex-1 min-w-0">
-                      <span className="text-xs mobile:text-sm text-gray-500 flex-shrink-0">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <span className="text-xs text-gray-500 flex-shrink-0">
                         {format(new Date(item.date), 'M/d', { locale: ko })}
                       </span>
                       <span
@@ -344,12 +342,12 @@ const BudgetPage = () => {
                       >
                         {item.category}
                       </span>
-                      <span className="font-medium text-sm mobile:text-base truncate">
+                      <span className="font-medium text-sm  truncate">
                         {item.name}
                       </span>
                     </div>
                     <span
-                      className={`font-semibold text-sm mobile:text-base flex-shrink-0 ${
+                      className={`font-semibold text-sm  flex-shrink-0 ${
                         item.type === 'income'
                           ? 'text-green-600'
                           : 'text-red-600'
@@ -367,7 +365,7 @@ const BudgetPage = () => {
 
         {/* 거래가 없을 때 안내 */}
         {budgetItems.length === 0 && (
-          <div className="bg-white rounded-lg p-8 mobile:p-12 shadow-sm border text-center">
+          <div className="bg-white rounded-lg p-8 shadow-sm border text-center">
             <div className="text-gray-400 mb-4">
               <Calendar className="w-12 h-12 mx-auto" />
             </div>
