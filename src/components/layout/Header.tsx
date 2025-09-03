@@ -21,7 +21,7 @@ export default function Header() {
   const navigationItems = [
     {
       name: '가계부',
-      href: '/expenses',
+      href: '/budget',
       icon: BarChart3,
       description: '지출 관리',
     },
