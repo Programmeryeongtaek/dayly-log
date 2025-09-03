@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { BudgetFormData, BudgetStatistics, BudgetTransaction, CategoryTotal, TransactionType } from '@/types/budget';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { endOfMonth, format, parseISO, startOfMonth } from 'date-fns';
 import { useMemo } from 'react';
 
 interface UseBudgetProps {
@@ -43,15 +44,14 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
         incomeQuery = incomeQuery.eq('date', date);
         expenseQuery = expenseQuery.eq('date', date);
       } else if (month) {
-        const startOfMonth = `${month}-01`;
-        const endOfMonth = new Date(
-          new Date(month).getFullYear(),
-          new Date(month).getMonth() + 1,
-          0
-        ).toISOString().split('T')[0];
+        const startDate = startOfMonth(parseISO(`${month}-01`));
+        const endDate = endOfMonth(parseISO(`${month}-01`));
 
-        incomeQuery = incomeQuery.gte('date', startOfMonth).lte('date', endOfMonth);
-        expenseQuery = expenseQuery.gte('date', startOfMonth).lte('date', endOfMonth);
+        const startOfMonthStr = format(startDate, 'yyyy-MM-dd');
+        const endOfMonthStr = format(endDate, 'yyyy-MM-dd');
+
+        incomeQuery = incomeQuery.gte('date', startOfMonthStr).lte('date', endOfMonthStr);
+        expenseQuery = expenseQuery.gte('date', startOfMonthStr).lte('date', endOfMonthStr);
       }
 
       const [incomeResult, expenseResult] = await Promise.all([
