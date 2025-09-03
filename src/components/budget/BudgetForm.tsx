@@ -17,12 +17,23 @@ export default function BudgetForm({
   // 폼 제출 핸들러
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddCategory();
+    onAddItem();
   };
 
   // 카테고리 추가 핸들러
   const handleAddCategory = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('카테고리 추가 시도:', {
+      newCategoryName: newItem.newCategoryName,
+      type: newItem.type,
+      categoryType: newItem.categoryType,
+    });
+
+    if (!newItem.newCategoryName.trim()) {
+      console.error('카테고리 이름이 비어있습니다');
+      return;
+    }
+
     onAddCategory();
   };
 
