@@ -57,24 +57,23 @@ export default function BudgetChart({
               className="sr-only"
             />
             <div
-              className={`w-10 h-5  rounded-full transition-colors ${
+              className={`w-10 h-5 rounded-full transition-colors ${
                 isFixedEnabled ? 'bg-accent-500' : 'bg-gray-300'
               }`}
             >
               <div
-                className={`w-4 h-4  bg-white rounded-full shadow transform transition-transform mt-0.5 ${
+                className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform mt-0.5 ${
                   isFixedEnabled ? 'translate-x-5  ml-0.5' : 'translate-x-0.5'
                 }`}
               />
             </div>
-            <span className="ml-2 text-xs  font-medium">고정항목 포함</span>
+            <span className="ml-2 text-xs font-medium">고정항목 포함</span>
           </label>
         </div>
 
         {/* 순자산 표시 */}
         <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg">
-          <DollarSign className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">순자산:</span>
+          <span className="text-sm font-medium text-gray-700">합계:</span>
           <span
             className={`font-bold ${totals.net >= 0 ? 'text-green-600' : 'text-red-600'}`}
           >
@@ -85,12 +84,12 @@ export default function BudgetChart({
       </div>
 
       {/* 차트 영역 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* 수입 파이 차트 */}
         <div className="bg-white p-4 rounded-lg border">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-green-600" />
-            수입 구성 ({totals.income.total.toLocaleString()}원)
+            수입 구조 ({totals.income.total.toLocaleString()}원)
           </h3>
           {incomeData.length > 0 ? (
             <div className="h-64">
@@ -138,7 +137,7 @@ export default function BudgetChart({
         <div className="bg-white p-4 rounded-lg border">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <TrendingDown className="w-5 h-5 text-red-600" />
-            지출 구성 ({totals.expense.total.toLocaleString()}원)
+            지출 구조 ({totals.expense.total.toLocaleString()}원)
           </h3>
           {expenseData.length > 0 ? (
             <div className="h-64">
@@ -185,14 +184,14 @@ export default function BudgetChart({
 
       {/* 카테고리별 상세 정보 */}
       <div className="bg-white p-4 rounded-lg border">
-        <h3 className="text-lg font-semibold mb-4">카테고리별 상세</h3>
+        <h3 className="text-lg font-semibold mb-4">카테고리 내역</h3>
 
         {/* 수입 카테고리 */}
         {incomeData.length > 0 && (
           <div className="mb-6">
             <h4 className="font-medium text-green-700 mb-3 flex items-center gap-2">
               <TrendingUp className="w-5 h-5" />
-              수입 카테고리
+              수입
             </h4>
             <div className="space-y-3">
               {incomeData.map((income) => (
@@ -239,7 +238,7 @@ export default function BudgetChart({
           <div>
             <h4 className="font-medium text-red-700 mb-3 flex items-center gap-2">
               <TrendingDown className="w-5 h-5" />
-              지출 카테고리
+              지출
             </h4>
             <div className="space-y-3">
               {expenseData.map((expense) => (

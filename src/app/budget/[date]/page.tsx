@@ -191,7 +191,7 @@ const BudgetDatePage = () => {
 
   return (
     <AuthGuard>
-      <div className="max-w-7xl mx-auto p-2  space-y-4 ">
+      <div className="max-w-7xl mx-auto p-2 space-y-4 ">
         {/* 가계부 항목 추가 폼 */}
         <BudgetForm
           selectedDate={selectedDate}
@@ -205,7 +205,7 @@ const BudgetDatePage = () => {
 
         {/* 수입 목록 */}
         {incomeItems.length > 0 && (
-          <div className="bg-white rounded-lg p-4  shadow-sm border">
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
             <BudgetList
               items={incomeItems}
               onDeleteItem={(id) => handleDeleteItem(id, 'income')}
@@ -227,36 +227,16 @@ const BudgetDatePage = () => {
           </div>
         )}
 
-        {/* 전체 목록 (수입+지출이 모두 있을 때) */}
-        {selectedDateItems.length > 0 &&
-          incomeItems.length > 0 &&
-          expenseItems.length > 0 && (
-            <div className="bg-white rounded-lg p-4  shadow-sm border">
-              <BudgetList
-                items={selectedDateItems}
-                onDeleteItem={(id) => {
-                  const item = selectedDateItems.find((i) => i.id === id);
-                  if (item) handleDeleteItem(id, item.type);
-                }}
-                title="전체 내역"
-                type="all"
-              />
-            </div>
-          )}
-
         {/* 거래가 없을 때 안내 */}
         {selectedDateItems.length === 0 && (
-          <div className="bg-white rounded-lg p-8  shadow-sm border text-center">
+          <div className="bg-white rounded-lg p-8 shadow-sm border text-center">
             <div className="text-gray-400 mb-4">
               <Calendar className="w-12 h-12 mx-auto" />
             </div>
             <h3 className="text-lg font-medium text-gray-600 mb-2">
-              {format(parseISO(selectedDate), 'M월 d일', { locale: ko })}에는
-              아직 거래가 없습니다
+              {format(parseISO(selectedDate), 'M월 d일', { locale: ko })} 내역이
+              없습니다.
             </h3>
-            <p className="text-gray-500">
-              위의 폼을 사용해서 수입과 지출을 추가해보세요
-            </p>
           </div>
         )}
 

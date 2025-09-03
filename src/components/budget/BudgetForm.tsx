@@ -4,6 +4,7 @@ import { BudgetFormProps } from '@/types/budget';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {
+  ArrowLeft,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -64,29 +65,38 @@ export default function BudgetForm({
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm border">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
+    <div className="bg-white flex flex-col gap-2 rounded-lg p-4 shadow-sm border">
+      <div className="flex justify-between">
+        <div className="flex items-center">
           <button
             onClick={() => handleDateChange('prev')}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-6 h-6" />
           </button>
 
-          <h2 className="text-base font-semibold">
+          <h2 className="text-xl font-semibold">
             {format(parseISO(selectedDate), 'M월 d일', { locale: ko })}
           </h2>
 
           <button
             onClick={() => handleDateChange('next')}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-end">
+            <button
+              onClick={onBackToMonth}
+              className=" text-accent-600 hover:text-accent-700 px-2 py-1 border border-accent-300 rounded-lg text-sm transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          </div>
+
           {/* 날짜 직접 선택 */}
           <input
             type="date"
@@ -94,20 +104,13 @@ export default function BudgetForm({
             onChange={handleDatePicker}
             className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
           />
-
-          <button
-            onClick={onBackToMonth}
-            className="text-accent-600 hover:text-accent-700 px-2 py-1 border border-accent-300 rounded-lg text-sm transition-colors"
-          >
-            월별 보기
-          </button>
         </div>
       </div>
 
       {/* 항목 추가 폼 */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-gray-700 text-sm ">항목 추가</h3>
+          <h3 className="font-medium text-gray-700 text-sm">항목 추가</h3>
         </div>
 
         {/* 수입/지출 타입 선택 */}
@@ -196,12 +199,12 @@ export default function BudgetForm({
                     onChange={(e) =>
                       onNewItemChange({ newCategoryName: e.target.value })
                     }
-                    className="flex-1 border border-gray-300 rounded-lg px-2  py-1.5  text-sm  focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+                    className="flex-1 border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
                   />
                   <button
                     type="button"
                     onClick={handleAddCategory}
-                    className="bg-accent-500 text-white px-2  py-1.5 rounded-lg hover:bg-accent-600 text-sm transition-colors"
+                    className="bg-accent-500 text-white px-2 py-1.5 rounded-lg hover:bg-accent-600 text-sm transition-colors"
                   >
                     추가
                   </button>
@@ -225,7 +228,7 @@ export default function BudgetForm({
                     onChange={(e) =>
                       onNewItemChange({ category: e.target.value })
                     }
-                    className="flex-1 border border-gray-300 rounded-lg px-2 py-1.5  text-sm  focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+                    className="flex-1 border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
                   >
                     <option value="">카테고리 선택</option>
                     {getCurrentCategories().map((category) => (
@@ -239,16 +242,16 @@ export default function BudgetForm({
                     onClick={() =>
                       onNewItemChange({ isCreatingCategory: true })
                     }
-                    className="bg-gray-200 text-gray-700 px-2 py-1.5  rounded-lg hover:bg-gray-300 transition-colors"
+                    className="bg-gray-200 text-gray-700 px-2 py-1.5 rounded-lg hover:bg-gray-300 transition-colors"
                   >
-                    <Plus className="w-3 h-3 " />
+                    <Plus className="w-3 h-3" />
                   </button>
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-xs  font-medium mb-1 text-gray-700">
+              <label className="block text-xs font-medium mb-1 text-gray-700">
                 항목명
               </label>
               <input
@@ -256,7 +259,7 @@ export default function BudgetForm({
                 placeholder="항목명"
                 value={newItem.name}
                 onChange={(e) => onNewItemChange({ name: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm  focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+                className="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
               />
             </div>
           </div>
@@ -271,14 +274,14 @@ export default function BudgetForm({
                 placeholder="금액"
                 value={newItem.amount}
                 onChange={(e) => onNewItemChange({ amount: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-2  py-1.5 text-sm  focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+                className="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
               />
             </div>
 
             <div className="flex items-end">
               <button
                 type="submit"
-                className={`w-full rounded-lg px-3  py-1.5 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm transition-colors ${
+                className={`w-full rounded-lg px-3 py-1.5 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm transition-colors ${
                   newItem.type === 'income'
                     ? 'bg-green-500 text-white hover:bg-green-600'
                     : 'bg-red-500 text-white hover:bg-red-600'

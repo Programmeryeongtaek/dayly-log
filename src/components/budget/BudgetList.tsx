@@ -24,8 +24,8 @@ export default function BudgetList({
   const totalAmount = filteredItems.reduce((sum, item) => sum + item.amount, 0);
 
   return (
-    <div className="mt-4  pt-4 border-t">
-      <div className="flex items-center justify-between mb-2">
+    <div className="flex flex-col">
+      <div className="flex items-center justify-between mb-2 border-b pb-2">
         <h3 className="font-medium text-gray-700 text-sm flex items-center gap-2">
           {type === 'income' && (
             <TrendingUp className="w-4 h-4 text-green-600" />
@@ -57,47 +57,34 @@ export default function BudgetList({
           .map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between p-2  bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <div className="flex items-center gap-2  flex-1 min-w-0">
-                {/* 수입/지출 아이콘 */}
-                <div
-                  className={`p-1 rounded-full ${
-                    item.type === 'income'
-                      ? 'bg-green-100 text-green-600'
-                      : 'bg-red-100 text-red-600'
-                  }`}
-                >
-                  {item.type === 'income' ? (
-                    <TrendingUp className="w-3 h-3" />
-                  ) : (
-                    <TrendingDown className="w-3 h-3" />
-                  )}
+              <div className="flex items-center justify-between gap-2 flex-1 min-w-0">
+                <div className="flex gap-1 items-center">
+                  {/* 카테고리 태그 */}
+                  <span
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                      isFixedCategory(item.categoryType)
+                        ? item.type === 'income'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-700'
+                        : item.type === 'income'
+                          ? 'bg-green-50 text-green-600'
+                          : 'bg-red-50 text-red-600'
+                    }`}
+                  >
+                    {item.category}
+                  </span>
+
+                  {/* 항목명 */}
+                  <span className="font-medium text-sm truncate">
+                    {item.name}
+                  </span>
                 </div>
-
-                {/* 카테고리 태그 */}
-                <span
-                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                    isFixedCategory(item.categoryType)
-                      ? item.type === 'income'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
-                      : item.type === 'income'
-                        ? 'bg-green-50 text-green-600'
-                        : 'bg-red-50 text-red-600'
-                  }`}
-                >
-                  {item.category}
-                </span>
-
-                {/* 항목명 */}
-                <span className="font-medium text-sm truncate">
-                  {item.name}
-                </span>
 
                 {/* 금액 */}
                 <span
-                  className={`font-semibold text-sm  flex-shrink-0 ${
+                  className={`font-semibold text-sm flex-shrink-0 ${
                     item.type === 'income' ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
@@ -116,39 +103,6 @@ export default function BudgetList({
               </button>
             </div>
           ))}
-      </div>
-
-      {/* 타입별 요약 */}
-      <div
-        className={`mt-2  p-2  rounded-lg ${
-          type === 'income'
-            ? 'bg-green-50'
-            : type === 'expense'
-              ? 'bg-red-50'
-              : 'bg-gray-50'
-        }`}
-      >
-        <div
-          className={`flex justify-between font-semibold text-sm  ${
-            type === 'income'
-              ? 'text-green-700'
-              : type === 'expense'
-                ? 'text-red-700'
-                : 'text-gray-700'
-          }`}
-        >
-          <span>
-            {type === 'income'
-              ? '총 수입:'
-              : type === 'expense'
-                ? '총 지출:'
-                : '총 금액:'}
-          </span>
-          <span>
-            {type === 'income' ? '+' : type === 'expense' ? '-' : ''}
-            {totalAmount.toLocaleString()}원
-          </span>
-        </div>
       </div>
     </div>
   );

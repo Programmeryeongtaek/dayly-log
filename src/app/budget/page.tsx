@@ -218,7 +218,7 @@ const BudgetPage = () => {
   // 사용자 인증 확인
   if (!user?.id) {
     return (
-      <div className="max-w-7xl mx-auto p-2  text-center py-8">
+      <div className="max-w-7xl mx-auto p-2 text-center py-8">
         <div className="bg-white rounded-lg p-8 shadow-sm border">
           <h3 className="text-lg font-medium text-gray-600 mb-2">
             로그인이 필요합니다
@@ -234,7 +234,7 @@ const BudgetPage = () => {
   // 로딩 상태
   if (shouldFetchData && (isLoadingBudget || isLoadingCategories)) {
     return (
-      <div className="max-w-7xl mx-auto p-2 space-y-4 ">
+      <div className="max-w-7xl mx-auto p-2 space-y-4">
         <div className="bg-white rounded-lg p-4 shadow-sm border animate-pulse">
           <div className="h-64 bg-gray-200 rounded"></div>
         </div>
@@ -247,17 +247,17 @@ const BudgetPage = () => {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto p-2  space-y-4">
+      <div className="max-w-7xl mx-auto p-2 space-y-4">
         {/* 월 네비게이션 헤더 */}
         <div className="bg-white rounded-lg p-4 shadow-sm border">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl  font-bold text-gray-900">
-              {format(currentDate, 'yyyy년 M월', { locale: ko })} 가계부
+            <h1 className="text-xl font-bold text-gray-900">
+              {format(currentDate, 'yyyy년 M월', { locale: ko })}
             </h1>
-            <div className="flex gap-1 ">
+            <div className="flex gap-1">
               <button
                 onClick={() => handleMonthChange('prev')}
-                className="p-2  hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -280,7 +280,7 @@ const BudgetPage = () => {
             onFixedToggle={handleFixedToggle}
             totals={totals}
             categories={categorizedData}
-            transactions={transactions} // transactions 전달
+            transactions={transactions}
             onChallengeClick={handleChartChallengeClick}
           />
         </div>
@@ -297,16 +297,15 @@ const BudgetPage = () => {
 
         {/* 월별 거래 목록 */}
         {budgetItems.length > 0 && (
-          <div className="bg-white rounded-lg p-4  shadow-sm border">
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
             <button
               onClick={() => setIsTransactionListOpen(!isTransactionListOpen)}
-              className="w-full flex items-center justify-between mb-3  hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              className="w-full flex items-center justify-between mb-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
             >
               <div className="flex items-center gap-2">
-                <h2 className="text-base  font-semibold">이번 달 거래 내역</h2>
-                <div className="text-xs  text-gray-500">
-                  총 {budgetItems.length}건 • 순자산{' '}
-                  {totals.net >= 0 ? '+' : ''}
+                <h2 className="text-base font-semibold">가계내역</h2>
+                <div className="text-xs text-gray-500">
+                  총 {budgetItems.length}건 • 합계: {totals.net >= 0 ? '+' : ''}
                   {totals.net.toLocaleString()}원
                 </div>
               </div>
@@ -342,12 +341,12 @@ const BudgetPage = () => {
                       >
                         {item.category}
                       </span>
-                      <span className="font-medium text-sm  truncate">
+                      <span className="font-medium text-sm truncate">
                         {item.name}
                       </span>
                     </div>
                     <span
-                      className={`font-semibold text-sm  flex-shrink-0 ${
+                      className={`font-semibold text-sm flex-shrink-0 ${
                         item.type === 'income'
                           ? 'text-green-600'
                           : 'text-red-600'

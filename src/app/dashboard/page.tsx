@@ -170,7 +170,7 @@ const DashboardPage = () => {
                 👋
               </h1>
               <p className="text-accent-100 text-lg">
-                {format(currentDate, 'yyyy년 M월', { locale: ko })}의 가계 현황
+                {format(currentDate, 'yyyy년 M월', { locale: ko })} 가계 현황
               </p>
             </div>
             <div className="mt-4">
@@ -405,12 +405,12 @@ const DashboardPage = () => {
             ) : (
               <div className="text-center py-8">
                 <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">아직 거래 내역이 없습니다</p>
+                <p className="text-gray-500">아직 내역이 없습니다.</p>
                 <Link
-                  href="/budget" // 변경
+                  href="/budget"
                   className="text-accent-600 hover:text-accent-700 text-sm font-medium mt-2 inline-block"
                 >
-                  첫 거래를 기록해보세요
+                  첫 내역을 기록해보세요.
                 </Link>
               </div>
             )}
@@ -423,7 +423,7 @@ const DashboardPage = () => {
                 카테고리별 지출
               </h2>
               <Link
-                href="/budget" // 변경
+                href="/budget"
                 className="text-accent-600 hover:text-accent-700 text-sm font-medium flex items-center"
               >
                 상세분석
@@ -477,7 +477,7 @@ const DashboardPage = () => {
             ) : (
               <div className="text-center py-8">
                 <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">카테고리별 데이터가 없습니다</p>
+                <p className="text-gray-500">카테고리별 데이터가 없습니다.</p>
               </div>
             )}
           </div>
