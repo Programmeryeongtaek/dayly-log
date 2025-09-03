@@ -3,7 +3,14 @@
 import { BudgetFormProps } from '@/types/budget';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { Plus, TrendingDown, TrendingUp } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function BudgetForm({
   selectedDate,
@@ -14,6 +21,8 @@ export default function BudgetForm({
   onAddCategory,
   getCurrentCategories,
 }: BudgetFormProps) {
+  const router = useRouter();
+
   // 폼 제출 핸들러
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,18 +41,67 @@ export default function BudgetForm({
     onAddCategory();
   };
 
+  // 날짜 네비게이션 핸들러 추가
+  const handleDateChange = (direction: 'prev' | 'next') => {
+    const currentDateObj = parseISO(selectedDate);
+    const newDate = new Date(currentDateObj);
+
+    if (direction === 'prev') {
+      newDate.setDate(newDate.getDate() - 1);
+    } else {
+      newDate.setDate(newDate.getDate() + 1);
+    }
+
+    const newDateString = format(newDate, 'yyyy-MM-dd');
+    router.push(`/budget/${newDateString}`);
+  };
+
+  const handleDatePicker = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = e.target.value;
+    if (newDate) {
+      router.push(`/budget/${newDate}`);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg p-4 mobile:p-6 shadow-sm border">
       <div className="flex items-center justify-between mb-3 mobile:mb-4">
-        <h2 className="text-base mobile:text-lg font-semibold">
-          {format(parseISO(selectedDate), 'M월 d일', { locale: ko })} 가계부
-        </h2>
-        <button
-          onClick={onBackToMonth}
-          className="text-accent-600 hover:text-accent-700 px-2 mobile:px-4 py-1 mobile:py-2 border border-accent-300 rounded-lg text-sm mobile:text-base transition-colors"
-        >
-          월별 보기
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleDateChange('prev')}
+            className="p-1 mobile:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4 mobile:w-5 mobile:h-5" />
+          </button>
+
+          <h2 className="text-base mobile:text-lg font-semibold">
+            {format(parseISO(selectedDate), 'M월 d일', { locale: ko })} 가계부
+          </h2>
+
+          <button
+            onClick={() => handleDateChange('next')}
+            className="p-1 mobile:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ChevronRight className="w-4 h-4 mobile:w-5 mobile:h-5" />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* 날짜 직접 선택 */}
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={handleDatePicker}
+            className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+          />
+
+          <button
+            onClick={onBackToMonth}
+            className="text-accent-600 hover:text-accent-700 px-2 mobile:px-4 py-1 mobile:py-2 border border-accent-300 rounded-lg text-sm mobile:text-base transition-colors"
+          >
+            월별 보기
+          </button>
+        </div>
       </div>
 
       {/* 항목 추가 폼 */}
