@@ -91,7 +91,7 @@ export default function Header() {
           </nav>
 
           {/* 우측 사용자 영역 */}
-          <div className="flex items-center gap-2 mobile:gap-4">
+          <div className="flex items-center gap-2">
             {/* 사용자 프로필 (데스크톱) */}
             <div className="hidden tablet:flex items-center gap-2">
               <div className="w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center">
