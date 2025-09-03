@@ -100,7 +100,8 @@ const BudgetDatePage = () => {
   };
 
   const handleBackToMonth = () => {
-    router.push('/budget');
+    const currentMonth = selectedDate.substring(0, 7); // "2025-08-15" -> "2025-08"
+    router.push(`/budget?month=${currentMonth}`);
   };
 
   const getCurrentCategories = () => {

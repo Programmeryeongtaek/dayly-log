@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {
@@ -37,9 +37,19 @@ const BudgetPage = () => {
   const { user } = useAuth();
   const { createChallenge, isCreatingChallenge } = useChallenge();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // URL에서 month 파라미터 읽기
+  const monthParam = searchParams.get('month');
 
   // 날짜 상태
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(() => {
+    if (monthParam) {
+      const [year, month] = monthParam.split('-');
+      return new Date(parseInt(year), parseInt(month) - 1, 1);
+    }
+    return new Date();
+  });
   const [isFixedEnabled, setIsFixedEnabled] = useState(true);
 
   // 챌린지 모달 상태
