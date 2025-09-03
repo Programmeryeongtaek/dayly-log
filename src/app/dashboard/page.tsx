@@ -144,7 +144,7 @@ const DashboardPage = () => {
         <div className="max-w-7xl mx-auto p-4 space-y-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
               ))}
@@ -163,31 +163,30 @@ const DashboardPage = () => {
       <div className="max-w-7xl mx-auto p-4 space-y-6">
         {/* 환영 메시지 - 항상 표시 */}
         <div className="bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-xl p-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between">
+          <div className="flex flex-col justify-between">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">
+              <h1 className="text-2xl font-bold mb-2">
                 안녕하세요, {profile?.name || profile?.nickname || '사용자'}님!
                 👋
               </h1>
               <p className="text-accent-100 text-lg">
-                {format(currentDate, 'yyyy년 M월', { locale: ko })}의 가계
-                현황을 확인해보세요
+                {format(currentDate, 'yyyy년 M월', { locale: ko })}의 가계 현황
               </p>
             </div>
-            <div className="mt-4 md:mt-0">
+            <div className="mt-4">
               <Link
-                href="/budget" // 변경
+                href="/budget"
                 className="inline-flex items-center px-4 py-2 bg-white text-accent-600 rounded-lg hover:bg-accent-50 transition-colors font-medium"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                거래 추가하기 {/* 변경 */}
+                내역 추가
               </Link>
             </div>
           </div>
         </div>
 
         {/* 주요 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {/* 이번 달 총 수입 */}
           <div className="bg-white rounded-lg p-6 shadow-sm border">
             <div className="flex items-center justify-between">
@@ -280,7 +279,9 @@ const DashboardPage = () => {
           <div className="bg-white rounded-lg p-6 shadow-sm border">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600">순자산</p>
+                <p className="text-sm font-medium text-gray-600">
+                  이번 달 현황
+                </p>
                 {isDataLoading ? (
                   <div className="animate-pulse">
                     <div className="h-8 bg-gray-200 rounded w-20 mt-1"></div>
@@ -321,61 +322,16 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
-
-          {/* 일평균 순수익 */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600">
-                  일평균 순수익
-                </p>
-                {isDataLoading ? (
-                  <div className="animate-pulse">
-                    <div className="h-8 bg-gray-200 rounded w-20 mt-1"></div>
-                    <div className="h-3 bg-gray-200 rounded w-16 mt-2"></div>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {(
-                        dashboardStats.dailyAverageIncome -
-                        dashboardStats.dailyAverageExpense
-                      ).toLocaleString('ko-KR', {
-                        maximumFractionDigits: 0,
-                      })}
-                      원
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      수입{' '}
-                      {dashboardStats.dailyAverageIncome.toLocaleString(
-                        'ko-KR',
-                        { maximumFractionDigits: 0 }
-                      )}
-                      원 / 지출{' '}
-                      {dashboardStats.dailyAverageExpense.toLocaleString(
-                        'ko-KR',
-                        { maximumFractionDigits: 0 }
-                      )}
-                      원
-                    </p>
-                  </>
-                )}
-              </div>
-              <div className="p-3 bg-blue-100 rounded-full">
-                <Calendar className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* 하단 콘텐츠 그리드 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {/* 최근 거래 내역 */}
           <div className="bg-white rounded-lg p-6 shadow-sm border">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">최근 거래</h2>
+              <h2 className="text-lg font-semibold text-gray-900">최근 내역</h2>
               <Link
-                href="/budget" // 변경
+                href="/budget"
                 className="text-accent-600 hover:text-accent-700 text-sm font-medium flex items-center"
               >
                 전체보기
@@ -406,32 +362,32 @@ const DashboardPage = () => {
                 {recentTransactions.map((transaction) => (
                   <div
                     key={transaction.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg transition-colors"
                   >
-                    <div className="flex items-center space-x-3">
-                      <span
-                        className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                          transaction.type === 'income'
-                            ? transaction.categoryType === 'fixed'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-green-50 text-green-600'
-                            : transaction.categoryType === 'fixed'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-red-50 text-red-600'
-                        }`}
-                      >
-                        {transaction.category}
-                      </span>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {transaction.name}
-                        </p>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                            transaction.type === 'income'
+                              ? transaction.categoryType === 'fixed'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-green-50 text-green-600'
+                              : transaction.categoryType === 'fixed'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-red-50 text-red-600'
+                          }`}
+                        >
+                          {transaction.category}
+                        </span>
                         <p className="text-xs text-gray-500">
                           {format(new Date(transaction.date), 'M월 d일', {
                             locale: ko,
                           })}
                         </p>
                       </div>
+                      <p className="font-medium text-gray-900">
+                        {transaction.name}
+                      </p>
                     </div>
                     <span
                       className={`font-semibold ${
@@ -532,16 +488,16 @@ const DashboardPage = () => {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             빠른 액션
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <Link
-              href="/budget" // 변경
+              href="/budget"
               className="flex flex-col items-center p-4 bg-accent-50 rounded-lg hover:bg-accent-100 transition-colors group"
             >
               <div className="p-3 bg-accent-500 rounded-full group-hover:bg-accent-600 transition-colors">
                 <Plus className="w-6 h-6 text-white" />
               </div>
               <span className="mt-2 text-sm font-medium text-gray-700">
-                거래 추가 {/* 변경 */}
+                내약 추가
               </span>
             </Link>
 
