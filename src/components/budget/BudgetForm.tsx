@@ -380,8 +380,11 @@ export default function BudgetForm({
                       추가
                     </button>
                   </div>
-
-                  {/* 삭제된 카테고리 섹션 */}
+                  {/* 사용하지 않는 카테고리 섹션 */}
+                  {/* TODO: 삭제할 때, 일괄적으로 삭제할 수 있도록 하기. 소프트
+                  삭제를 하되 언제든지 다시 복구할 수 있도록 하기 
+                  또한 해당 카테고리의 건수가 0일 경우에는 카테고리를 영구삭제 할 수 있도록 하기
+                  소프트 삭제를 고려한 이유는 데이터 보존을 위해 UI 측면에서만 작동하도록 한 것이다.*/}
                   {deletedCategories.length > 0 && (
                     <div className="border-t pt-3">
                       <button
