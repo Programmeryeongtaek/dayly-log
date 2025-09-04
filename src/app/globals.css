@@ -1,15 +1,106 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+@theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* 반응형 브레이크포인트 */
+  --breakpoint-mobile: 360px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-laptop: 1024px;
+
+  /* 메인 색상: 청록색 */
+  --color-accent-50: #f0fdfa;
+  --color-accent-100: #ccfbf1;
+  --color-accent-200: #99f6e4;
+  --color-accent-300: #5eead4;
+  --color-accent-400: #2dd4bf;
+  --color-accent-500: #14b8a6;
+  --color-accent-600: #0d9488;
+  --color-accent-700: #0f766e;
+  --color-accent-800: #115e59;
+  --color-accent-900: #134e4a;
+}
+
+/* 커스텀 브레이크포인트 */
+@media (min-width: 360px) {
+  .mobile\:block {
+    display: block;
+  }
+  .mobile\:hidden {
+    display: none;
+  }
+  .mobile\:flex {
+    display: flex;
+  }
+}
+
+@media (min-width: 768px) {
+  .tablet\:block {
+    display: block;
+  }
+  .tablet\:hidden {
+    display: none;
+  }
+  .tablet\:flex {
+    display: flex;
+  }
+  .tablet\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .laptop\:block {
+    display: block;
+  }
+  .laptop\:hidden {
+    display: none;
+  }
+  .laptop\:flex {
+    display: flex;
+  }
+  .laptop\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* 360px 이하 초소형 화면 대응 */
+@media (max-width: 359px) {
+  .text-6xl {
+    font-size: 3rem;
+    line-height: 1;
+  }
+  .text-4xl {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+  .px-8 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .py-4 {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  .gap-8 {
+    gap: 1rem;
+  }
+  .p-8 {
+    padding: 1rem;
+  }
+  .max-w-7xl {
+    max-width: 100%;
+  }
+  .px-4 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
