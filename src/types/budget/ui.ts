@@ -57,6 +57,7 @@ export interface BudgetFormProps {
   onAddItem: () => void;
   onAddCategory: () => void;
   getCurrentCategories: () => Category[];
+  allCategories: Category[];
 }
 
 export interface BudgetListProps {

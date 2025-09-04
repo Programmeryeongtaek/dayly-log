@@ -194,6 +194,7 @@ const BudgetDatePage = () => {
           onAddItem={handleAddItem}
           onAddCategory={handleAddCategory}
           getCurrentCategories={getCurrentCategories}
+          allCategories={categories}
         />
 
         {/* 수입 목록 */}

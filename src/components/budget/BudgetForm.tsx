@@ -1,8 +1,9 @@
 'use client';
 
-import { queryClient } from '@/lib/query-client';
+import { useAuth } from '@/hooks/auth';
 import { supabase } from '@/lib/supabase';
-import { BudgetFormProps } from '@/types/budget';
+import { BudgetFormProps, Category } from '@/types/budget';
+import { useQueryClient } from '@tanstack/react-query';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {
@@ -12,6 +13,7 @@ import {
   ChevronRight,
   ChevronUp,
   Plus,
+  RotateCw,
   TrendingDown,
   TrendingUp,
   X,
@@ -26,9 +28,16 @@ export default function BudgetForm({
   onBackToMonth,
   onAddItem,
   onAddCategory,
-  getCurrentCategories,
+  allCategories,
 }: BudgetFormProps) {
+  const queryClient = useQueryClient();
   const router = useRouter();
+  const { user } = useAuth();
+
+  const deletedCategories = allCategories.filter(
+    (cat) =>
+      cat.type === `${newItem.type}_${newItem.categoryType}` && cat.is_deleted
+  );
 
   // 삭제된 카테고리 관리
   const [showDeletedCategories, setShowDeletedCategories] = useState(false);
@@ -50,7 +59,7 @@ export default function BudgetForm({
 
     // 삭제된 동일 이름 카테고리 확인
     const categoryType = `${newItem.type}_${newItem.categoryType}`;
-    const existingCategory = getCurrentCategories().find(
+    const existingCategory = allCategories.find(
       (cat) =>
         cat.name === newItem.newCategoryName.trim() &&
         cat.type === categoryType &&
@@ -100,6 +109,21 @@ export default function BudgetForm({
 
   // 카테고리 삭제
   const handleDeleteCategory = async (categoryId: string) => {
+    // 선택된 카테고리 해제
+    const deletedCategory = allCategories.find((cat) => cat.id === categoryId);
+    if (newItem.category === deletedCategory?.name) {
+      onNewItemChange({ category: '' });
+    }
+
+    // 올바른 queryClient 인스턴스 사용
+    queryClient.setQueryData(
+      ['categories', user?.id],
+      (oldData: Category[] = []) =>
+        oldData.map((cat) =>
+          cat.id === categoryId ? { ...cat, is_deleted: true } : cat
+        )
+    );
+
     try {
       const { error } = await supabase
         .from('categories')
@@ -107,24 +131,23 @@ export default function BudgetForm({
         .eq('id', categoryId);
 
       if (error) throw error;
-
-      // 카테고리 목록 새로고침을 위해 쿼리 무효화
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-
-      // 현재 선택된 카테고리가 선택된 경우 선택 해제
-      if (
-        newItem.category ===
-        getCurrentCategories().find((cat) => cat.id === categoryId)?.name
-      ) {
-        onNewItemChange({ category: '' });
-      }
     } catch (error) {
       console.error('카테고리 삭제 실패:', error);
+      queryClient.invalidateQueries({ queryKey: ['categories', user?.id] });
     }
   };
 
   // 카테고리 복구
   const handleRestoreCategory = async (categoryId: string) => {
+    // 낙관적 업데이트
+    queryClient.setQueryData(
+      ['categories', user?.id],
+      (oldData: Category[] = []) =>
+        oldData.map((cat) =>
+          cat.id === categoryId ? { ...cat, is_deleted: false } : cat
+        )
+    );
+
     try {
       const { error } = await supabase
         .from('categories')
@@ -132,11 +155,10 @@ export default function BudgetForm({
         .eq('id', categoryId);
 
       if (error) throw error;
-
-      // 카테고리 목록 새로고침을 위해 쿼리 무효화
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
     } catch (error) {
       console.error('카테고리 복구 실패:', error);
+      // 실패 시 롤백
+      queryClient.invalidateQueries({ queryKey: ['categories', user?.id] });
     }
   };
 
@@ -186,7 +208,7 @@ export default function BudgetForm({
       {/* 항목 추가 폼 */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-gray-700 text-sm">항목 추가</h3>
+          <h3 className="font-medium text-gray-700 text-sm">항목</h3>
         </div>
 
         {/* 수입/지출 타입 선택 */}
@@ -266,12 +288,13 @@ export default function BudgetForm({
               <label className="block text-xs font-medium mb-1 text-gray-700">
                 카테고리
               </label>
+
               {newItem.isCreatingCategory ? (
                 <div className="space-y-3">
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      placeholder="새 카테고리 이름"
+                      placeholder="카테고리 이름"
                       value={newItem.newCategoryName}
                       onChange={(e) =>
                         onNewItemChange({ newCategoryName: e.target.value })
@@ -283,7 +306,7 @@ export default function BudgetForm({
                       onClick={handleAddCategory}
                       className="bg-accent-500 text-white px-4 py-2 rounded-lg hover:bg-accent-600 text-sm transition-colors"
                     >
-                      추가
+                      등록
                     </button>
                     <button
                       type="button"
@@ -303,8 +326,13 @@ export default function BudgetForm({
                 <div className="space-y-3">
                   {/* 활성 카테고리 태그들 */}
                   <div className="flex flex-wrap gap-2">
-                    {getCurrentCategories()
-                      .filter((cat) => !cat.is_deleted)
+                    {allCategories
+                      .filter(
+                        (cat) =>
+                          cat.type ===
+                            `${newItem.type}_${newItem.categoryType}` &&
+                          !cat.is_deleted
+                      )
                       .map((category) => (
                         <div
                           key={category.id}
@@ -348,13 +376,13 @@ export default function BudgetForm({
                       }
                       className="px-3 py-1.5 rounded-full text-sm font-medium bg-accent-100 text-accent-600 hover:bg-accent-200 transition-colors flex items-center gap-1"
                     >
-                      <Plus className="w-3 h-3" />새 카테고리
+                      <Plus className="w-3 h-3" />
+                      추가
                     </button>
                   </div>
 
                   {/* 삭제된 카테고리 섹션 */}
-                  {getCurrentCategories().filter((cat) => cat.is_deleted)
-                    .length > 0 && (
+                  {deletedCategories.length > 0 && (
                     <div className="border-t pt-3">
                       <button
                         type="button"
@@ -368,50 +396,35 @@ export default function BudgetForm({
                         ) : (
                           <ChevronDown className="w-4 h-4" />
                         )}
-                        삭제된 카테고리 (
-                        {
-                          getCurrentCategories().filter((cat) => cat.is_deleted)
-                            .length
-                        }
-                        개)
+                        삭제된 카테고리 ({deletedCategories.length}개)
                       </button>
 
                       {showDeletedCategories && (
                         <div className="mt-2 flex flex-wrap gap-2">
-                          {getCurrentCategories()
-                            .filter((cat) => cat.is_deleted)
-                            .map((category) => (
-                              <div
-                                key={category.id}
-                                className="flex items-center gap-1 px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-full text-sm"
+                          {deletedCategories.map((category) => (
+                            <div
+                              key={category.id}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-full text-sm"
+                            >
+                              <span className="text-gray-600">
+                                {category.name}
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                ({category.transactionCount || 0}건)
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRestoreCategory(category.id)
+                                }
+                                className="ml-1 text-accent-600 hover:text-accent-700 text-xs underline"
                               >
-                                <span className="text-gray-600">
-                                  {category.name}
-                                </span>
-                                <span className="text-xs text-gray-400">
-                                  ({category.transactionCount || 0}건)
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleRestoreCategory(category.id)
-                                  }
-                                  className="ml-1 text-accent-600 hover:text-accent-700 text-xs underline"
-                                >
-                                  복구
-                                </button>
-                              </div>
-                            ))}
+                                <RotateCw className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
                         </div>
                       )}
-                    </div>
-                  )}
-
-                  {/* 선택된 카테고리 표시 */}
-                  {newItem.category && (
-                    <div className="text-xs text-gray-600">
-                      선택된 카테고리:{' '}
-                      <span className="font-medium">{newItem.category}</span>
                     </div>
                   )}
                 </div>
