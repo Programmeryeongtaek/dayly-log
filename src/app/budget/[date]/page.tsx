@@ -108,15 +108,7 @@ const BudgetDatePage = () => {
     // 현재 선택된 타입과 카테고리 타입에 맞는 카테고리들 반환
     const targetType: CategoryType =
       `${newItem.type}_${newItem.categoryType}` as CategoryType;
-    const filteredCategories = categories.filter(
-      (cat) => cat.type === targetType
-    );
-
-    return filteredCategories.map((cat) => ({
-      id: cat.id,
-      name: cat.name,
-      type: cat.type,
-    }));
+    return categories.filter((cat) => cat.type === targetType);
   };
 
   const handleAddCategory = () => {

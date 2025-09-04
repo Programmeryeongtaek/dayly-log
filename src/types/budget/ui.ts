@@ -1,4 +1,4 @@
-import { BudgetTransaction, CategoryType } from './database';
+import { BudgetTransaction, Category } from './database';
 
 export interface BudgetItem {
   id: string;
@@ -56,7 +56,7 @@ export interface BudgetFormProps {
   onBackToMonth: () => void;
   onAddItem: () => void;
   onAddCategory: () => void;
-  getCurrentCategories: () => Array<{ id: string; name: string; type: CategoryType }>;
+  getCurrentCategories: () => Category[];
 }
 
 export interface BudgetListProps {

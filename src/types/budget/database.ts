@@ -29,6 +29,8 @@ export interface Category {
   type: 'income_fixed' | 'income_variable' | 'expense_fixed' | 'expense_variable';
   color: string;
   is_default: boolean;
+  is_deleted?: boolean;
+  transactionCount?: number;
   created_at: string;
   updated_at: string;
 }

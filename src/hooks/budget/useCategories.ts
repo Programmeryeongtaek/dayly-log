@@ -10,15 +10,42 @@ export const useCategories = (userId?: string) => {
   const { data: categories = [], isLoading, error } = useQuery({
     queryKey: ['categories', userId],
     queryFn: async (): Promise<Category[]> => {
-      const { data, error } = await supabase
+      const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
         .select('*')
         .eq('user_id', userId!)
+        .order('is_deleted', { ascending: true })
         .order('is_default', { ascending: false })
         .order('name');
 
-      if (error) throw error;
-      return data || [];
+      if (categoriesError) throw categoriesError;
+
+      // 각 카테고리의 거래 건수 계산
+      const categoriesWithCount = await Promise.all(
+        (categoriesData || []).map(async (category) => {
+          const [incomeResult, expenseResult] = await Promise.all([
+            supabase
+              .from('incomes')
+              .select('id')
+              .eq('category_id', category.id),
+            supabase
+              .from('expenses')
+              .select('id')
+              .eq('category_id', category.id)
+          ]);
+
+          const incomeCount = incomeResult.data?.length || 0;
+          const expenseCount = expenseResult.data?.length || 0;
+          const totalCount = incomeCount + expenseCount;
+
+          return {
+            ...category,
+            transactionCount: totalCount
+          };
+        })
+      );
+
+      return categoriesWithCount;
     },
     enabled: !!userId,
   });
