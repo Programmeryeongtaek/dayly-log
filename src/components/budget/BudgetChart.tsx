@@ -1,5 +1,6 @@
 import { BudgetChartProps } from '@/types/budget';
 import { Target, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { useMemo } from 'react';
 import {
   Cell,
   Legend,
@@ -30,8 +31,50 @@ export default function BudgetChart({
   isFixedEnabled,
   onFixedToggle,
   totals,
+  transactions,
   onChallengeClick,
 }: BudgetChartProps) {
+  const categoryDetails = useMemo(() => {
+    if (!transactions) return [];
+
+    const categoryMap = new Map<
+      string,
+      {
+        name: string;
+        incomeAmount: number;
+        expenseAmount: number;
+        incomeCount: number;
+        expenseCount: number;
+      }
+    >();
+
+    // 실제 transactions를 순회하면서 건수 계산
+    transactions.forEach((transaction) => {
+      const categoryName = transaction.category?.name || 'Unknown';
+      const existing = categoryMap.get(categoryName) || {
+        name: categoryName,
+        incomeAmount: 0,
+        expenseAmount: 0,
+        incomeCount: 0,
+        expenseCount: 0,
+      };
+
+      if (transaction.type === 'income') {
+        existing.incomeAmount += transaction.amount;
+        existing.incomeCount += 1;
+      } else {
+        existing.expenseAmount += transaction.amount;
+        existing.expenseCount += 1;
+      }
+
+      categoryMap.set(categoryName, existing);
+    });
+
+    return Array.from(categoryMap.values()).filter(
+      (category) => category.incomeAmount > 0 || category.expenseAmount > 0
+    );
+  }, [transactions]);
+
   const handleChallengeClick = (
     categoryName: string,
     amount: number,
@@ -194,41 +237,47 @@ export default function BudgetChart({
               수입
             </h4>
             <div className="space-y-3">
-              {incomeData.map((income) => (
-                <div
-                  key={`income-${income.name}`}
-                  className="border border-green-200 rounded-lg p-4 bg-green-50/30"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <h5 className="font-medium text-gray-900">
-                        {income.name}
-                      </h5>
-                      <span className="text-sm text-green-600 font-semibold">
-                        +{income.value.toLocaleString()}원
-                      </span>
-                    </div>
+              {categoryDetails
+                .filter((cat) => cat.incomeAmount > 0)
+                .map((category) => (
+                  <div
+                    key={`income-${category.name}`}
+                    className="border border-green-200 rounded-lg p-4 bg-green-50/30"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <h5 className="font-medium text-gray-900">
+                          {category.name}
+                        </h5>
+                        <span className="text-sm text-green-600 font-semibold">
+                          +{category.incomeAmount.toLocaleString()}원
+                        </span>
+                        {category.incomeCount > 1 && (
+                          <span className="text-xs text-gray-500">
+                            ({category.incomeCount}건)
+                          </span>
+                        )}
+                      </div>
 
-                    {/* 수입 늘리기 챌린지 버튼 */}
-                    {onChallengeClick && (
-                      <button
-                        onClick={() =>
-                          handleChallengeClick(
-                            income.name,
-                            income.value,
-                            1,
-                            'income'
-                          )
-                        }
-                        className="p-1 text-green-600 hover:text-green-700 hover:bg-green-100 rounded-md transition-colors group"
-                        title="수입 늘리기 챌린지"
-                      >
-                        <Target className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                      </button>
-                    )}
+                      {onChallengeClick && (
+                        <button
+                          onClick={() =>
+                            handleChallengeClick(
+                              category.name,
+                              category.incomeAmount,
+                              category.incomeCount,
+                              'income'
+                            )
+                          }
+                          className="p-1 text-green-600 hover:text-green-700 hover:bg-green-100 rounded-md transition-colors group"
+                          title="수입 늘리기 챌린지"
+                        >
+                          <Target className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         )}
@@ -241,41 +290,47 @@ export default function BudgetChart({
               지출
             </h4>
             <div className="space-y-3">
-              {expenseData.map((expense) => (
-                <div
-                  key={`expense-${expense.name}`}
-                  className="border border-red-200 rounded-lg p-4 bg-red-50/30"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <h5 className="font-medium text-gray-900">
-                        {expense.name}
-                      </h5>
-                      <span className="text-sm text-red-600 font-semibold">
-                        -{expense.value.toLocaleString()}원
-                      </span>
-                    </div>
+              {categoryDetails
+                .filter((cat) => cat.expenseAmount > 0)
+                .map((category) => (
+                  <div
+                    key={`expense-${category.name}`}
+                    className="border border-red-200 rounded-lg p-4 bg-red-50/30"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <h5 className="font-medium text-gray-900">
+                          {category.name}
+                        </h5>
+                        <span className="text-sm text-red-600 font-semibold">
+                          -{category.expenseAmount.toLocaleString()}원
+                        </span>
+                        {category.expenseCount > 1 && (
+                          <span className="text-xs text-gray-500">
+                            ({category.expenseCount}건)
+                          </span>
+                        )}
+                      </div>
 
-                    {/* 지출 줄이기 챌린지 버튼 */}
-                    {onChallengeClick && (
-                      <button
-                        onClick={() =>
-                          handleChallengeClick(
-                            expense.name,
-                            expense.value,
-                            1,
-                            'expense'
-                          )
-                        }
-                        className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-md transition-colors group"
-                        title="지출 줄이기 챌린지"
-                      >
-                        <Target className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                      </button>
-                    )}
+                      {onChallengeClick && (
+                        <button
+                          onClick={() =>
+                            handleChallengeClick(
+                              category.name,
+                              category.expenseAmount,
+                              category.expenseCount,
+                              'expense'
+                            )
+                          }
+                          className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-md transition-colors group"
+                          title="지출 줄이기 챌린지"
+                        >
+                          <Target className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         )}

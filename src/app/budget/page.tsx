@@ -31,6 +31,7 @@ interface ExpenseForChallenge {
   amount: number;
   category: string;
   count?: number;
+  type: 'income' | 'expense';
 }
 
 const BudgetPage = () => {
@@ -188,10 +189,11 @@ const BudgetPage = () => {
     if (!user?.id) return;
 
     const expenseForChallenge: ExpenseForChallenge = {
-      name: `${categoryName} ${type === 'income' ? '늘리기' : '줄이기'}`,
+      name: `${categoryName}`,
       amount: amount,
       category: categoryName,
       count: count,
+      type: type,
     };
 
     setSelectedExpense(expenseForChallenge);
@@ -395,7 +397,7 @@ const BudgetPage = () => {
           isOpen={isChallengeModalOpen}
           onClose={handleChallengeModalClose}
           onSubmit={handleChallengeSubmit}
-          expenseData={selectedExpense}
+          challengeData={selectedExpense}
           isSubmitting={isCreatingChallenge}
         />
       )}
