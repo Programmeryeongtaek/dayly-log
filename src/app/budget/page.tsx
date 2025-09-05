@@ -21,7 +21,10 @@ interface ChallengeFormData {
   title: string;
   description: string;
   reason: string;
+  enableAmountGoal: boolean;
+  enableCountGoal: boolean;
   targetAmount: string; // TODO: 카테고리에 따라 필요하지 않을 수도 있음. 검토바람
+  targetCount: string;
   duration: string;
   targetDate: string;
 }
@@ -202,7 +205,10 @@ const BudgetPage = () => {
 
   // 챌린지 생성 핸들러
   const handleChallengeSubmit = (
-    data: ChallengeFormData & { category: string }
+    data: ChallengeFormData & {
+      category: string;
+      categoryType: 'income' | 'expense';
+    }
   ) => {
     if (!user?.id) return;
 
@@ -210,9 +216,13 @@ const BudgetPage = () => {
       title: data.title,
       description: data.description,
       reason: data.reason,
+      enableAmountGoal: data.enableAmountGoal,
+      enableCountGoal: data.enableCountGoal,
       targetAmount: data.targetAmount,
+      targetCount: data.targetCount,
       targetDate: data.targetDate,
       category: data.category,
+      categoryType: data.categoryType,
       userId: user.id,
     });
 

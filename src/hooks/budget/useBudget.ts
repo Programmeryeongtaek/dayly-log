@@ -1,8 +1,10 @@
+import { useTransactionAlertContext } from '@/components/budget/TransactionAlertProvider';
 import { supabase } from '@/lib/supabase';
 import { BudgetFormData, BudgetStatistics, BudgetTransaction, CategoryTotal, TransactionType } from '@/types/budget';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { endOfMonth, format, parseISO, startOfMonth } from 'date-fns';
 import { useMemo } from 'react';
+import { useGoalStatusUpdater } from '../goals/useGoalStatusUpdater';
 
 interface UseBudgetProps {
   userId?: string;
@@ -12,6 +14,8 @@ interface UseBudgetProps {
 
 export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
   const queryClient = useQueryClient();
+  const { showAlert } = useTransactionAlertContext();
+  const { checkGoalsByCategory } = useGoalStatusUpdater();
 
   // 통합 데이터 조회 (수입 + 지출)
   const { data: transactions = [], isLoading, error } = useQuery({
@@ -217,12 +221,11 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
     }));
   }, [transactions]);
 
-  // 항목 추가 mutation
+  // 항목 추가
   const addTransactionMutation = useMutation({
     mutationFn: async (newTransaction: BudgetFormData & { user_id: string; category_id: string }) => {
       const tableName = newTransaction.type === 'income' ? 'incomes' : 'expenses';
       
-      // type 필드 제거 후 저장 (DB 테이블에는 type 컬럼이 없음)
       const { type, ...transactionData } = newTransaction;
       
       const { data, error } = await supabase
@@ -237,15 +240,37 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
       if (error) throw error;
       return { ...data, type };
     },
-    onSuccess: () => {
+    onSuccess: async (newTransaction) => {
       queryClient.invalidateQueries({ queryKey: ['budget'] });
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+
+      // 알림 표시
+      if (newTransaction.category?.name && userId) {
+        // 목표 상태 확인 (알림보다 먼저 실행)
+        await checkGoalsByCategory(userId, newTransaction.category.name, newTransaction.type);
+        
+        // 지연을 두어 TanStack Query 업데이트 후 알림 표시
+        setTimeout(() => {
+          showAlert(newTransaction.category!.name, newTransaction.type);
+        }, 100);
+      }
     },
   });
 
-  // 항목 삭제 mutation
+  // 항목 삭제
   const deleteTransactionMutation = useMutation({
     mutationFn: async ({ id, type }: { id: string; type: TransactionType }) => {
       const tableName = type === 'income' ? 'incomes' : 'expenses';
+
+      // 삭제 전에 거래 정보 조회 (알림용)
+      const { data: transactionToDelete } = await supabase
+        .from(tableName)
+        .select(`
+          *,
+          category:categories(*)
+        `)
+        .eq('id', id)
+        .single();
 
       const { error } = await supabase
         .from(tableName)
@@ -253,13 +278,23 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
         .eq('id', id);
 
       if (error) throw error;
+
+      return { deletedTransaction: transactionToDelete, type };
     },
-    onSuccess: () => {
+    onSuccess: ({ deletedTransaction, type }) => {
       queryClient.invalidateQueries({ queryKey: ['budget'] });
+      queryClient.invalidateQueries({ queryKey: ['goals']});
+
+      // 알림 표시
+      if (deletedTransaction?.category?.name && userId) {
+        setTimeout(() => {
+          showAlert(deletedTransaction.category!.name, type);
+        }, 100);
+      }
     },
   });
 
-  // 항목 수정 mutation
+  // 항목 수정
   const updateTransactionMutation = useMutation({
     mutationFn: async ({
       id,

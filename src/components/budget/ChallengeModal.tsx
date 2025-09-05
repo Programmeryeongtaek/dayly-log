@@ -21,7 +21,12 @@ interface ChallengeFormData {
 interface ChallengeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: ChallengeFormData & { category: string }) => void;
+  onSubmit: (
+    data: ChallengeFormData & {
+      category: string;
+      categoryType: 'income' | 'expense';
+    }
+  ) => void;
   challengeData: {
     name: string;
     amount: number;
@@ -116,7 +121,8 @@ const ChallengeModal = ({
     e.preventDefault();
     onSubmit({
       ...formData,
-      category: '가계부',
+      category: challengeData.category,
+      categoryType: challengeData.type,
     });
   };
 

@@ -1,9 +1,9 @@
 'use client';
 
-import AuthGuard from '@/components/auth/AuthGuard';
+import { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/auth';
 import { useBudget, useCategories } from '@/hooks/budget';
-
+import { useGoals } from '@/hooks/goals/useGoals';
 import { format, subMonths } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {
@@ -15,9 +15,10 @@ import {
   TrendingDown,
   TrendingUp,
   Wallet,
+  CheckCircle,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import AuthGuard from '@/components/auth/AuthGuard';
 
 const DashboardPage = () => {
   const { user, profile, isLoading: isAuthLoading } = useAuth();
@@ -46,7 +47,16 @@ const DashboardPage = () => {
     month: previousMonth,
   });
 
-  // 카테고리 데이터
+  // 목표 데이터
+  const {
+    activeGoals,
+    completedGoals,
+    goals,
+    isLoading: isGoalsLoading,
+  } = useGoals({
+    userId: shouldFetchData ? user.id : undefined,
+  });
+
   const { isLoading: isCategoriesLoading } = useCategories(
     shouldFetchData ? user.id : undefined
   );
@@ -67,7 +77,7 @@ const DashboardPage = () => {
         ? ((currentExpense - previousExpense) / previousExpense) * 100
         : 0;
 
-    // 최근 7일 계산
+    // 최근 7일 내역
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const recentItems = currentItems.filter(
@@ -80,7 +90,7 @@ const DashboardPage = () => {
       .filter((item) => item.type === 'expense')
       .reduce((sum, item) => sum + item.amount, 0);
 
-    // 일평균 계산
+    // 일평균
     const currentDay = currentDate.getDate();
     const dailyAverageIncome = currentDay > 0 ? currentIncome / currentDay : 0;
     const dailyAverageExpense =
@@ -111,7 +121,35 @@ const DashboardPage = () => {
     };
   }, [currentStats, previousStats, currentItems, currentDate]);
 
-  // 최근 지출 항목 (상위 5개)
+  // 목표 통계
+  const goalStats = useMemo(() => {
+    const totalGoals = goals.length;
+    const activeCount = activeGoals.length;
+    const completedCount = completedGoals.length;
+
+    // 곧 마감되는 목표들 (7일 이내)
+    const soonDueGoals = activeGoals.filter((goal) => {
+      if (!goal.target_date) return false;
+      const daysLeft = goal.progress.daysLeft;
+      return daysLeft <= 7 && daysLeft > 0;
+    });
+
+    // 달성률이 80% 이상인 목표들
+    const nearCompletionGoals = activeGoals.filter(
+      (goal) => goal.progress.overallProgress >= 80
+    );
+
+    return {
+      total: totalGoals,
+      active: activeCount,
+      completed: completedCount,
+      soonDue: soonDueGoals.length,
+      nearCompletion: nearCompletionGoals.length,
+      completionRate: totalGoals > 0 ? (completedCount / totalGoals) * 100 : 0,
+    };
+  }, [goals, activeGoals, completedGoals]);
+
+  // 최근 내역 (상위 5개)
   const recentTransactions = useMemo(() => {
     return currentItems
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -137,7 +175,14 @@ const DashboardPage = () => {
       .map(([name, amount]) => ({ name, amount }));
   }, [currentItems]);
 
-  // 인증 로딩 상태만 확인 - 데이터 로딩은 별도 처리
+  // 상위 목표들 (진행률 기준)
+  const topProgressGoals = useMemo(() => {
+    return activeGoals
+      .sort((a, b) => b.progress.overallProgress - a.progress.overallProgress)
+      .slice(0, 3);
+  }, [activeGoals]);
+
+  // 인증 로딩 상태만 확인
   if (isAuthLoading) {
     return (
       <AuthGuard>
@@ -156,12 +201,13 @@ const DashboardPage = () => {
   }
 
   const isDataLoading =
-    shouldFetchData && (isCurrentLoading || isCategoriesLoading);
+    shouldFetchData &&
+    (isCurrentLoading || isCategoriesLoading || isGoalsLoading);
 
   return (
     <AuthGuard>
       <div className="max-w-7xl mx-auto p-4 space-y-6">
-        {/* 환영 메시지 - 항상 표시 */}
+        {/* 환영 메시지 */}
         <div className="bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-xl p-6">
           <div className="flex flex-col justify-between">
             <div>
@@ -170,16 +216,23 @@ const DashboardPage = () => {
                 👋
               </h1>
               <p className="text-accent-100 text-lg">
-                {format(currentDate, 'yyyy년 M월', { locale: ko })} 가계 현황
+                {format(currentDate, 'yyyy년 M월', { locale: ko })} 현황
               </p>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 flex gap-3">
               <Link
                 href="/budget"
                 className="inline-flex items-center px-4 py-2 bg-white text-accent-600 rounded-lg hover:bg-accent-50 transition-colors font-medium"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 내역 추가
+              </Link>
+              <Link
+                href="/goals"
+                className="inline-flex items-center px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors font-medium"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                목표 관리
               </Link>
             </div>
           </div>
@@ -231,7 +284,7 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* 이번 달 총 지출 */}
+          {/* 지출 */}
           <div className="bg-white rounded-lg p-6 shadow-sm border">
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -319,6 +372,33 @@ const DashboardPage = () => {
                       : 'text-red-600'
                   }`}
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* 목표 현황 */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-600">활성 목표</p>
+                {isDataLoading ? (
+                  <div className="animate-pulse">
+                    <div className="h-8 bg-gray-200 rounded w-16 mt-1"></div>
+                    <div className="h-3 bg-gray-200 rounded w-20 mt-2"></div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {goalStats.active}개
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      완료율 {Math.round(goalStats.completionRate)}%
+                    </p>
+                  </>
+                )}
+              </div>
+              <div className="p-3 bg-blue-100 rounded-full">
+                <Target className="w-6 h-6 text-blue-600" />
               </div>
             </div>
           </div>
@@ -416,17 +496,17 @@ const DashboardPage = () => {
             )}
           </div>
 
-          {/* 카테고리별 지출 현황 */}
+          {/* 진행 중인 목표 */}
           <div className="bg-white rounded-lg p-6 shadow-sm border">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">
-                카테고리별 지출
+                진행 중인 목표
               </h2>
               <Link
-                href="/budget"
+                href="/goals"
                 className="text-accent-600 hover:text-accent-700 text-sm font-medium flex items-center"
               >
-                상세분석
+                전체보기
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
@@ -436,51 +516,144 @@ const DashboardPage = () => {
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="h-4 bg-gray-200 rounded w-20"></div>
-                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                      <div className="h-4 bg-gray-200 rounded w-32"></div>
+                      <div className="h-4 bg-gray-200 rounded w-12"></div>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2"></div>
                   </div>
                 ))}
               </div>
-            ) : topExpenseCategories.length > 0 ? (
+            ) : topProgressGoals.length > 0 ? (
               <div className="space-y-4">
-                {topExpenseCategories.map((category, index) => {
-                  const percentage =
-                    dashboardStats.currentExpense > 0
-                      ? (category.amount / dashboardStats.currentExpense) * 100
-                      : 0;
-
-                  return (
-                    <div key={category.name} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-gray-900">
-                          {index + 1}. {category.name}
-                        </span>
-                        <span className="text-gray-600">
-                          {category.amount.toLocaleString()}원
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                {topProgressGoals.map((goal) => (
+                  <div key={goal.id} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
                         <div
-                          className="bg-accent-500 h-2 rounded-full"
-                          style={{ width: `${percentage}%` }}
-                        ></div>
+                          className={`p-1 rounded ${
+                            goal.type === 'increase_income'
+                              ? 'bg-green-100 text-green-600'
+                              : 'bg-red-100 text-red-600'
+                          }`}
+                        >
+                          {goal.type === 'increase_income' ? (
+                            <TrendingUp className="w-3 h-3" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3" />
+                          )}
+                        </div>
+                        <span className="font-medium text-gray-900 text-sm">
+                          {goal.title}
+                        </span>
+                        {goal.progress.isComplete && (
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                        )}
                       </div>
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>{percentage.toFixed(1)}%</span>
-                      </div>
+                      <span className="text-sm font-medium text-gray-600">
+                        {Math.round(goal.progress.overallProgress)}%
+                      </span>
                     </div>
-                  );
-                })}
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          goal.progress.isComplete
+                            ? 'bg-green-500'
+                            : 'bg-accent-500'
+                        }`}
+                        style={{
+                          width: `${Math.min(100, goal.progress.overallProgress)}%`,
+                        }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>{goal.progress.progressText}</span>
+                      <span>
+                        {goal.target_amount &&
+                          `${goal.current_amount.toLocaleString()} / ${goal.target_amount.toLocaleString()}원`}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="text-center py-8">
-                <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">카테고리별 데이터가 없습니다.</p>
+                <Target className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">진행 중인 목표가 없습니다.</p>
+                <Link
+                  href="/goals"
+                  className="text-accent-600 hover:text-accent-700 text-sm font-medium mt-2 inline-block"
+                >
+                  첫 번째 목표를 만들어보세요.
+                </Link>
               </div>
             )}
           </div>
+        </div>
+
+        {/* 카테고리별 지출 현황 */}
+        <div className="bg-white rounded-lg p-6 shadow-sm border">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">
+              카테고리별 지출
+            </h2>
+            <Link
+              href="/budget"
+              className="text-accent-600 hover:text-accent-700 text-sm font-medium flex items-center"
+            >
+              상세분석
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
+
+          {isDataLoading ? (
+            <div className="space-y-4 animate-pulse">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2"></div>
+                </div>
+              ))}
+            </div>
+          ) : topExpenseCategories.length > 0 ? (
+            <div className="space-y-4">
+              {topExpenseCategories.map((category, index) => {
+                const percentage =
+                  dashboardStats.currentExpense > 0
+                    ? (category.amount / dashboardStats.currentExpense) * 100
+                    : 0;
+
+                return (
+                  <div key={category.name} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-900">
+                        {index + 1}. {category.name}
+                      </span>
+                      <span className="text-gray-600">
+                        {category.amount.toLocaleString()}원
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-accent-500 h-2 rounded-full"
+                        style={{ width: `${percentage}%` }}
+                      ></div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>{percentage.toFixed(1)}%</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">카테고리별 데이터가 없습니다.</p>
+            </div>
+          )}
         </div>
 
         {/* 빠른 액션 버튼들 */}
