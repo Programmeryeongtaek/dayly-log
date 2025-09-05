@@ -1,13 +1,18 @@
 import { supabase } from '@/lib/supabase';
+import { GoalFormData } from '@/types/goals';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface CreateChallengeData {
   title: string;
   description: string;
   reason: string;
+  enableAmountGoal: boolean;
+  enableCountGoal: boolean;
   targetAmount: string; // TODO: 카테고리에 따라 필요하지 않을 수도 있음. 검토바람
+  targetCount: string;
   targetDate: string;
   category: string;
+  categoryType: 'income' | 'expense';
   userId: string;
 }
 
@@ -16,28 +21,43 @@ export const useChallenge = () => {
 
   const createChallengeMutation = useMutation({
     mutationFn: async (data: CreateChallengeData) => {
-      const challengeData = {
+      // 챌린지 모드 결정
+      let challengeMode: 'amount' | 'count' | 'both' = 'amount';
+      if (data.enableAmountGoal && data.enableCountGoal) {
+        challengeMode = 'both';
+      } else if (data.enableCountGoal) {
+        challengeMode = 'count';
+      }
+
+      // 목표 타입 결정
+      const goalType = data.categoryType === 'income' ? 'increase_income' : 'reduce_expense';
+      
+      const goalData: GoalFormData & { user_id: string } = {
         user_id: data.userId,
         title: data.title,
         description: data.description || null,
-        type: 'reduce_expense', // 지출에서 생성되는 챌린지
-        target_amount: Number(data.targetAmount),
-        current_amount: 0,
+        reason: data.reason || null,
+        type: goalType,
+        target_amount: data.enableAmountGoal ? Number(data.targetAmount) : null,
+        target_count: data.enableCountGoal ? Number(data.targetCount) : null,
         target_date: data.targetDate,
-        status: 'active',
-        created_from_date: new Date().toISOString().split('T')[0],
-        // reason을 description에 포함 (현재 DB 스키마에 reason 필드가 없음)
-        ...(data.reason && {
-          description: data.description 
-            ? `${data.reason}\n\n${data.description}` 
-            : data.reason
-        }),
+        challenge_mode: challengeMode,
+        category_id: null, // TODO:카테고리별 목표가 필요하다면 추후 구현
       };
 
       const { data: result, error } = await supabase
         .from('goals')
-        .insert([challengeData])
-        .select()
+        .insert([{
+          ...goalData,
+          current_amount: 0,
+          current_count: 0,
+          status: 'active',
+          created_from_date: new Date().toISOString().split('T')[0],
+        }])
+        .select(`
+          *,
+          category:categories(*)
+        `)
         .single();
 
       if (error) throw error;
