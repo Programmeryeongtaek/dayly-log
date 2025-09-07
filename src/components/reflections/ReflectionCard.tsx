@@ -15,14 +15,12 @@ import Link from 'next/link';
 
 interface ReflectionCardProps {
   reflection: ReflectionWithKeywords;
-  showActions?: boolean;
-  onEdit?: (reflection: ReflectionWithKeywords) => void;
-  onDelete?: (id: string) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
 const ReflectionCard = ({
   reflection,
-  showActions = true,
   onEdit,
   onDelete,
 }: ReflectionCardProps) => {
@@ -30,17 +28,13 @@ const ReflectionCard = ({
   const TypeIcon = isGratitude ? Heart : Lightbulb;
 
   const handleEdit = (e: React.MouseEvent) => {
-    e.preventDefault();
     e.stopPropagation();
+    onEdit(reflection.id);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
-    e.preventDefault();
     e.stopPropagation();
-
-    if (onDelete && confirm('정말 삭제하시겠습니까?')) {
-      onDelete(reflection.id);
-    }
+    onDelete(reflection.id);
   };
 
   return (

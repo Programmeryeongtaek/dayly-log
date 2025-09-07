@@ -10,9 +10,11 @@ import { DateRangePeriod, ReflectionFilters } from '@/types/reflections';
 import { format, subMonths, subWeeks, subYears } from 'date-fns';
 import { BookOpen, Calendar, Heart, Lightbulb, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
 const ReflectionsPage = () => {
+  const router = useRouter();
   const { user } = useAuth();
   const [filters, setFilters] = useState<ReflectionFilters>({
     type: 'all',
@@ -83,6 +85,10 @@ const ReflectionsPage = () => {
         endDate: undefined,
       });
     }
+  };
+
+  const handleEdit = (id: string) => {
+    router.push(`/reflections/${id}/edit`);
   };
 
   const handleDelete = (id: string) => {
@@ -223,8 +229,8 @@ const ReflectionsPage = () => {
               <ReflectionCard
                 key={reflection.id}
                 reflection={reflection}
+                onEdit={handleEdit}
                 onDelete={handleDelete}
-                showActions={reflection.is_own}
               />
             ))}
           </div>
