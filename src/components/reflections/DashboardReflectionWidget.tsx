@@ -9,8 +9,8 @@ import {
   Hash,
   Heart,
   Lightbulb,
+  PencilIcon,
   Plus,
-  TrendingUp,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
@@ -36,12 +36,6 @@ const DashboardReflectionWidget = () => {
   const topKeywords = useMemo(() => {
     return keywordStats.slice(0, 3).filter((stat) => stat.usageCount > 0);
   }, [keywordStats]);
-
-  // 오늘 회고 작성 여부
-  const todayReflection = useMemo(() => {
-    const today = format(new Date(), 'yyyy-MM-dd');
-    return reflections.some((r) => r.date === today);
-  }, [reflections]);
 
   if (isLoading) {
     return (
@@ -112,32 +106,11 @@ const DashboardReflectionWidget = () => {
           </div>
         </div>
 
-        {/* 오늘 회고 작성 권장 */}
-        {!todayReflection && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-blue-900">오늘의 회고</h3>
-                <p className="text-sm text-blue-700">
-                  하루를 마무리하며 감사한 점과 배운 점을 기록해보세요
-                </p>
-              </div>
-              <Link
-                href="/reflections/new"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                작성
-              </Link>
-            </div>
-          </div>
-        )}
-
         {/* 최근 회고 */}
         {recentReflections.length > 0 && (
           <div>
             <h3 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-gray-600" />
+              <PencilIcon className="w-4 h-4 text-gray-600" />
               최근 회고
             </h3>
             <div className="space-y-3">
