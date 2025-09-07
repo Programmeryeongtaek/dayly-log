@@ -29,6 +29,7 @@ const ReflectionCard = ({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     onEdit(reflection.id);
   };
 
