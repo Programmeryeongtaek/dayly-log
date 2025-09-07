@@ -1,6 +1,7 @@
 'use client';
 
 import AuthGuard from '@/components/auth/AuthGuard';
+import KeywordManagementModal from '@/components/reflections/KeywordManagementModal';
 import KeywordReflectionsModal from '@/components/reflections/KeywordReflectionsModal';
 import { useAuth } from '@/hooks/auth';
 import { useKeywords } from '@/hooks/reflections/useKeywords';
@@ -9,19 +10,16 @@ import { useReflections } from '@/hooks/reflections/useReflections';
 import { format, subMonths, subWeeks, subYears } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import {
-  ArrowLeft,
   BarChart3,
   Filter,
+  Hash,
   Heart,
   Lightbulb,
   RefreshCw,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
 const AnalyticsPage = () => {
-  const router = useRouter();
   const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<
     'all' | '1week' | '1month' | '3months' | '6months' | '1year'
@@ -34,6 +32,7 @@ const AnalyticsPage = () => {
   const [customEndDate, setCustomEndDate] = useState('');
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isKeywordManagementOpen, setIsKeywordManagementOpen] = useState(false);
 
   const { keywordStats } = useKeywords(user?.id);
   const { reflections } = useReflections({ userId: user?.id });
@@ -258,20 +257,19 @@ const AnalyticsPage = () => {
       <div className="max-w-7xl mx-auto p-4 space-y-6">
         {/* 헤더 */}
         <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-              <Link
-                href="/reflections"
-                className="flex items-center gap-1 hover:text-gray-900 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Link>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              <BarChart3 className="w-8 h-8 text-accent-600" />
-              키워드 분석
-            </h1>
-          </div>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            <BarChart3 className="w-8 h-8 text-accent-600" />
+            키워드 분석
+          </h1>
+
+          {/* 키워드 삭제 */}
+          <button
+            onClick={() => setIsKeywordManagementOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            <Hash className="w-4 h-4" />
+            키워드 삭제
+          </button>
         </div>
 
         {/* 필터 */}
@@ -519,6 +517,14 @@ const AnalyticsPage = () => {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           keywordName={selectedKeyword}
+          userId={user.id}
+        />
+      )}
+
+      {user?.id && (
+        <KeywordManagementModal
+          isOpen={isKeywordManagementOpen}
+          onClose={() => setIsKeywordManagementOpen(false)}
           userId={user.id}
         />
       )}
