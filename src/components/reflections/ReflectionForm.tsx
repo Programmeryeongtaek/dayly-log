@@ -108,6 +108,24 @@ const ReflectionForm = ({
           </div>
         )}
 
+        {/* 주의사항 */}
+        {mode === 'edit' && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <h3 className="text-sm font-medium text-yellow-800 mb-2">
+              ⚠️ 주의사항
+            </h3>
+            <ul className="text-sm text-yellow-700 space-y-1">
+              <li>• 수정된 내용은 즉시 반영되며, 되돌릴 수 없습니다.</li>
+              <li>
+                • 키워드를 변경하면 기존 키워드 통계에 영향을 줄 수 있습니다.
+              </li>
+              <li>
+                • 공개 설정을 변경하면 다른 사용자의 접근 권한이 달라집니다.
+              </li>
+            </ul>
+          </div>
+        )}
+
         {/* 카테고리 선택 */}
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-700">
