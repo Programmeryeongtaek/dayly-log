@@ -72,12 +72,12 @@ const ReflectionForm = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="bg-white rounded-lg shadow-sm border p-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* 헤더 */}
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">
-            {mode === 'create' ? '새 회고 작성' : '회고 수정'}
+            {mode === 'create' ? '회고 작성' : '회고 수정'}
           </h2>
           <button
             type="button"
@@ -88,10 +88,30 @@ const ReflectionForm = ({
           </button>
         </div>
 
+        {/* 도움말 */}
+        {mode === 'create' && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+            <h3 className="font-medium text-accent-400 mb-2">Tip</h3>
+            <ul className="text-sm text-accent-500 space-y-1">
+              <li>
+                • <strong>감사:</strong> 감사했던 순간, 사람, 경험을 적어보세요.
+              </li>
+              <li>
+                • <strong>성찰:</strong> 배운 점, 아쉬웠던 점, 개선하고 싶은
+                점들을 정리해보세요.
+              </li>
+              <li>
+                • <strong>키워드:</strong> 쉽게 찾을 수 있도록 관련 키워드를
+                추가해보세요.
+              </li>
+            </ul>
+          </div>
+        )}
+
         {/* 카테고리 선택 */}
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-700">
-            회고 타입 *
+            타입 *
           </label>
           <div className="grid grid-cols-2 gap-3">
             {gratitudeCategory && (
@@ -151,7 +171,7 @@ const ReflectionForm = ({
         {/* 날짜 */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            날짜 *
+            날짜 <strong className="text-red-500">*</strong>
           </label>
           <input
             type="date"
@@ -180,7 +200,7 @@ const ReflectionForm = ({
         {/* 내용 */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            내용 *
+            내용 <strong className="text-red-500">*</strong>
           </label>
           <textarea
             value={formData.content}
@@ -199,73 +219,73 @@ const ReflectionForm = ({
             <span
               className={formData.content.length < 10 ? 'text-red-500' : ''}
             >
-              최소 10자 이상 작성해주세요
+              최소 10자 이상 작성해주세요.
             </span>
           </div>
         </div>
 
         {/* 키워드 */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            키워드 (선택사항)
-          </label>
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between text-sm font-medium text-gray-700">
+            <label>키워드 (선택사항)</label>
+            <span>최대 10개</span>
+          </div>
           <KeywordInput
             keywords={formData.keywords}
             onChange={(keywords) => updateField('keywords', keywords)}
-            placeholder="키워드를 입력하고 Enter를 누르세요"
-            maxKeywords={5}
+            placeholder="키워드를 입력하고 Enter를 누르세요."
+            maxKeywords={10}
           />
-          <p className="text-xs text-gray-500">
-            나중에 쉽게 찾을 수 있도록 키워드를 추가해보세요 (최대 5개)
-          </p>
         </div>
 
         {/* 공개 설정 */}
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-700">
-            공개 설정
+            공개 범위
           </label>
           <div className="space-y-2">
             <label className="flex items-center gap-2">
               <input
-                type="checkbox"
-                checked={formData.is_public}
-                onChange={(e) => {
-                  const isPublic = e.target.checked;
-                  updateField('is_public', isPublic);
-                  if (!isPublic) {
-                    updateField('is_neighbor_visible', false);
-                  }
+                type="radio"
+                name="visibility"
+                checked={formData.is_public && formData.is_neighbor_visible}
+                onChange={() => {
+                  updateField('is_public', true);
+                  updateField('is_neighbor_visible', true);
                 }}
-                className="w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 rounded focus:ring-accent-500"
+                className="w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 focus:ring-accent-500"
               />
-              <span className="text-sm">전체 공개</span>
+              <span className="text-sm">전체</span>
             </label>
 
             <label className="flex items-center gap-2">
               <input
-                type="checkbox"
-                checked={formData.is_neighbor_visible && formData.is_public}
-                onChange={(e) =>
-                  updateField('is_neighbor_visible', e.target.checked)
-                }
-                disabled={!formData.is_public}
-                className="w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 rounded focus:ring-accent-500 disabled:opacity-50"
+                type="radio"
+                name="visibility"
+                checked={!formData.is_public && formData.is_neighbor_visible}
+                onChange={() => {
+                  updateField('is_public', false);
+                  updateField('is_neighbor_visible', true);
+                }}
+                className="w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 focus:ring-accent-500"
               />
-              <span className="text-sm">이웃에게 공개</span>
+              <span className="text-sm">이웃</span>
+            </label>
+
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="visibility"
+                checked={!formData.is_public && !formData.is_neighbor_visible}
+                onChange={() => {
+                  updateField('is_public', false);
+                  updateField('is_neighbor_visible', false);
+                }}
+                className="w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 focus:ring-accent-500"
+              />
+              <span className="text-sm">비공개</span>
             </label>
           </div>
-          <p className="text-xs text-gray-500">
-            {!formData.is_public &&
-              !formData.is_neighbor_visible &&
-              '🔒 비공개'}
-            {formData.is_public &&
-              !formData.is_neighbor_visible &&
-              '👤 이웃 공개'}
-            {formData.is_public &&
-              formData.is_neighbor_visible &&
-              '🌍 전체 공개'}
-          </p>
         </div>
 
         {/* 버튼 */}
@@ -287,7 +307,7 @@ const ReflectionForm = ({
             ) : (
               <Save className="w-4 h-4" />
             )}
-            {mode === 'create' ? '작성하기' : '수정하기'}
+            {mode === 'create' ? '작성' : '수정'}
           </button>
         </div>
       </form>

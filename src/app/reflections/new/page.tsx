@@ -77,24 +77,7 @@ const NewReflectionPage = () => {
             className="flex items-center gap-1 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            회고 목록으로 돌아가기
           </Link>
-        </div>
-
-        {/* 페이지 제목 */}
-        <div className="text-center py-6">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-accent-100 rounded-lg">
-              <BookOpen className="w-8 h-8 text-accent-600" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            새로운 회고 작성
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            오늘 하루를 되돌아보며 감사함과 배움을 기록해보세요. 작은 순간들도
-            소중한 성장의 기록이 됩니다.
-          </p>
         </div>
 
         {/* 에러 메시지 */}
@@ -114,21 +97,6 @@ const NewReflectionPage = () => {
           isSubmitting={createReflectionMutation.isPending}
           mode="create"
         />
-
-        {/* 도움말 */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-medium text-blue-900 mb-2">회고 작성 팁</h3>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• 감사: 오늘 감사했던 순간, 사람, 경험을 적어보세요</li>
-            <li>
-              • 성찰: 배운 점, 아쉬웠던 점, 내일 다르게 하고 싶은 것들을
-              정리해보세요
-            </li>
-            <li>
-              • 키워드: 나중에 쉽게 찾을 수 있도록 관련 키워드를 추가해보세요
-            </li>
-          </ul>
-        </div>
       </div>
     </AuthGuard>
   );
