@@ -1,6 +1,7 @@
 'use client';
 
 import AuthGuard from '@/components/auth/AuthGuard';
+import KeywordReflectionsModal from '@/components/reflections/KeywordReflectionsModal';
 import { useAuth } from '@/hooks/auth';
 import { useKeywords } from '@/hooks/reflections/useKeywords';
 import { useReflectionCategories } from '@/hooks/reflections/useReflectionCategories';
@@ -31,6 +32,8 @@ const AnalyticsPage = () => {
   const [showCustomPeriod, setShowCustomPeriod] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
+  const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { keywordStats } = useKeywords(user?.id);
   const { reflections } = useReflections({ userId: user?.id });
@@ -224,7 +227,13 @@ const AnalyticsPage = () => {
     customEndDate;
 
   const handleKeywordClick = (keywordName: string) => {
-    router.push(`/reflections?keyword=${encodeURIComponent(keywordName)}`);
+    setSelectedKeyword(keywordName);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedKeyword(null);
   };
 
   if (!user?.id) {
@@ -504,6 +513,15 @@ const AnalyticsPage = () => {
           </table>
         </div>
       </div>
+
+      {selectedKeyword && (
+        <KeywordReflectionsModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          keywordName={selectedKeyword}
+          userId={user.id}
+        />
+      )}
     </AuthGuard>
   );
 };
