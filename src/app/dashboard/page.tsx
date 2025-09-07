@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import AuthGuard from '@/components/auth/AuthGuard';
+import DashboardReflectionWidget from '@/components/reflections/DashboardReflectionWidget';
 
 const DashboardPage = () => {
   const { user, profile, isLoading: isAuthLoading } = useAuth();
@@ -655,6 +656,8 @@ const DashboardPage = () => {
             </div>
           )}
         </div>
+
+        <DashboardReflectionWidget />
 
         {/* 빠른 액션 버튼들 */}
         <div className="bg-white rounded-lg p-6 shadow-sm border">
