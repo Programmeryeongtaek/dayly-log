@@ -92,7 +92,7 @@ const ReflectionFiltersComponent = ({
           }
           className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
         >
-          <option value="all">모든 타입</option>
+          <option value="all">전체</option>
           <option value="gratitude">감사</option>
           <option value="reflection">성찰</option>
         </select>
@@ -107,7 +107,6 @@ const ReflectionFiltersComponent = ({
           }
           className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
         >
-          <option value="all">모든 공개 설정</option>
           <option value="public">전체 공개</option>
           <option value="neighbors">이웃 공개</option>
           <option value="private">비공개</option>
@@ -141,7 +140,7 @@ const ReflectionFiltersComponent = ({
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
-            시작 날짜
+            시작
           </label>
           <input
             type="date"
@@ -152,7 +151,7 @@ const ReflectionFiltersComponent = ({
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
-            종료 날짜
+            종료
           </label>
           <input
             type="date"
@@ -166,14 +165,14 @@ const ReflectionFiltersComponent = ({
       {/* 키워드 필터 */}
       {keywords.length > 0 && (
         <div className="space-y-3">
-          <h4 className="text-sm font-medium text-gray-700">키워드로 필터링</h4>
+          <h4 className="text-sm font-medium text-gray-700">키워드</h4>
 
           {/* 감사 키워드 */}
           {gratitudeKeywords.length > 0 && (
             <div>
               <p className="text-xs text-orange-600 mb-2 flex items-center gap-1">
                 <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
-                감사 키워드
+                감사
               </p>
               <div className="flex flex-wrap gap-2">
                 {gratitudeKeywords.map((keyword) => (
@@ -203,7 +202,7 @@ const ReflectionFiltersComponent = ({
             <div>
               <p className="text-xs text-blue-600 mb-2 flex items-center gap-1">
                 <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                성찰 키워드
+                성찰
               </p>
               <div className="flex flex-wrap gap-2">
                 {reflectionKeywords.map((keyword) => (
@@ -250,7 +249,7 @@ const ReflectionFiltersComponent = ({
                 key={keyword}
                 className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
               >
-                키워드: {keyword}
+                {keyword}
                 <button
                   onClick={() => handleKeywordToggle(keyword)}
                   className="hover:bg-gray-200 rounded-full"
