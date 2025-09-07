@@ -236,7 +236,7 @@ const ReflectionDetailPage = () => {
 
   return (
     <AuthGuard>
-      <div className="max-w-4xl mx-auto p-4 space-y-6">
+      <div className="max-w-4xl mx-auto p-4 space-y-4">
         {/* 브레드크럼 */}
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <Link
@@ -244,154 +244,115 @@ const ReflectionDetailPage = () => {
             className="flex items-center gap-1 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            회고 목록으로 돌아가기
           </Link>
         </div>
 
         {/* 메인 콘텐츠 */}
-        <div className="bg-white rounded-lg shadow-sm border">
+        <div className="flex flex-col gap-2 bg-white p-2 rounded-lg shadow-sm border">
           {/* 헤더 */}
-          <div className="p-6 border-b">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3 mb-4">
-                <div
-                  className={`p-3 rounded-lg ${isGratitude ? 'bg-orange-100' : 'bg-blue-100'}`}
-                >
-                  <TypeIcon
-                    className={`w-6 h-6 ${isGratitude ? 'text-orange-600' : 'text-blue-600'}`}
-                  />
-                </div>
-                <div>
-                  <span
-                    className={`text-sm font-medium ${isGratitude ? 'text-orange-600' : 'text-blue-600'}`}
-                  >
-                    {reflection.category?.display_name}
-                  </span>
-                  <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {format(new Date(reflection.date), 'yyyy년 M월 d일')}
-                    </div>
-                    <div
-                      className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${visibilityInfo.bgColor} ${visibilityInfo.color}`}
-                    >
-                      <VisibilityIcon className="w-3 h-3" />
-                      {visibilityInfo.label}
-                    </div>
-                  </div>
-                </div>
+          <div className="flex justify-between">
+            <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
+              <div
+                className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${visibilityInfo.bgColor} ${visibilityInfo.color}`}
+              >
+                <VisibilityIcon className="w-3 h-3" />
+                {visibilityInfo.label}
               </div>
+            </div>
+            {/* 액션 버튼 */}
+            {reflection.is_own && (
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleShare}
+                  className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                  title="공유"
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
+                <Link
+                  href={`/reflections/${reflection.id}/edit`}
+                  className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                  title="수정"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeletingReflection}
+                  className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                  title="삭제"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
 
-              {/* 액션 버튼 */}
-              {reflection.is_own && (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleShare}
-                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                    title="공유"
-                  >
-                    <Share2 className="w-5 h-5" />
-                  </button>
-                  <Link
-                    href={`/reflections/${reflection.id}/edit`}
-                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                    title="수정"
-                  >
-                    <Edit2 className="w-5 h-5" />
-                  </Link>
-                  <button
-                    onClick={handleDelete}
-                    disabled={isDeletingReflection}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                    title="삭제"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+          <div className="flex flex-col pb-2 border-b">
+            <div className="flex gap-2 items-center">
+              <div
+                className={`p-3 rounded-lg ${isGratitude ? 'bg-orange-100' : 'bg-blue-100'}`}
+              >
+                <TypeIcon
+                  className={`w-6 h-6 ${isGratitude ? 'text-orange-600' : 'text-blue-600'}`}
+                />
+              </div>
+              <div className="flex flex-col items-start">
+                <div className="flex items-center gap-1 text-sm text-gray-500">
+                  <Calendar className="w-4 h-4" />
+                  {format(new Date(reflection.created_at), 'yyyy. M. d. HH:mm')}
                 </div>
+                <span
+                  className={`text-sm font-medium ${isGratitude ? 'text-orange-600' : 'text-blue-600'}`}
+                >
+                  {reflection.category?.display_name}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 바디 */}
+          <div className="flex flex-col min-h-[200px] gap-2">
+            <div className="flex justify-end text-sm text-gray-500">
+              {reflection.updated_at !== reflection.created_at && (
+                <span>
+                  수정일:{' '}
+                  {format(new Date(reflection.updated_at), 'yyyy. M. d. HH:mm')}
+                </span>
               )}
             </div>
-
             {/* 제목 */}
             {reflection.title && (
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-gray-900">
                 {reflection.title}
               </h1>
             )}
+            <div className="text-gray-800 text-base leading-relaxed whitespace-pre-wrap">
+              {reflection.content}
+            </div>
+          </div>
 
-            {/* 키워드 */}
-            {reflection.keywords && reflection.keywords.length > 0 && (
+          {/* 키워드 */}
+          {reflection.keywords.length > 0 && (
+            <div className="bg-gray-50 border-t pt-2 rounded-b-lg">
               <div className="flex flex-wrap gap-2">
                 {reflection.keywords.map((keyword) => (
-                  <span
+                  <Link
                     key={keyword.id}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                    href={`/reflections?keywords=${encodeURIComponent(keyword.name)}`}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium hover:opacity-80 transition-opacity"
                     style={{
                       backgroundColor: `${keyword.color}20`,
                       color: keyword.color,
                     }}
                   >
                     #{keyword.name}
-                  </span>
+                  </Link>
                 ))}
               </div>
-            )}
-          </div>
-
-          {/* 내용 */}
-          <div className="p-6">
-            <div className="prose max-w-none">
-              <div className="text-gray-800 text-base leading-relaxed whitespace-pre-wrap">
-                {reflection.content}
-              </div>
             </div>
-          </div>
-
-          {/* 푸터 */}
-          <div className="px-6 py-4 bg-gray-50 border-t rounded-b-lg">
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <span>
-                작성일:{' '}
-                {format(
-                  new Date(reflection.created_at),
-                  'yyyy년 M월 d일 HH:mm'
-                )}
-              </span>
-              {reflection.updated_at !== reflection.created_at && (
-                <span>
-                  수정일:{' '}
-                  {format(
-                    new Date(reflection.updated_at),
-                    'yyyy년 M월 d일 HH:mm'
-                  )}
-                </span>
-              )}
-            </div>
-          </div>
+          )}
         </div>
-
-        {/* 관련 키워드로 더 보기 */}
-        {reflection.keywords && reflection.keywords.length > 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="font-medium text-blue-900 mb-2">
-              관련 키워드로 더 보기
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {reflection.keywords.map((keyword) => (
-                <Link
-                  key={keyword.id}
-                  href={`/reflections?keywords=${encodeURIComponent(keyword.name)}`}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium hover:opacity-80 transition-opacity"
-                  style={{
-                    backgroundColor: `${keyword.color}20`,
-                    color: keyword.color,
-                  }}
-                >
-                  #{keyword.name}으로 검색
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </AuthGuard>
   );

@@ -40,9 +40,40 @@ const ReflectionCard = ({
   return (
     <Link
       href={`/reflections/${reflection.id}`}
-      className="block bg-white rounded-lg p-6 shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
+      className="block bg-white rounded-lg p-2 shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
     >
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex flex-col mb-3">
+        <div className="flex justify-between">
+          <span
+            title={getVisibilityLabel(
+              reflection.is_public,
+              reflection.is_neighbor_visible
+            )}
+          >
+            {getVisibilityStatus(
+              reflection.is_public,
+              reflection.is_neighbor_visible
+            )}
+          </span>
+          {reflection.is_own && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handleEdit}
+                className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                title="편집"
+              >
+                <Edit className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleDelete}
+                className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                title="삭제"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <div
             className={`p-2 rounded-lg ${getReflectionTypeBgColor(reflection.category?.name || 'gratitude')}`}
@@ -62,43 +93,12 @@ const ReflectionCard = ({
             </span>
             <div className="flex items-center gap-2 text-xs text-gray-500">
               <Calendar className="w-3 h-3" />
-              {format(new Date(reflection.date), 'yyyy년 M월 d일', {
+              {format(new Date(reflection.date), 'yyyy. M. d.', {
                 locale: ko,
               })}
-              <span
-                title={getVisibilityLabel(
-                  reflection.is_public,
-                  reflection.is_neighbor_visible
-                )}
-              >
-                {getVisibilityStatus(
-                  reflection.is_public,
-                  reflection.is_neighbor_visible
-                )}
-              </span>
             </div>
           </div>
         </div>
-
-        {showActions && reflection.is_own && (
-          <div className="flex items-center gap-1">
-            <Link
-              href={`/reflections/${reflection.id}/edit`}
-              onClick={handleEdit}
-              className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-              title="편집"
-            >
-              <Edit className="w-4 h-4" />
-            </Link>
-            <button
-              onClick={handleDelete}
-              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-              title="삭제"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        )}
       </div>
 
       {/* 제목 */}
