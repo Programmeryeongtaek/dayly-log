@@ -28,6 +28,9 @@ const QuestionsAnalyticsPage = () => {
   );
   const [modalTitle, setModalTitle] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedPeriod, setSelectedPeriod] = useState('전체');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
 
   const { questions, isLoading, statistics } = useQuestions({
     userId: user?.id,
@@ -36,6 +39,75 @@ const QuestionsAnalyticsPage = () => {
   const { keywords } = useQuestionKeywords({
     userId: user?.id,
   });
+
+  // 기간 프리셋
+  const periodPresets = useMemo(() => {
+    const today = new Date();
+    const getDateString = (date: Date) => date.toISOString().split('T')[0];
+
+    return [
+      { label: '전체', startDate: '', endDate: '' },
+      {
+        label: '최근 1주일',
+        startDate: getDateString(
+          new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+        ),
+        endDate: getDateString(today),
+      },
+      {
+        label: '한 달간',
+        startDate: getDateString(
+          new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+        ),
+        endDate: getDateString(today),
+      },
+      {
+        label: '3개월 간',
+        startDate: getDateString(
+          new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)
+        ),
+        endDate: getDateString(today),
+      },
+      {
+        label: '6개월 간',
+        startDate: getDateString(
+          new Date(today.getTime() - 180 * 24 * 60 * 60 * 1000)
+        ),
+        endDate: getDateString(today),
+      },
+      {
+        label: '12개월 간',
+        startDate: getDateString(
+          new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000)
+        ),
+        endDate: getDateString(today),
+      },
+      { label: '임의 기간', startDate: '', endDate: '' },
+    ];
+  }, []);
+
+  // 기간 필터 적용
+  const filters = useMemo(() => {
+    if (selectedPeriod === '임의 기간') {
+      return customStartDate || customEndDate
+        ? {
+            dateFrom: customStartDate || undefined,
+            dateTo: customEndDate || undefined,
+          }
+        : {};
+    }
+
+    const selectedPreset = periodPresets.find(
+      (p) => p.label === selectedPeriod
+    );
+    if (!selectedPreset || selectedPreset.label === '전체') {
+      return {};
+    }
+    return {
+      dateFrom: selectedPreset.startDate,
+      dateTo: selectedPreset.endDate,
+    };
+  }, [selectedPeriod, periodPresets, customStartDate, customEndDate]);
 
   // 카테고리별 분석
   const categoryAnalysis = useMemo(() => {
@@ -176,6 +248,28 @@ const QuestionsAnalyticsPage = () => {
     ];
   }, [questions]);
 
+  // 기간 선택 핸들러
+  const handlePeriodSelect = (periodLabel: string) => {
+    if (selectedPeriod === periodLabel) {
+      setSelectedPeriod('전체');
+    } else {
+      setSelectedPeriod(periodLabel);
+
+      if (periodLabel === '임의 기간') {
+        // 임의 기간 선택 시 종료일을 오늘로 설정
+        const today = new Date().toISOString().split('T')[0];
+        setCustomEndDate(today);
+      } else {
+        // 기존 프리셋 클릭 시 해당 날짜를 임의 기간 입력필드에 반영
+        const preset = periodPresets.find((p) => p.label === periodLabel);
+        if (preset && preset.startDate && preset.endDate) {
+          setCustomStartDate(preset.startDate);
+          setCustomEndDate(preset.endDate);
+        }
+      }
+    }
+  };
+
   const handlePrevious = () => {
     setCurrentIndex((prev) => Math.max(0, prev - 1));
   };
@@ -234,6 +328,56 @@ const QuestionsAnalyticsPage = () => {
                 <BarChart3 className="w-6 h-6 text-blue-600" />
                 질문 분석
               </h1>
+            </div>
+          </div>
+
+          {/* 기간 선택 */}
+          <div className="mt-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-3">
+              분석 기간
+            </h3>
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                {periodPresets.map((preset) => (
+                  <button
+                    key={preset.label}
+                    onClick={() => handlePeriodSelect(preset.label)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                      selectedPeriod === preset.label
+                        ? 'bg-accent-100 text-black-500 border-accent-300'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* 임의 기간 날짜 입력 */}
+              <div className="grid grid-cols-2 gap-3 mt-3 p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    시작일
+                  </label>
+                  <input
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    종료일
+                  </label>
+                  <input
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
