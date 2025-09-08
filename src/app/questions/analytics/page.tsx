@@ -280,11 +280,15 @@ const QuestionsAnalyticsPage = () => {
   const handlePeriodSelect = (periodLabel: string) => {
     if (selectedPeriod === periodLabel) {
       setSelectedPeriod('전체');
+      // 기간 해제 시 임의 기간 날짜도 초기화
+      setCustomStartDate('');
+      setCustomEndDate('');
     } else {
       setSelectedPeriod(periodLabel);
 
       if (periodLabel === '임의 기간') {
-        // 임의 기간 선택 시 종료일을 오늘로 설정
+        // 임의 기간 선택 시 날짜 초기화 후 종료일을 오늘로 설정
+        setCustomStartDate('');
         const today = new Date().toISOString().split('T')[0];
         setCustomEndDate(today);
       } else {
@@ -293,6 +297,10 @@ const QuestionsAnalyticsPage = () => {
         if (preset && preset.startDate && preset.endDate) {
           setCustomStartDate(preset.startDate);
           setCustomEndDate(preset.endDate);
+        } else {
+          // 프리셋이 없거나 전체인 경우 날짜 초기화
+          setCustomStartDate('');
+          setCustomEndDate('');
         }
       }
     }
