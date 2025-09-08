@@ -654,17 +654,18 @@ const QuestionsAnalyticsPage = () => {
             <Modal.Title>{modalTitle}</Modal.Title>
             <button
               onClick={handleCloseModal}
-              className="p-1 hover:bg-gray-100 rounded"
+              className="p-1 hover:bg-gray-100 rounded hover:cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         </Modal.Header>
         <Modal.Body>
+          {/* 현재 질문 표시 */}
           {selectedItems.length > 0 ? (
-            <div>
+            <div className="overflow-y-auto">
               {/* 네비게이션 헤더 */}
-              <div className="flex items-center justify-between mb-4 pb-3 border-b">
+              <div className="flex items-center justify-between mb-4 pt-3 border-t-2 border-accent-500">
                 <div className="text-sm text-gray-600">
                   {currentIndex + 1} / {selectedItems.length}
                 </div>
@@ -672,7 +673,7 @@ const QuestionsAnalyticsPage = () => {
                   <button
                     onClick={handlePrevious}
                     disabled={currentIndex === 0}
-                    className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg bg-gray-100 hover:cursor-pointer hover:bg-accent-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     title="이전 질문"
                   >
                     <ArrowLeft className="w-4 h-4" />
@@ -680,41 +681,18 @@ const QuestionsAnalyticsPage = () => {
                   <button
                     onClick={handleNext}
                     disabled={currentIndex === selectedItems.length - 1}
-                    className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 rounded-lg bg-gray-100 hover:cursor-pointer hover:bg-accent-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     title="다음 질문"
                   >
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
-
-              {/* 현재 질문 표시 */}
-              <div className="max-h-96 overflow-y-auto">
-                <QuestionCard
-                  key={selectedItems[currentIndex].id}
-                  question={selectedItems[currentIndex]}
-                  showActions={false}
-                />
-              </div>
-
-              {/* 페이지 인디케이터 */}
-              {selectedItems.length > 1 && (
-                <div className="flex justify-center mt-4 pt-3 border-t">
-                  <div className="flex gap-1">
-                    {selectedItems.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentIndex(index)}
-                        className={`w-2 h-2 rounded-full transition-colors ${
-                          index === currentIndex
-                            ? 'bg-blue-500'
-                            : 'bg-gray-300 hover:bg-gray-400'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
+              <QuestionCard
+                key={selectedItems[currentIndex].id}
+                question={selectedItems[currentIndex]}
+                showActions={false}
+              />
             </div>
           ) : (
             <div className="text-center py-8 text-gray-500">

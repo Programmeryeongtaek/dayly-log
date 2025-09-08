@@ -97,14 +97,14 @@ const QuestionCard = ({
 
       {/* 내용 */}
       {question.content && (
-        <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-2">
+        <p className="text-gray-700 min-h-50 text-sm leading-relaxed mb-4 line-clamp-2">
           {question.content}
         </p>
       )}
 
       {/* 답변 미리보기 */}
       {question.answer && (
-        <div className="bg-blue-50 rounded-lg p-3 mb-4">
+        <div className="bg-accent-50 rounded-lg p-3 mb-4">
           <p className="text-blue-800 text-sm leading-relaxed line-clamp-2">
             <span className="font-medium">답변: </span>
             {question.answer}
@@ -118,11 +118,7 @@ const QuestionCard = ({
           {question.keywords.map((keyword) => (
             <span
               key={keyword.id}
-              className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium"
-              style={{
-                backgroundColor: `${keyword.color}20`,
-                color: keyword.color,
-              }}
+              className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-accent-100"
             >
               {keyword.name}
             </span>
