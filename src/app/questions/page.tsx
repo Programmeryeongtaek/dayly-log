@@ -22,6 +22,9 @@ const QuestionsPage = () => {
   const { user } = useAuth();
   const [filters, setFilters] = useState<QuestionFilters>({});
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingQuestion, setEditingQuestion] =
+    useState<QuestionWithKeywords | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState('전체');
 
   // 기간 프리셋
@@ -72,11 +75,19 @@ const QuestionsPage = () => {
   });
 
   // 필터된 질문 데이터 (질문 목록용)
-  const { questions, isLoading, error, createQuestion, isCreatingQuestion } =
-    useQuestions({
-      userId: user?.id,
-      filters,
-    });
+  const {
+    questions,
+    isLoading,
+    error,
+    createQuestion,
+    isCreatingQuestion,
+    updateQuestion,
+    deleteQuestion,
+    isUpdatingQuestion,
+  } = useQuestions({
+    userId: user?.id,
+    filters,
+  });
 
   // 키워드 데이터 가져오기
   const { keywords } = useQuestionKeywords({
@@ -118,14 +129,36 @@ const QuestionsPage = () => {
 
   // 질문 편집 핸들러
   const handleEditQuestion = (question: QuestionWithKeywords) => {
-    // TODO: 편집 모달 구현
-    console.log('Edit question:', question);
+    setEditingQuestion(question);
+    setShowEditModal(true);
   };
 
   // 질문 삭제 핸들러
-  const handleDeleteQuestion = (questionId: string) => {
+  const handleDeleteQuestion = async (questionId: string) => {
     if (confirm('정말로 이 질문을 삭제하시겠습니까?')) {
-      handleDeleteQuestion(questionId);
+      try {
+        await deleteQuestion(questionId);
+      } catch (error) {
+        console.error('질문 삭제 실패:', error);
+        alert('질문 삭제 중 오류가 발생했습니다.');
+      }
+    }
+  };
+
+  // 질문 업데이트 핸들러
+  const handleUpdateQuestion = async (formData: QuestionFormData) => {
+    if (!editingQuestion) return;
+
+    try {
+      await updateQuestion({
+        id: editingQuestion.id,
+        ...formData,
+      });
+      setShowEditModal(false);
+      setEditingQuestion(null);
+    } catch (error) {
+      console.error('질문 수정 실패:', error);
+      alert('질문 수정 중 오류가 발생했습니다.');
     }
   };
 
@@ -345,6 +378,53 @@ const QuestionsPage = () => {
           />
         </Modal.Body>
       </Modal>
+
+      {/* 편집 모달 */}
+      {showEditModal && editingQuestion && (
+        <Modal
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditingQuestion(null);
+          }}
+          size="lg"
+        >
+          <Modal.Header className="border-b-2 border-accent-500">
+            <Modal.Title className="flex items-center justify-between">
+              <p className="text-accent-400">편집</p>
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditingQuestion(null);
+                }}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <QuestionForm
+              initialData={{
+                title: editingQuestion.title,
+                content: editingQuestion.content,
+                answer: editingQuestion.answer,
+                category_id: editingQuestion.category_id,
+                date: editingQuestion.date,
+                is_public: editingQuestion.is_public,
+                is_neighbor_visible: editingQuestion.is_neighbor_visible,
+                is_answered: editingQuestion.is_answered,
+                keywords: editingQuestion.keywords?.map((k) => k.name) || [],
+              }}
+              onSubmit={handleUpdateQuestion}
+              onCancel={() => {
+                setShowEditModal(false);
+                setEditingQuestion(null);
+              }}
+              isLoading={isUpdatingQuestion}
+            />
+          </Modal.Body>
+        </Modal>
+      )}
     </div>
   );
 };
