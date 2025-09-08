@@ -14,7 +14,7 @@ import {
   QuestionFormData,
   QuestionWithKeywords,
 } from '@/types/questions';
-import { Filter, Plus, TrendingUp } from 'lucide-react';
+import { Plus, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
@@ -233,57 +233,12 @@ const QuestionsPage = () => {
               onPeriodChange={handlePeriodChange}
             />
 
-            {/* 현재 필터 상태 표시 */}
-            {(filters.categories?.length ||
-              filters.keywords?.length ||
-              filters.searchQuery) && (
-              <div className="bg-white rounded-lg border p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <Filter className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-700">
-                    적용된 필터
-                  </span>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {filters.categories?.map((category) => (
-                    <span
-                      key={category}
-                      className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
-                    >
-                      {category}
-                    </span>
-                  ))}
-
-                  {filters.keywords?.map((keyword) => (
-                    <span
-                      key={keyword}
-                      className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-
-                  {filters.searchQuery && (
-                    <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
-                      {filters.searchQuery}
-                    </span>
-                  )}
-
-                  {selectedPeriod !== '전체' && (
-                    <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
-                      {selectedPeriod}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-
             {/* 질문 목록 */}
             <QuestionList
               questions={questions}
               filters={filters}
               keywords={keywords}
+              periodPresets={periodPresets}
               isLoading={isLoading}
               onEdit={handleEditQuestion}
               onDelete={handleDeleteQuestion}

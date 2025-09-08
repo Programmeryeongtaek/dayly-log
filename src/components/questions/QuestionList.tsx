@@ -1,4 +1,5 @@
 import {
+  DateRangePeriod,
   QuestionFilters,
   QuestionKeyword,
   QuestionWithKeywords,
@@ -11,6 +12,7 @@ interface QuestionListProps {
   questions: QuestionWithKeywords[];
   filters: QuestionFilters;
   keywords: QuestionKeyword[];
+  periodPresets: DateRangePeriod[];
   isLoading?: boolean;
   onEdit?: (question: QuestionWithKeywords) => void;
   onDelete?: (questionId: string) => void;
@@ -20,6 +22,7 @@ const QuestionList = ({
   questions,
   filters,
   keywords,
+  periodPresets,
   isLoading = false,
   onEdit,
   onDelete,
@@ -37,7 +40,19 @@ const QuestionList = ({
   // 현재 기간 라벨 가져오기
   const getCurrentPeriodLabel = () => {
     if (filters.dateFrom && filters.dateTo) {
-      return `${filters.dateFrom} ~ ${filters.dateTo}`;
+      // 프리셋 기간과 매치하는지 확인
+      const matchingPreset = periodPresets.find(
+        (preset) =>
+          preset.startDate === filters.dateFrom &&
+          preset.endDate === filters.dateTo
+      );
+
+      if (matchingPreset) {
+        return matchingPreset.label;
+      }
+
+      // 매치하는 프리셋이 없으면 날짜 범위 표시
+      return '임의기간';
     }
     return '';
   };
@@ -96,7 +111,7 @@ const QuestionList = ({
     <div>
       {/* 구분선과 검색 결과 헤더 */}
       <div className="border-t-2 border-accent-200 pt-4">
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex flex-col mb-2">
           <div className="flex items-center gap-2">
             <Search className="w-5 h-5 text-accent-600" />
             <h2 className="text-lg font-semibold text-gray-900">
@@ -138,7 +153,7 @@ const QuestionList = ({
               {filters.isAnswered !== undefined && (
                 <>
                   <span>•</span>
-                  <span>{filters.isAnswered ? '답변 완료' : '답변 대기'}</span>
+                  <span>{filters.isAnswered ? '완료' : '대기'}</span>
                 </>
               )}
             </div>
@@ -147,17 +162,12 @@ const QuestionList = ({
 
         {/* 키워드 분석 결과 */}
         {questions.length > 0 && filteredKeywordStats.length > 0 && (
-          <div className="bg-white rounded-lg mb-6">
-            <div className="flex flex-wrap gap-2">
+          <div className="rounded-lg mb-6">
+            <div className="flex flex-wrap gap-2 ">
               {filteredKeywordStats.map((stat) => (
                 <span
                   key={stat.keyword.id}
-                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
-                  style={{
-                    backgroundColor: `${stat.keyword.color}20`,
-                    color: stat.keyword.color,
-                    border: `1px solid ${stat.keyword.color}40`,
-                  }}
+                  className="inline-flex bg-accent-200 items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
                 >
                   {stat.keyword.name}
                   <span className="text-xs opacity-75">
