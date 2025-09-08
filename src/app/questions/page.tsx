@@ -14,7 +14,7 @@ import {
   QuestionFormData,
   QuestionWithKeywords,
 } from '@/types/questions';
-import { Plus, TrendingUp } from 'lucide-react';
+import { Plus, TrendingUp, X } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
@@ -190,7 +190,7 @@ const QuestionsPage = () => {
               </Link>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-1 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors"
+                className="flex items-center gap-1 bg-accent-500 text-white p-2 rounded-lg hover:bg-accent-600 transition-colors"
               >
                 <Plus className="w-5 h-5" />
                 추가
@@ -328,8 +328,13 @@ const QuestionsPage = () => {
 
       {/* 질문 생성 모달 */}
       <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
-        <Modal.Header>
-          <Modal.Title>질문 작성</Modal.Title>
+        <Modal.Header className="border-b-2 border-accent-400">
+          <div className="flex items-center justify-between">
+            <Modal.Title>
+              <p className="text-accent-400">질문 작성</p>
+            </Modal.Title>
+            <X className="w-5 h-5" onClick={() => setShowCreateModal(false)} />
+          </div>
         </Modal.Header>
 
         <Modal.Body>

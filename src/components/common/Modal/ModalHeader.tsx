@@ -19,7 +19,7 @@ const ModalHeader = ({
 
   return (
     <div
-      className={`flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0 ${className}`}
+      className={`flex items-center justify-between p-4 lex-shrink-0 ${className}`}
     >
       <div className="flex-1 min-w-0">{children}</div>
       {showCloseButton && (

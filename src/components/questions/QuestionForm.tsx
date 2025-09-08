@@ -69,6 +69,12 @@ const QuestionForm = ({
     }
   };
 
+  const handleCategorySelect = (categoryId: string) => {
+    setFormData((prev) => ({ ...prev, category_id: categoryId }));
+    // 카테고리 변경 시 기존 키워드 초기화
+    setSelectedKeywords([]);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* 카테고리 선택 */}
@@ -76,20 +82,22 @@ const QuestionForm = ({
         <label className="block text-sm font-medium text-gray-700 mb-2">
           카테고리
         </label>
-        <select
-          value={formData.category_id}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, category_id: e.target.value }))
-          }
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        >
+        <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
-            <option key={category.id} value={category.id}>
+            <button
+              key={category.id}
+              type="button"
+              onClick={() => handleCategorySelect(category.id)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                formData.category_id === category.id
+                  ? 'bg-accent-100 text-black-700 border-accent-500'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+              }`}
+            >
               {category.display_name}
-            </option>
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
       {/* 제목 */}
@@ -103,7 +111,7 @@ const QuestionForm = ({
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, title: e.target.value }))
           }
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
           placeholder="질문을 입력하세요."
           required
         />
@@ -120,7 +128,7 @@ const QuestionForm = ({
             setFormData((prev) => ({ ...prev, content: e.target.value }))
           }
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
           placeholder="질문에 대한 추가 설명을 입력하세요."
         />
       </div>
@@ -141,7 +149,7 @@ const QuestionForm = ({
             }));
           }}
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
           placeholder="질문에 대한 답변을 작성하세요."
         />
       </div>
@@ -157,7 +165,7 @@ const QuestionForm = ({
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, date: e.target.value }))
           }
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
           required
         />
       </div>
@@ -177,13 +185,13 @@ const QuestionForm = ({
             onKeyPress={(e) =>
               e.key === 'Enter' && (e.preventDefault(), handleAddKeyword())
             }
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
             placeholder="새 키워드 추가"
           />
           <button
             type="button"
             onClick={handleAddKeyword}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-4 py-2 bg-accent-500 text-white rounded-md hover:bg-accent-600"
           >
             추가
           </button>
@@ -201,17 +209,9 @@ const QuestionForm = ({
                   onClick={() => handleKeywordClick(keyword.name)}
                   className={`px-3 py-1 rounded-full text-sm ${
                     selectedKeywords.includes(keyword.name)
-                      ? 'bg-blue-100 text-blue-800'
+                      ? 'bg-accent-200 text-black-800'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
-                  style={{
-                    backgroundColor: selectedKeywords.includes(keyword.name)
-                      ? `${keyword.color}20`
-                      : undefined,
-                    color: selectedKeywords.includes(keyword.name)
-                      ? keyword.color
-                      : undefined,
-                  }}
                 >
                   {keyword.name}
                 </button>
@@ -228,13 +228,13 @@ const QuestionForm = ({
               {selectedKeywords.map((keyword) => (
                 <span
                   key={keyword}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-accent-300 text-black-600 rounded-full text-sm"
                 >
                   {keyword}
                   <button
                     type="button"
                     onClick={() => handleRemoveKeyword(keyword)}
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-blue-600 hover:text-black-800"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -264,7 +264,7 @@ const QuestionForm = ({
                   is_neighbor_visible: true,
                 }))
               }
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-accent-300 focus:ring-accent-200"
             />
             <span className="ml-2 text-sm text-gray-600">🌍 전체</span>
           </label>
@@ -281,7 +281,7 @@ const QuestionForm = ({
                   is_neighbor_visible: false,
                 }))
               }
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-accent-300 focus:ring-accent-200"
             />
             <span className="ml-2 text-sm text-gray-600">👤 이웃</span>
           </label>
@@ -298,7 +298,7 @@ const QuestionForm = ({
                   is_neighbor_visible: false,
                 }))
               }
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-accent-300 focus:ring-accent-200"
             />
             <span className="ml-2 text-sm text-gray-600">🔒 비공개</span>
           </label>
@@ -310,7 +310,7 @@ const QuestionForm = ({
         <button
           type="submit"
           disabled={isLoading}
-          className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 bg-accent-500 text-white py-2 px-4 rounded-md hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? '저장 중...' : '저장'}
         </button>
