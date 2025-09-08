@@ -7,6 +7,7 @@ import { useQuestionKeywords } from '@/hooks/questions/useQuestionKeywords';
 import { useQuestions } from '@/hooks/questions/useQuestions';
 import { QuestionKeyword, QuestionWithKeywords } from '@/types/questions';
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   BarChart3,
@@ -18,7 +19,7 @@ import {
   X,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 const QuestionsAnalyticsPage = () => {
   const { user } = useAuth();
@@ -78,9 +79,29 @@ const QuestionsAnalyticsPage = () => {
     ];
   }, []);
 
+  // 날짜 유효성 검사
+  const isValidDateRange = useMemo(() => {
+    if (!customStartDate || !customEndDate) return true;
+    return new Date(customStartDate) <= new Date(customEndDate);
+  }, [customStartDate, customEndDate]);
+
+  // 날짜 에러 메시지
+  const dateErrorMessage = useMemo(() => {
+    if (!customStartDate || !customEndDate) return '';
+    if (!isValidDateRange) {
+      return '시작일이 종료일보다 늦을 수 없습니다.';
+    }
+    return '';
+  }, [customStartDate, customEndDate, isValidDateRange]);
+
   // 기간 필터 적용
   const filters = useMemo(() => {
     if (selectedPeriod === '임의 기간') {
+      // 임의 기간이지만 날짜가 유효하지 않으면 필터 적용 x
+      if (!isValidDateRange) {
+        return {};
+      }
+
       return customStartDate || customEndDate
         ? {
             dateFrom: customStartDate || undefined,
@@ -99,7 +120,13 @@ const QuestionsAnalyticsPage = () => {
       dateFrom: selectedPreset.startDate,
       dateTo: selectedPreset.endDate,
     };
-  }, [selectedPeriod, periodPresets, customStartDate, customEndDate]);
+  }, [
+    selectedPeriod,
+    periodPresets,
+    customStartDate,
+    customEndDate,
+    isValidDateRange,
+  ]);
 
   const { questions, isLoading, statistics } = useQuestions({
     userId: user?.id,
@@ -271,6 +298,36 @@ const QuestionsAnalyticsPage = () => {
     }
   };
 
+  // 시작일 변경 핸들러 (종료일보다 늦지 않도록 제한)
+  const handleStartDateChange = useCallback(
+    (value: string) => {
+      setCustomStartDate(value);
+
+      // 시작일이 종료일보다 늦으면 종료일을 시작일과 같게 설정
+      if (value && customEndDate && new Date(value) > new Date(customEndDate)) {
+        setCustomEndDate(value);
+      }
+    },
+    [customEndDate]
+  );
+
+  // 종료일 변경 핸들러 (시작일보다 빠르지 않도록 제한)
+  const handleEndDateChange = useCallback(
+    (value: string) => {
+      setCustomEndDate(value);
+
+      // 종료일이 시작일보다 빠르면 시작일을 종료일과 같게 설정
+      if (
+        value &&
+        customStartDate &&
+        new Date(value) < new Date(customStartDate)
+      ) {
+        setCustomStartDate(value);
+      }
+    },
+    [customStartDate]
+  );
+
   const handlePrevious = () => {
     setCurrentIndex((prev) => Math.max(0, prev - 1));
   };
@@ -363,8 +420,8 @@ const QuestionsAnalyticsPage = () => {
                   <input
                     type="date"
                     value={customStartDate}
-                    onChange={(e) => setCustomStartDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    onChange={(e) => handleStartDateChange(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                   />
                 </div>
                 <div>
@@ -374,10 +431,18 @@ const QuestionsAnalyticsPage = () => {
                   <input
                     type="date"
                     value={customEndDate}
-                    onChange={(e) => setCustomEndDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    onChange={(e) => handleEndDateChange(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                   />
                 </div>
+
+                {/* 날짜 에러 메시지 */}
+                {dateErrorMessage && (
+                  <div className="col-span-2 flex items-center gap-2 text-red-600 text-xs">
+                    <AlertTriangle className="w-3 h-3" />
+                    {dateErrorMessage}
+                  </div>
+                )}
               </div>
             </div>
           </div>
