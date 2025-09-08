@@ -64,15 +64,19 @@ const QuestionsPage = () => {
 
   // 질문 데이터 (헤더 통계용)
   const {
-    questions,
-    statistics,
-    isLoading,
-    error,
-    createQuestion,
-    isCreatingQuestion,
+    questions: allQuestions,
+    statistics: allStatistics,
+    isLoading: isLoadingAll,
   } = useQuestions({
     userId: user?.id,
   });
+
+  // 필터된 질문 데이터 (질문 목록용)
+  const { questions, isLoading, error, createQuestion, isCreatingQuestion } =
+    useQuestions({
+      userId: user?.id,
+      filters,
+    });
 
   // 키워드 데이터 가져오기
   const { keywords } = useQuestionKeywords({
@@ -126,7 +130,7 @@ const QuestionsPage = () => {
   };
 
   // 로딩 상태
-  if (isLoading) {
+  if (isLoadingAll) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -198,28 +202,28 @@ const QuestionsPage = () => {
           <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-blue-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-blue-600">
-                {statistics.total}
+                {allStatistics.total}
               </div>
               <div className="text-sm text-blue-800">총 질문</div>
             </div>
 
             <div className="bg-green-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-green-600">
-                {statistics.answered}
+                {allStatistics.answered}
               </div>
               <div className="text-sm text-green-800">답변 완료</div>
             </div>
 
             <div className="bg-orange-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-orange-600">
-                {statistics.unanswered}
+                {allStatistics.unanswered}
               </div>
               <div className="text-sm text-orange-800">답변 대기</div>
             </div>
 
             <div className="bg-purple-50 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-purple-600">
-                {statistics.answerRate.toFixed(0)}%
+                {allStatistics.answerRate.toFixed(0)}%
               </div>
               <div className="text-sm text-purple-800">답변률</div>
             </div>
@@ -254,7 +258,7 @@ const QuestionsPage = () => {
 
             {/* 빈 상태일 때 액션 가이드 */}
             {!isLoading &&
-              questions.length === 0 &&
+              allQuestions.length === 0 &&
               !Object.keys(filters).length && (
                 <div className="bg-white rounded-lg border p-8 text-center">
                   <div className="text-6xl mb-4">🤔</div>
@@ -302,13 +306,13 @@ const QuestionsPage = () => {
             </div>
 
             {/* 미답변 질문 알림 */}
-            {statistics.unanswered > 0 && (
+            {allStatistics.unanswered > 0 && (
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                 <h3 className="font-semibold text-orange-800 mb-2">
                   답변을 기다리는 질문들
                 </h3>
                 <p className="text-sm text-orange-700 mb-3">
-                  {statistics.unanswered}개의 질문이 답변을 기다리고 있어요.
+                  {allStatistics.unanswered}개의 질문이 답변을 기다리고 있어요.
                 </p>
                 <button
                   onClick={() => handleFiltersChange({ isAnswered: false })}
