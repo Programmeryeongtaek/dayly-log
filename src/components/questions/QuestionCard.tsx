@@ -4,12 +4,9 @@ import { QuestionWithKeywords } from '@/types/questions';
 import {
   getAnswerStatus,
   getAnswerStatusLabel,
-  getQuestionTypeColor,
-  getQuestionVisibilityLabel,
-  getQuestionVisibilityStatus,
 } from '@/utils/questions/helpers';
 import { format } from 'date-fns';
-import { Calendar, Edit, MessageCircle, Trash2 } from 'lucide-react';
+import { Calendar, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface QuestionCardProps {
@@ -43,20 +40,9 @@ const QuestionCard = ({
       className="block bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 p-4"
     >
       {/* 헤더 */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            {/* 카테고리 배지 */}
-            <span
-              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                question.category
-                  ? `${getQuestionTypeColor(question.category.name)} bg-gray-100`
-                  : 'text-gray-500 bg-gray-100'
-              }`}
-            >
-              {question.category?.display_name || '알 수 없음'}
-            </span>
-
+      <div className="flex items-start justify-between border-b pb-2 border-accent-500 mb-3">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1">
             {/* 답변 상태 */}
             <span
               title={getAnswerStatusLabel(question.is_answered)}
@@ -64,49 +50,38 @@ const QuestionCard = ({
             >
               {getAnswerStatus(question.is_answered)}
             </span>
+            <div className="flex items-center gap-1 text-sm text-gray-500 min-w-0">
+              <Calendar className="w-4 h-4 flex-shrink-0" />
+              <span className="truncate">
+                {format(new Date(question.date), 'yyyy. M. d.')}
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 text-sm text-gray-500 min-w-0">
-            <Calendar className="w-4 h-4 flex-shrink-0" />
-            <span className="truncate">
-              {format(new Date(question.date), 'M월 d일')}
-            </span>
-
-            {/* 답변 표시 */}
-            {question.answer && (
-              <div className="flex items-center gap-1">
-                <MessageCircle className="w-4 h-4 flex-shrink-0" />
-                <span className="text-xs text-blue-600">답변 있음</span>
-              </div>
-            )}
-
-            {/* 공개 설정 */}
-            <span
-              title={getQuestionVisibilityLabel(
-                question.is_public,
-                question.is_neighbor_visible
-              )}
-            >
-              {getQuestionVisibilityStatus(
-                question.is_public,
-                question.is_neighbor_visible
-              )}
-            </span>
-          </div>
+          {/* 카테고리 배지 */}
+          <span
+            className={`py-1 px-3 rounded-full text-xs font-medium ${
+              question.category
+                ? `bg-accent-200 text-black`
+                : 'text-gray-500 bg-gray-100'
+            }`}
+          >
+            {question.category?.display_name || '알 수 없음'}
+          </span>
         </div>
 
         {showActions && question.is_own && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <button
               onClick={handleEdit}
-              className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+              className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
               title="편집"
             >
               <Edit className="w-4 h-4" />
             </button>
             <button
               onClick={handleDelete}
-              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
               title="삭제"
             >
               <Trash2 className="w-4 h-4" />
