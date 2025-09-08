@@ -62,7 +62,7 @@ const QuestionsPage = () => {
     ];
   }, []);
 
-  // 질문 데이터 가져오기
+  // 질문 데이터 (헤더 통계용)
   const {
     questions,
     statistics,
@@ -72,7 +72,6 @@ const QuestionsPage = () => {
     isCreatingQuestion,
   } = useQuestions({
     userId: user?.id,
-    filters,
   });
 
   // 키워드 데이터 가져오기
