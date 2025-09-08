@@ -32,14 +32,6 @@ const QuestionsAnalyticsPage = () => {
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
 
-  const { questions, isLoading, statistics } = useQuestions({
-    userId: user?.id,
-  });
-
-  const { keywords } = useQuestionKeywords({
-    userId: user?.id,
-  });
-
   // 기간 프리셋
   const periodPresets = useMemo(() => {
     const today = new Date();
@@ -108,6 +100,15 @@ const QuestionsAnalyticsPage = () => {
       dateTo: selectedPreset.endDate,
     };
   }, [selectedPeriod, periodPresets, customStartDate, customEndDate]);
+
+  const { questions, isLoading, statistics } = useQuestions({
+    userId: user?.id,
+    filters,
+  });
+
+  const { keywords } = useQuestionKeywords({
+    userId: user?.id,
+  });
 
   // 카테고리별 분석
   const categoryAnalysis = useMemo(() => {
