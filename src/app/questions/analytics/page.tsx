@@ -401,7 +401,7 @@ const QuestionsAnalyticsPage = () => {
                   <button
                     key={preset.label}
                     onClick={() => handlePeriodSelect(preset.label)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border hover:cursor-pointer ${
                       selectedPeriod === preset.label
                         ? 'bg-accent-100 text-black-500 border-accent-300'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
@@ -422,7 +422,7 @@ const QuestionsAnalyticsPage = () => {
                     type="date"
                     value={customStartDate}
                     onChange={(e) => handleStartDateChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-accent-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-600 text-sm"
+                    className="w-full px-3 py-2 border border-accent-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-600 text-sm hover:cursor-pointer"
                   />
                 </div>
                 <div>
@@ -433,7 +433,7 @@ const QuestionsAnalyticsPage = () => {
                     type="date"
                     value={customEndDate}
                     onChange={(e) => handleEndDateChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-accent-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-600 text-sm"
+                    className="w-full px-3 py-2 border border-accent-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-600 text-sm hover:cursor-pointer"
                   />
                 </div>
 
@@ -518,12 +518,9 @@ const QuestionsAnalyticsPage = () => {
                   {category.count > 0 && (
                     <button
                       onClick={() =>
-                        handleShowDetail(
-                          category.questions,
-                          `${category.name} 질문`
-                        )
+                        handleShowDetail(category.questions, `${category.name}`)
                       }
-                      className={`mt-1 text-xs ${category.textColor} hover:underline`}
+                      className={`mt-1 text-xs ${category.textColor} hover:underline hover:cursor-pointer`}
                     >
                       질문 보기
                     </button>
@@ -566,7 +563,7 @@ const QuestionsAnalyticsPage = () => {
                       onClick={() =>
                         handleShowDetail(item.questions, item.label)
                       }
-                      className={`mt-1 text-xs ${item.textColor} hover:underline`}
+                      className={`mt-1 text-xs ${item.textColor} hover:underline hover:cursor-pointer`}
                     >
                       질문 보기
                     </button>
@@ -589,7 +586,7 @@ const QuestionsAnalyticsPage = () => {
                 {keywordAnalysis.map((item, index) => (
                   <div
                     key={item.keyword.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-accent-50 transition-colors cursor-pointer"
                     onClick={() =>
                       handleShowDetail(
                         item.questions,
@@ -627,7 +624,7 @@ const QuestionsAnalyticsPage = () => {
                 {monthlyAnalysis.map((month) => (
                   <div
                     key={month.month}
-                    className="text-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="text-center p-4 bg-gray-50 rounded-lg hover:bg-accent-50 transition-colors cursor-pointer"
                     onClick={() =>
                       handleShowDetail(month.questions, month.month)
                     }

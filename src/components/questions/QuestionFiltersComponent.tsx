@@ -6,7 +6,7 @@ import {
   QuestionFilters,
   QuestionKeyword,
 } from '@/types/questions';
-import { Filter, RefreshCcw, Search, X } from 'lucide-react';
+import { Filter, RefreshCcw, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 interface QuestionFiltersComponentProps {
@@ -139,7 +139,7 @@ const QuestionFiltersComponent = ({
           onChange={(e) =>
             onFiltersChange({ searchQuery: e.target.value || undefined })
           }
-          className="w-full pl-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
+          className="w-full pl-10 py-2 border-2 rounded-lg focus:outline-none border-accent-300 focus:ring-accent-500 text-sm"
         />
         <Search className="w-5 h-5 absolute left-4 top-[10px]" />
       </div>
@@ -153,9 +153,9 @@ const QuestionFiltersComponent = ({
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              className="text-base cursor-pointer font-medium text-gray-500 hover:text-accent-500 flex items-center gap-1"
             >
-              <RefreshCcw className="w-3 h-3" />
+              <RefreshCcw className="w-3 h-3 font-medium" />
               초기화
             </button>
           )}
@@ -175,10 +175,10 @@ const QuestionFiltersComponent = ({
                 <button
                   key={category.key}
                   onClick={() => handleCategoryToggle(category.key)}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors cursor-pointer  ${
                     filters.categories?.includes(category.key)
                       ? `bg-${category.color}-100 text-${category.color}-700 border-${category.color}-300`
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                      : `bg-gray-100 text-gray-600 hover:bg-${category.color}-100 border-gray-300`
                   } border`}
                 >
                   {category.label}
@@ -199,10 +199,10 @@ const QuestionFiltersComponent = ({
                     isAnswered: filters.isAnswered === true ? undefined : true,
                   })
                 }
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                   filters.isAnswered === true
                     ? 'bg-green-100 text-green-700 border-green-300'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                    : 'bg-gray-100 text-gray-600 hover:bg-accent-100 border-gray-300'
                 } border`}
               >
                 완료
@@ -214,10 +214,10 @@ const QuestionFiltersComponent = ({
                       filters.isAnswered === false ? undefined : false,
                   })
                 }
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                   filters.isAnswered === false
                     ? 'bg-orange-100 text-orange-700 border-orange-300'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                    : 'bg-gray-100 text-gray-600 hover:bg-orange-100 border-gray-300'
                 } border`}
               >
                 대기
@@ -239,9 +239,9 @@ const QuestionFiltersComponent = ({
                 <button
                   key={visibility.key}
                   onClick={() => handleVisibilityToggle(visibility.key)}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                     filters.visibility?.includes(visibility.key)
-                      ? 'bg-blue-100 text-blue-700 border-blue-300'
+                      ? 'bg-accent-100 text-gray-700 border-accent-300'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
                   } border`}
                 >
@@ -251,15 +251,15 @@ const QuestionFiltersComponent = ({
             </div>
           </div>
 
-          {/* 기간 필터 - 태그 형태 */}
+          {/* 기간 필터 */}
           <div>
             <h4 className="text-sm font-medium text-gray-700 mb-2">기간</h4>
             <div className="flex flex-wrap gap-2 mb-3">
               <button
                 onClick={() => handlePeriodToggle('전체')}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                   selectedPeriod === '전체'
-                    ? 'bg-blue-100 text-blue-700 border-blue-300'
+                    ? 'bg-accent-100 text-gray-700 border-accent-300'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
                 } border`}
               >
@@ -271,9 +271,9 @@ const QuestionFiltersComponent = ({
                   <button
                     key={preset.label}
                     onClick={() => handlePeriodToggle(preset.label)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                       selectedPeriod === preset.label
-                        ? 'bg-blue-100 text-blue-700 border-blue-300'
+                        ? 'bg-accent-100 text-gray-700 border-accent-300'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
                     } border`}
                   >
@@ -282,9 +282,9 @@ const QuestionFiltersComponent = ({
                 ))}
               <button
                 onClick={() => handlePeriodToggle('임의 기간')}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                   selectedPeriod === '임의 기간'
-                    ? 'bg-blue-100 text-blue-700 border-blue-300'
+                    ? 'bg-accent-100 text-gray-700 border-accent-300'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
                 } border`}
               >
@@ -306,7 +306,7 @@ const QuestionFiltersComponent = ({
               onChange={(e) =>
                 onFiltersChange({ dateFrom: e.target.value || undefined })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full px-3 py-2 border border-accent-300 rounded-lg hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
             />
           </div>
           <div>
@@ -319,7 +319,7 @@ const QuestionFiltersComponent = ({
               onChange={(e) =>
                 onFiltersChange({ dateTo: e.target.value || undefined })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full px-3 py-2 border border-accent-300 rounded-lg hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
             />
           </div>
         </div>
@@ -341,7 +341,7 @@ const QuestionFiltersComponent = ({
                     <button
                       key={keyword.id}
                       onClick={() => handleKeywordToggle(keyword.name)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors hover:cursor-pointer hover:border-accent-100 ${
                         filters.keywords?.includes(keyword.name)
                           ? 'bg-green-100 text-green-700 border-green-300'
                           : 'bg-gray-100 text-gray-600 hover:bg-green-50 border-gray-300'
@@ -371,7 +371,7 @@ const QuestionFiltersComponent = ({
                     <button
                       key={keyword.id}
                       onClick={() => handleKeywordToggle(keyword.name)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors hover:cursor-pointer hover:border-accent-100 ${
                         filters.keywords?.includes(keyword.name)
                           ? 'bg-purple-100 text-purple-700 border-purple-300'
                           : 'bg-gray-100 text-gray-600 hover:bg-purple-50 border-gray-300'
@@ -401,7 +401,7 @@ const QuestionFiltersComponent = ({
                     <button
                       key={keyword.id}
                       onClick={() => handleKeywordToggle(keyword.name)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors hover:cursor-pointer hover:border-accent-100 ${
                         filters.keywords?.includes(keyword.name)
                           ? 'bg-blue-100 text-blue-700 border-blue-300'
                           : 'bg-gray-100 text-gray-600 hover:bg-blue-50 border-gray-300'

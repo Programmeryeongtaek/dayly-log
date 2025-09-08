@@ -188,7 +188,7 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleShare}
-                  className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="text-gray-400 hover:text-accent-400 hover:bg-accent-50 rounded-lg transition-colors hover:cursor-pointer"
                   title="공유"
                 >
                   <Share2 className="w-5 h-5" />
@@ -197,14 +197,14 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
                   <div className="flex items-center gap-3 ">
                     <button
                       onClick={handleEdit}
-                      className="flex items-center gap-1 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="flex items-center gap-1 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors hover:cursor-pointer"
                     >
                       <Edit className="w-5 h-5" />
                     </button>
                     <button
                       onClick={handleDelete}
                       disabled={isDeletingQuestion}
-                      className="flex items-center gap-1 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 hover:cursor-pointer"
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>

@@ -223,7 +223,7 @@ const QuestionsPage = () => {
               </Link>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-1 bg-accent-500 text-white p-2 rounded-lg hover:bg-accent-600 transition-colors"
+                className="flex items-center gap-1 bg-accent-500 text-white p-2 rounded-lg hover:bg-accent-600 transition-colors hover:cursor-pointer"
               >
                 <Plus className="w-5 h-5" />
                 추가
@@ -322,7 +322,7 @@ const QuestionsPage = () => {
               <div className="space-y-3">
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="w-full flex items-center gap-2 p-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                  className="w-full flex items-center gap-2 p-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors hover:cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   질문 작성
@@ -361,12 +361,15 @@ const QuestionsPage = () => {
 
       {/* 질문 생성 모달 */}
       <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
-        <Modal.Header className="border-b-2 border-accent-400">
+        <Modal.Header className="border-b-2 border-accent-400 pb-4">
           <div className="flex items-center justify-between">
             <Modal.Title>
               <p className="text-accent-400">질문 작성</p>
             </Modal.Title>
-            <X className="w-5 h-5" onClick={() => setShowCreateModal(false)} />
+            <X
+              className="w-5 h-5 hover:cursor-pointer"
+              onClick={() => setShowCreateModal(false)}
+            />
           </div>
         </Modal.Header>
 
@@ -389,7 +392,7 @@ const QuestionsPage = () => {
           }}
           size="lg"
         >
-          <Modal.Header className="border-b-2 border-accent-500">
+          <Modal.Header className="border-b-2 border-accent-400 pb-4">
             <Modal.Title className="flex items-center justify-between">
               <p className="text-accent-400">편집</p>
               <button
@@ -398,7 +401,7 @@ const QuestionsPage = () => {
                   setEditingQuestion(null);
                 }}
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 cursor-pointer" />
               </button>
             </Modal.Title>
           </Modal.Header>

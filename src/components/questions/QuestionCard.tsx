@@ -74,14 +74,14 @@ const QuestionCard = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handleEdit}
-              className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+              className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors hover:cursor-pointer"
               title="편집"
             >
               <Edit className="w-4 h-4" />
             </button>
             <button
               onClick={handleDelete}
-              className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors hover:cursor-pointer"
               title="삭제"
             >
               <Trash2 className="w-4 h-4" />

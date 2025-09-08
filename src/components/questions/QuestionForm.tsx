@@ -88,7 +88,7 @@ const QuestionForm = ({
               key={category.id}
               type="button"
               onClick={() => handleCategorySelect(category.id)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border hover:cursor-pointer ${
                 formData.category_id === category.id
                   ? 'bg-accent-100 text-black-700 border-accent-500'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
@@ -165,7 +165,7 @@ const QuestionForm = ({
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, date: e.target.value }))
           }
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
+          className="w-full cursor-pointer px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
           required
         />
       </div>
@@ -191,7 +191,7 @@ const QuestionForm = ({
           <button
             type="button"
             onClick={handleAddKeyword}
-            className="px-4 py-2 bg-accent-500 text-white rounded-md hover:bg-accent-600"
+            className="px-4 py-2 bg-accent-500 text-white rounded-md hover:bg-accent-600 hover:cursor-pointer"
           >
             추가
           </button>
@@ -207,7 +207,7 @@ const QuestionForm = ({
                   key={keyword.id}
                   type="button"
                   onClick={() => handleKeywordClick(keyword.name)}
-                  className={`px-3 py-1 rounded-full text-sm ${
+                  className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
                     selectedKeywords.includes(keyword.name)
                       ? 'bg-accent-200 text-black-800'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -236,7 +236,7 @@ const QuestionForm = ({
                     onClick={() => handleRemoveKeyword(keyword)}
                     className="text-blue-600 hover:text-black-800"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-3 h-3 cursor-pointer" />
                   </button>
                 </span>
               ))}
@@ -252,7 +252,7 @@ const QuestionForm = ({
         </label>
 
         <div className="space-y-2">
-          <label className="flex items-center">
+          <label className="flex items-center cursor-pointer">
             <input
               type="radio"
               name="visibility"
@@ -269,7 +269,7 @@ const QuestionForm = ({
             <span className="ml-2 text-sm text-gray-600">🌍 전체</span>
           </label>
 
-          <label className="flex items-center">
+          <label className="flex items-center cursor-pointer">
             <input
               type="radio"
               name="visibility"
@@ -286,7 +286,7 @@ const QuestionForm = ({
             <span className="ml-2 text-sm text-gray-600">👤 이웃</span>
           </label>
 
-          <label className="flex items-center">
+          <label className="flex items-center cursor-pointer">
             <input
               type="radio"
               name="visibility"
@@ -310,7 +310,7 @@ const QuestionForm = ({
         <button
           type="submit"
           disabled={isLoading}
-          className="flex-1 bg-accent-500 text-white py-2 px-4 rounded-md hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 bg-accent-500 text-white py-2 px-4 rounded-md hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {isLoading ? '저장 중...' : '저장'}
         </button>
@@ -319,7 +319,7 @@ const QuestionForm = ({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 cursor-pointer"
           >
             취소
           </button>
