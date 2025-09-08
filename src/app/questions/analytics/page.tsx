@@ -14,8 +14,8 @@ import {
   Calendar,
   Hash,
   MessageCircle,
+  Pencil,
   Target,
-  TrendingUp,
   X,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -536,7 +536,7 @@ const QuestionsAnalyticsPage = () => {
           {/* 답변률 분석 */}
           <div className="bg-white rounded-lg border p-6">
             <div className="flex items-center gap-3 mb-4">
-              <TrendingUp className="w-5 h-5 text-green-600" />
+              <Pencil className="w-5 h-5 text-green-600" />
               <h2 className="text-lg font-semibold text-gray-900">답변 현황</h2>
             </div>
             <div className="space-y-3">
@@ -585,11 +585,11 @@ const QuestionsAnalyticsPage = () => {
                   인기 키워드
                 </h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-3">
                 {keywordAnalysis.map((item, index) => (
                   <div
                     key={item.keyword.id}
-                    className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
                     onClick={() =>
                       handleShowDetail(
                         item.questions,
@@ -597,33 +597,24 @@ const QuestionsAnalyticsPage = () => {
                       )
                     }
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span
-                        className="px-2 py-1 rounded-full text-sm font-medium"
-                        style={{
-                          backgroundColor: `${item.keyword.color}20`,
-                          color: item.keyword.color,
-                        }}
-                      >
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-bold text-gray-400 w-6">
+                        {index + 1}
+                      </span>
+                      <span className="px-2 py-1 rounded-full text-sm font-medium bg-accent-200">
                         #{item.keyword.name}
                       </span>
-                      <span className="text-sm text-gray-500">
-                        #{index + 1}
-                      </span>
                     </div>
-                    <div className="text-lg font-semibold text-gray-900">
-                      {item.count}회 사용
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      클릭하여 질문 보기
-                    </div>
+                    <span className="text-sm font-semibold text-gray-700">
+                      {item.count}회
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* 월별 활동 */}
+          {/* 월별 활동 TODO: 나중에는 전체보기 버튼을 만들어서, 년도별로 갯수를 나타내도록 만들기*/}
           {monthlyAnalysis.length > 0 && (
             <div className="bg-white rounded-lg border p-6 md:col-span-2 lg:col-span-3">
               <div className="flex items-center gap-3 mb-4">
