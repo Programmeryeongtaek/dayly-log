@@ -172,18 +172,26 @@ const QuestionsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 헤더 */}
-      <div className="bg-white border-b">
+      <div className="bg-white border-b-2 border-accent-200">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-gray-900">질문</h1>
-
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-              추가
-            </button>
+            <div className="flex gap-2">
+              <Link
+                href="/questions/analytics"
+                className="flex items-center gap-1 p-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
+              >
+                <TrendingUp className="w-4 h-4" />
+                분석
+              </Link>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="flex items-center gap-1 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                <Plus className="w-5 h-5" />
+                추가
+              </button>
+            </div>
           </div>
 
           {/* 통계 요약 */}
@@ -272,7 +280,7 @@ const QuestionsPage = () => {
             <QuestionStatistics questions={questions} />
 
             {/* 빠른 액션 */}
-            <div className="bg-white rounded-lg border p-4">
+            <div className="bg-white mobile:hidden tablet:block rounded-lg border p-4">
               <h3 className="font-semibold text-gray-800 mb-4">빠른 액션</h3>
               <div className="space-y-3">
                 <button

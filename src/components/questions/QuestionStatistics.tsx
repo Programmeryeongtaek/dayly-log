@@ -61,11 +61,11 @@ const QuestionStatistics = ({ questions }: QuestionStatisticsProps) => {
   }, [questions]);
 
   return (
-    <div className="bg-white rounded-lg border p-6">
+    <div className="bg-white rounded-lg tablet:block mobile:hidden border p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-6">질문 통계</h2>
 
       {/* 주요 지표 */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="text-center p-4 bg-blue-50 rounded-lg">
           <MessageCircle className="w-6 h-6 text-blue-600 mx-auto mb-2" />
           <div className="text-2xl font-bold text-blue-600">
