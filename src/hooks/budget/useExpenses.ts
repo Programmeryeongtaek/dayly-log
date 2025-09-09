@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { CategoryTotal, Expense, ExpenseFormData, ExpenseStatistics } from '@/types/expenses';
+import { CategoryTotal, BudgetTransaction, BudgetFormData, BudgetStatistics } from '@/types/budget';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -15,7 +15,7 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
   // 지출 데이터 조회
   const { data: expenses = [], isLoading, error } = useQuery({
     queryKey: ['expenses', userId, date, month],
-    queryFn: async (): Promise<Expense[]> => {
+    queryFn: async (): Promise<BudgetTransaction[]> => {
       let query = supabase
         .from('expenses')
         .select(`
@@ -50,7 +50,7 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
 
   // 지출 추가
   const addExpenseMutation = useMutation({
-    mutationFn: async (newExpense: ExpenseFormData & { user_id: string; category_id: string }) => {
+    mutationFn: async (newExpense: BudgetFormData & { user_id: string; category_id: string }) => {
       const { data, error } = await supabase
         .from('expenses')
         .insert([newExpense])
@@ -85,7 +85,7 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
 
   // 지출 수정
   const updateExpenseMutation = useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<ExpenseFormData> & { id: string}) => {
+    mutationFn: async ({ id, ...updates }: Partial<BudgetFormData> & { id: string }) => {
       const { data, error } = await supabase
         .from('expenses')
         .update(updates)
@@ -105,49 +105,72 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
   });
 
   // 통계 계산
-  const statistics: ExpenseStatistics = useMemo(() => {
-    let fixed = 0;
-    let variable = 0;
-    let fixedCount = 0;
-    let variableCount = 0;
+  const statistics: BudgetStatistics = useMemo(() => {
+    const stats = {
+      income: { fixed: 0, variable: 0, total: 0, count: 0 },
+      expense: { fixed: 0, variable: 0, total: 0, count: 0 },
+      net: 0,
+      totalTransactions: expenses.length,
+    };
 
     expenses.forEach(expense => {
-      if (expense.category?.type === 'fixed') {
-        fixed += expense.amount;
-        fixedCount++;
-      } else {
-        variable += expense.amount;
-        variableCount++;
+      const amount = expense.amount;
+      const categoryType = expense.category?.type;
+
+      if (expense.type === 'expense') {
+        stats.expense.count++;
+        if (categoryType === 'expense_fixed') {
+          stats.expense.fixed += amount;
+        } else {
+          stats.expense.variable += amount;
+        }
+      } else if (expense.type === 'income') {
+        stats.income.count++;
+        if (categoryType === 'income_fixed') {
+          stats.income.fixed += amount;
+        } else {
+          stats.income.variable += amount;
+        }
       }
     });
 
-    return {
-      fixed,
-      variable,
-      total: fixed + variable,
-      count: expenses.length,
-      fixedCount,
-      variableCount,
-    };
+    stats.income.total = stats.income.fixed + stats.income.variable;
+    stats.expense.total = stats.expense.fixed + stats.expense.variable;
+    stats.net = stats.income.total - stats.expense.total;
+
+    return stats;
   }, [expenses]);
 
   // 카테고리별 집계
   const categoryTotals: CategoryTotal[] = useMemo(() => {
-    const totalsMap = expenses.reduce((acc, expense) => {
+    const totalsMap: Record<string, CategoryTotal> = {};
+
+    expenses.forEach(expense => {
       const categoryName = expense.category?.name || 'Unknown';
-      const existing = acc[categoryName];
+      const categoryType = expense.category?.type || 'expense_variable';
+      const amount = expense.amount;
 
-      acc[categoryName] = {
-        name: categoryName,
-        amount: (existing?.amount || 0) + expense.amount,
-        type: expense.category?.type || 'variable',
-      };
+      if (!totalsMap[categoryName]) {
+        totalsMap[categoryName] = {
+          name: categoryName,
+          amount: 0,
+          type: categoryType,
+          count: 0,
+          percentage: 0,
+        };
+      }
 
-      return acc;
-    }, {} as Record<string, CategoryTotal>);
+      totalsMap[categoryName].amount += amount;
+      totalsMap[categoryName].count++;
+    });
 
-    return Object.values(totalsMap);
-  }, [expenses]);
+    const totalAmount = statistics.income.total + statistics.expense.total;
+    
+    return Object.values(totalsMap).map(category => ({
+      ...category,
+      percentage: totalAmount > 0 ? (category.amount / totalAmount) * 100 : 0,
+    }));
+  }, [expenses, statistics]);
 
   return {
     expenses,
