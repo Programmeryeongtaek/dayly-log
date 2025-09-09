@@ -17,6 +17,11 @@ export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // preview 페이지에서는 헤더를 렌더링하지 않음
+  if (pathname === '/preview') {
+    return null;
+  }
+
   // 네비게이션 메뉴 항목
   const navigationItems = [
     {
