@@ -81,6 +81,8 @@ export default function Header() {
     try {
       logout();
       setIsUserMenuOpen(false);
+      // 로그아웃 후 즉시 메인화면으로 이동
+      window.location.href = '/';
     } catch (error) {
       console.error('로그아웃 실패:', error);
     }
