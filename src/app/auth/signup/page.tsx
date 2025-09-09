@@ -160,7 +160,7 @@ export default function SignupPage() {
                       checkEmail(email.trim());
                     }
                   }}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
+                  className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
                     errors.email ||
                     (emailCheckResult && !emailCheckResult.available)
                       ? 'border-red-300 focus:border-red-500'
@@ -206,7 +206,7 @@ export default function SignupPage() {
                   type="password"
                   autoComplete="new-password"
                   {...register('password')}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
+                  className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
                     errors.password
                       ? 'border-red-300 focus:border-red-500'
                       : 'border-gray-300 focus:border-accent-500'
@@ -232,7 +232,7 @@ export default function SignupPage() {
                   type="text"
                   autoComplete="name"
                   {...register('name')}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
+                  className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
                     errors.name
                       ? 'border-red-300 focus:border-red-500'
                       : 'border-gray-300 focus:border-accent-500'
@@ -258,12 +258,12 @@ export default function SignupPage() {
                     id="nickname"
                     type="text"
                     {...register('nickname')}
-                    className={`mt-1 flex-1 px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
+                    className={`mt-1 block w-2/3 px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
                       errors.nickname
                         ? 'border-red-300 focus:border-red-500'
                         : 'border-gray-300 focus:border-accent-500'
                     }`}
-                    placeholder="다른 사용자에게 표시될 이름"
+                    placeholder="닉네임 입력"
                   />
                   <button
                     type="button"
@@ -274,7 +274,7 @@ export default function SignupPage() {
                       }
                     }}
                     disabled={isCheckingNickname || !watch('nickname')?.trim()}
-                    className="mt-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                    className="mt-1 px-3 py-2 w-1/3 hover:cursor-pointer bg-accent-200 text-black hover:bg-accent-300 text-sm hover:font-bold rounded-lg disabled:opacity-50 transition-colors"
                   >
                     {isCheckingNickname ? '확인중...' : '중복확인'}
                   </button>
@@ -310,7 +310,7 @@ export default function SignupPage() {
                   (emailCheckResult && !emailCheckResult.available) ||
                   (nicknameCheckResult && !nicknameCheckResult.available)
                 }
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="hover:cursor-pointer w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSigningUp ? '가입 중...' : '회원가입'}
               </button>
