@@ -316,13 +316,21 @@ export default function SignupPage() {
               </button>
             </div>
 
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <Link
-                href="/auth/login"
+                href="/auth/signup"
                 className="text-accent-600 hover:text-accent-500 text-sm font-medium transition-colors"
               >
-                이미 계정이 있으신가요? 로그인
+                계정이 없으신가요? 회원가입
               </Link>
+              <div>
+                <Link
+                  href="/"
+                  className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+                >
+                  메인 화면으로 돌아가기
+                </Link>
+              </div>
             </div>
           </form>
         </div>

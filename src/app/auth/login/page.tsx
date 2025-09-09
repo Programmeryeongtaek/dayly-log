@@ -5,14 +5,9 @@ import { useAuth } from '@/hooks/auth';
 import { LoginFormValues, loginSchema } from '@/lib/validations/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirect') || '/dashboard';
-
   const { login, isLoggingIn, loginError } = useAuth();
 
   const {
@@ -122,6 +117,14 @@ export default function LoginPage() {
               >
                 계정이 없으신가요? 회원가입
               </Link>
+              <div>
+                <Link
+                  href="/"
+                  className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+                >
+                  메인 화면으로 돌아가기
+                </Link>
+              </div>
             </div>
           </form>
         </div>
