@@ -59,7 +59,15 @@ export const useAuth = () => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // 로그인 실패 에러 메시지
+        if (error.message.includes('Invalid login credentials') ||
+            error.message.includes('Email not confirmed') ||
+            error.message.includes('Invalid email or password')) {
+          throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');
+          }
+        throw error;
+      } 
       return data;
     },
     onSuccess: () => {

@@ -25,13 +25,7 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    try {
-      await login(data);
-      router.push(redirectUrl);
-    } catch (error) {
-      // 에러는 useAuth에서 처리됨
-      console.error('로그인 실패:', error);
-    }
+    login(data);
   };
 
   return (
@@ -52,16 +46,6 @@ export default function LoginPage() {
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            {/* 전역 에러 표시 */}
-            {loginError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-sm text-red-600">
-                  {loginError.message ||
-                    '로그인에 실패했습니다. 다시 시도해주세요.'}
-                </p>
-              </div>
-            )}
-
             <div className="space-y-4">
               <div>
                 <label
@@ -116,15 +100,20 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoggingIn || !isValid}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLoggingIn ? '로그인 중...' : '로그인'}
-              </button>
-            </div>
+            {/* 전역 에러 표시 */}
+            {loginError && (
+              <p className="text-sm text-red-600">
+                이메일 또는 비밀번호가 올바르지 않습니다.
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={isLoggingIn || !isValid}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoggingIn ? '로그인 중...' : '로그인'}
+            </button>
 
             <div className="text-center space-y-2">
               <Link
