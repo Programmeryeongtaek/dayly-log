@@ -69,27 +69,30 @@ export const useAuth = () => {
 
   // 회원가입
   const signupMutation = useMutation({
-    mutationFn: async ({ email, password, name, nickname }: SignupFormData) => {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-            nickname: nickname || null,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/confirm`,
-        }
-      });
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      // 회원가입 후 즉시 세션 갱신
-      queryClient.invalidateQueries({ queryKey: ['auth'] });
-    },
-  });
+  mutationFn: async ({ email, password, name, nickname }: SignupFormData) => {
+    // 회원가입만 진행 (Supabase가 이메일 중복을 처리함)
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name, nickname: nickname?.trim() || null },
+        emailRedirectTo: `${window.location.origin}/auth/confirm`,
+      }
+    });
+    
+    if (error) {
+      if (error.message.includes('User already registered') || 
+          error.message.includes('already been registered')) {
+        throw new Error('이미 가입된 이메일입니다.');
+      }
+      throw error;
+    }
+    return data;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['auth'] });
+  },
+});
 
   // 로그아웃
   const logoutMutation = useMutation({
@@ -122,10 +125,46 @@ export const useAuth = () => {
     },
   });
 
+  const checkEmailMutation = useMutation({
+    mutationFn: async (email: string) => {
+      if (!email?.trim()) return { available: true };
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', email.trim())
+        .single();
+
+      // 데이터가 있으면 중복, 없으면 사용 가능
+      return { available: !data };
+    },
+  });
+
+  const checkNicknameMutation = useMutation({
+    mutationFn: async (nickname: string) => {
+      if (!nickname?.trim()) return { available: true };
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('nickname')
+        .eq('nickname', nickname.trim())
+        .single();
+
+      // 데이터가 있으면 중복, 없으면 사용 가능
+      return { available: !data };
+    },
+  });
+
+  // 닉네임 체크 결과 초기화 함수
+  const resetNicknameCheck = () => {
+    queryClient.setQueryData(['nickname-check'], null);
+    checkNicknameMutation.reset();
+  };
+
   // 세션 변경 감지
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event) => {
         if (event === 'SIGNED_IN') {
           // 로그인 시 프로필 쿼리만 갱신
           queryClient.invalidateQueries({ queryKey: ['auth', 'profile'] });
@@ -145,23 +184,32 @@ export const useAuth = () => {
     session,
     isLoading: (isSessionLoading || isProfileLoading) && !isInitialized,
     isAuthenticated: !!session?.user,
+    emailCheckResult: checkEmailMutation.data,
+    nicknameCheckResult: checkNicknameMutation.data,
+    resetNicknameCheck,
     
     // 액션
     login: loginMutation.mutate,
     signup: signupMutation.mutate,
     logout: logoutMutation.mutate,
     updateProfile: updateProfileMutation.mutate,
+    checkEmail: checkEmailMutation.mutate,
+    checkNickname: checkNicknameMutation.mutate,
     
     // 로딩 상태
     isLoggingIn: loginMutation.isPending,
     isSigningUp: signupMutation.isPending,
     isLoggingOut: logoutMutation.isPending,
     isUpdatingProfile: updateProfileMutation.isPending,
-    
+    isCheckingEmail: checkEmailMutation.isPending,
+    isCheckingNickname: checkNicknameMutation.isPending,
+
     // 에러
     loginError: loginMutation.error,
     signupError: signupMutation.error,
     logoutError: logoutMutation.error,
     updateProfileError: updateProfileMutation.error,
+    emailCheckError: checkEmailMutation.error,
+    nicknameCheckError: checkNicknameMutation.error,
   };
 };
