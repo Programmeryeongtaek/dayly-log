@@ -1,0 +1,72 @@
+name: CI - Code Quality Check
+
+on:
+  push:
+    branches:
+      - 'feat/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+
+      # 동시 실행 제한 (같은 브랜치에서 여러 워크플로우 실행 방지)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 전체 히스토리 가져오기 (린트 캐시 최적화)
+
+      # 2. pnpm 설정
+      - name: Setup pnpm
+        uses: pnpm.action-setup@v4
+        with:
+          version: 9.2.0
+
+      # 3. Node.js 설정
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      # 4. 의존성 설치
+      - name: Install dependencies
+        run: pnpm install
+
+      # 5. 코드 포맷팅 체크
+      - name: Check code formatting
+        run: pnpm run format:check
+
+      # 6. ESLint 검사
+      - name: Lint code
+        run: pnpm run lint
+
+      # 7. TypeScript 타입 체크
+      - name: Type check
+        run: pnpm run type-check
+
+      # 8. 빌드 테스트 (환경변수 없이도 빌드 가능한지 확인)
+      - name: Test build
+        run: pnpm run build
+        env:
+          # 빌드 테스트용 더미 환경변수
+          NEXT_PUBLIC_SUPABASE_URL: 'https://dummy.supabase.co'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'dummy-key-for-build-test'
+
+      # 9. 성공 시 체크마크 출력
+      - name: All checks passed
+        run: echo "모든 코드 품질 검사를 통과했습니다!"
