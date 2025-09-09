@@ -170,33 +170,64 @@ const DashboardPage = () => {
     <AuthGuard>
       <div className="max-w-7xl mx-auto p-4 space-y-6">
         {/* 환영 메시지 */}
-        <div className="bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-xl p-6">
-          <div className="flex flex-col justify-between">
-            <div>
-              <h1 className="text-2xl font-bold mb-2">
-                안녕하세요, {profile?.name || profile?.nickname || '사용자'}님!
-              </h1>
-              <p className="text-accent-100 text-lg">
-                {format(currentDate, 'yyyy년 M월', { locale: ko })} 현황
-              </p>
+        <div className="bg-gradient-to-r flex flex-col gap-1 from-accent-600 to-accent-500 text-white rounded-xl p-6">
+          <h1 className="text-2xl font-bold mb-2">
+            안녕하세요, {profile?.name || profile?.nickname || '사용자'}님!
+          </h1>
+          <p className="text-accent-100 text-lg">
+            {format(currentDate, 'yyyy년 M월', { locale: ko })} 현황
+          </p>
+        </div>
+
+        {/* 빠른 액션 */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link
+            href="/budget"
+            className="flex flex-col items-center p-4 bg-accent-100 rounded-lg hover:bg-accent-200 transition-colors group"
+          >
+            <div className="p-3 bg-accent-500 rounded-full group-hover:bg-accent-600 transition-colors">
+              <Plus className="w-6 h-6 text-white" />
             </div>
-            <div className="mt-4 flex gap-3">
-              <Link
-                href="/budget"
-                className="inline-flex items-center px-4 py-2 bg-white text-accent-600 rounded-lg hover:bg-accent-50 transition-colors font-medium"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                내역 추가
-              </Link>
-              <Link
-                href="/goals"
-                className="inline-flex items-center px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors font-medium"
-              >
-                <Target className="w-4 h-4 mr-2" />
-                목표 관리
-              </Link>
+            <span className="mt-2 text-sm font-medium text-gray-700">
+              가계부 내역
+            </span>
+          </Link>
+
+          <Link
+            href="/goals/new"
+            className="flex flex-col items-center p-4 bg-green-100 rounded-lg hover:bg-green-200 transition-colors group"
+          >
+            <div className="p-3 bg-green-500 rounded-full group-hover:bg-green-600 transition-colors">
+              <Target className="w-6 h-6 text-white" />
             </div>
-          </div>
+            <span className="mt-2 text-sm font-medium text-gray-700">
+              목표 설정
+            </span>
+          </Link>
+
+          <Link
+            href="/questions/new"
+            className="flex flex-col items-center p-4 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors group"
+          >
+            <div className="p-3 bg-blue-500 rounded-full group-hover:bg-blue-600 transition-colors">
+              <MessageSquare className="w-6 h-6 text-white" />
+            </div>
+            <span className="mt-2 text-sm font-medium text-gray-700">
+              성찰 질문
+            </span>
+          </Link>
+
+          <Link
+            href="/reflections/new"
+            className="flex flex-col items-center p-4 bg-purple-100 rounded-lg hover:bg-purple-200 transition-colors group"
+          >
+            <div className="p-3 bg-purple-500 rounded-full group-hover:bg-purple-600 transition-colors">
+              <Calendar className="w-6 h-6 text-white" />
+            </div>
+            <span className="mt-2 text-sm font-medium text-gray-700">
+              일상 회고
+            </span>
+          </Link>
         </div>
 
         {/* 주요 통계 카드 */}
@@ -562,62 +593,6 @@ const DashboardPage = () => {
 
           {/* 회고 위젯 */}
           <DashboardReflectionWidget />
-        </div>
-
-        {/* 빠른 액션 버튼들 */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            빠른 액션
-          </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link
-              href="/budget"
-              className="flex flex-col items-center p-4 bg-accent-50 rounded-lg hover:bg-accent-100 transition-colors group"
-            >
-              <div className="p-3 bg-accent-500 rounded-full group-hover:bg-accent-600 transition-colors">
-                <Plus className="w-6 h-6 text-white" />
-              </div>
-              <span className="mt-2 text-sm font-medium text-gray-700">
-                내역 추가
-              </span>
-            </Link>
-
-            <Link
-              href="/goals/new"
-              className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group"
-            >
-              <div className="p-3 bg-green-500 rounded-full group-hover:bg-green-600 transition-colors">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <span className="mt-2 text-sm font-medium text-gray-700">
-                목표 설정
-              </span>
-            </Link>
-
-            <Link
-              href="/questions/new"
-              className="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
-            >
-              <div className="p-3 bg-blue-500 rounded-full group-hover:bg-blue-600 transition-colors">
-                <MessageSquare className="w-6 h-6 text-white" />
-              </div>
-              <span className="mt-2 text-sm font-medium text-gray-700">
-                성찰 질문
-              </span>
-            </Link>
-
-            <Link
-              href="/reflections/new"
-              className="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors group"
-            >
-              <div className="p-3 bg-purple-500 rounded-full group-hover:bg-purple-600 transition-colors">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <span className="mt-2 text-sm font-medium text-gray-700">
-                일상 회고
-              </span>
-            </Link>
-          </div>
         </div>
       </div>
     </AuthGuard>
