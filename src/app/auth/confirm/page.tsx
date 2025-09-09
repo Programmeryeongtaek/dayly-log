@@ -2,7 +2,7 @@
 
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 type ConfirmationStatus = 'loading' | 'success' | 'error' | 'already_confirmed';
