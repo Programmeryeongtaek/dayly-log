@@ -1,8 +1,12 @@
 export interface BudgetSummary {
   user_id: string;
   month: string;
-  type: 'income' | 'expense';
-  category_type: 'income_fixed' | 'income_variable' | 'expense_fixed' | 'expense_variable';
+  type: "income" | "expense";
+  category_type:
+    | "income_fixed"
+    | "income_variable"
+    | "expense_fixed"
+    | "expense_variable";
   category_name: string;
   total_amount: number;
   transaction_count: number;
@@ -28,7 +32,7 @@ export interface BudgetStatistics {
     variable: number;
     total: number;
     count: number;
-  },
+  };
   expense: {
     fixed: number;
     variable: number;
@@ -42,7 +46,11 @@ export interface BudgetStatistics {
 export interface CategoryTotal {
   name: string;
   amount: number;
-  type: 'income_fixed' | 'income_variable' | 'expense_fixed' | 'expense_variable';
+  type:
+    | "income_fixed"
+    | "income_variable"
+    | "expense_fixed"
+    | "expense_variable";
   count: number;
   percentage: number;
 }

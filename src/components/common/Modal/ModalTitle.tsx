@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { HTMLAttributes, ReactNode } from 'react';
+import { HTMLAttributes, ReactNode } from "react";
 
 interface ModalTitleProps
-  extends Omit<HTMLAttributes<HTMLHeadingElement>, 'children'> {
+  extends Omit<HTMLAttributes<HTMLHeadingElement>, "children"> {
   children: ReactNode;
   id?: string;
 }
 
 const ModalTitle = ({
   children,
-  className = '',
-  id = 'modal-title',
+  className = "",
+  id = "modal-title",
   ...rest
 }: ModalTitleProps) => (
   <h2

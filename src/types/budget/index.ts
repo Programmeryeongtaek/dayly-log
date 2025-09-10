@@ -1,6 +1,26 @@
-import { BudgetSummary, DailyBudgetSummary, BudgetStatistics, CategoryTotal } from './summary';
-import { BudgetItem, NewBudgetItemState, BudgetCalendarProps, BudgetChartProps, BudgetFormProps, BudgetListProps, ChartData } from './ui';
-import { Profile, Category, BudgetTransaction, CategoryType, TransactionType, CategorySubType } from './database';
+import {
+  BudgetSummary,
+  DailyBudgetSummary,
+  BudgetStatistics,
+  CategoryTotal,
+} from "./summary";
+import {
+  BudgetItem,
+  NewBudgetItemState,
+  BudgetCalendarProps,
+  BudgetChartProps,
+  BudgetFormProps,
+  BudgetListProps,
+  ChartData,
+} from "./ui";
+import {
+  Profile,
+  Category,
+  BudgetTransaction,
+  CategoryType,
+  TransactionType,
+  CategorySubType,
+} from "./database";
 
 export type {
   // Database types
@@ -24,7 +44,7 @@ export type {
   BudgetSummary,
   DailyBudgetSummary,
   BudgetStatistics,
-  CategoryTotal
+  CategoryTotal,
 };
 
 // Form validation types
@@ -44,21 +64,30 @@ export interface CategoryFormData {
 }
 
 // Utility types
-export type BudgetStatus = 'active' | 'deleted';
+export type BudgetStatus = "active" | "deleted";
 
 // Helper functions for type checking
 export const isCategoryType = (type: string): type is CategoryType => {
-  return ['income_fixed', 'income_variable', 'expense_fixed', 'expense_variable'].includes(type);
+  return [
+    "income_fixed",
+    "income_variable",
+    "expense_fixed",
+    "expense_variable",
+  ].includes(type);
 };
 
 export const isTransactionType = (type: string): type is TransactionType => {
-  return ['income', 'expense'].includes(type);
+  return ["income", "expense"].includes(type);
 };
 
-export const getCategorySubType = (categoryType: CategoryType): CategorySubType => {
-  return categoryType.includes('fixed') ? 'fixed' : 'variable';
+export const getCategorySubType = (
+  categoryType: CategoryType,
+): CategorySubType => {
+  return categoryType.includes("fixed") ? "fixed" : "variable";
 };
 
-export const getTransactionType = (categoryType: CategoryType): TransactionType => {
-  return categoryType.startsWith('income') ? 'income' : 'expense';
+export const getTransactionType = (
+  categoryType: CategoryType,
+): TransactionType => {
+  return categoryType.startsWith("income") ? "income" : "expense";
 };

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Target,
@@ -12,9 +12,9 @@ import {
   User,
   Settings,
   LogOut,
-} from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { useAuth } from '@/hooks/auth';
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/hooks/auth";
 
 export default function Header() {
   const pathname = usePathname();
@@ -34,46 +34,46 @@ export default function Header() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // preview 페이지에서는 헤더를 렌더링하지 않음
-  if (pathname === '/preview' || pathname?.startsWith('/auth/')) {
+  if (pathname === "/preview" || pathname?.startsWith("/auth/")) {
     return null;
   }
 
   // 네비게이션 메뉴 항목
   const navigationItems = [
     {
-      name: '가계부',
-      href: '/budget',
+      name: "가계부",
+      href: "/budget",
       icon: BarChart3,
-      description: '지출 관리',
+      description: "지출 관리",
     },
     {
-      name: '목표',
-      href: '/goals',
+      name: "목표",
+      href: "/goals",
       icon: Target,
-      description: '목표 설정',
+      description: "목표 설정",
     },
     {
-      name: '질문',
-      href: '/questions',
+      name: "질문",
+      href: "/questions",
       icon: MessageSquare,
-      description: '성찰 질문',
+      description: "성찰 질문",
     },
     {
-      name: '회고',
-      href: '/reflections',
+      name: "회고",
+      href: "/reflections",
       icon: BookOpen,
-      description: '일상 회고',
+      description: "일상 회고",
     },
   ];
 
   // 현재 경로가 활성 상태인지 확인
   const isActiveRoute = (href: string) => {
-    return pathname === href || pathname?.startsWith(href + '/');
+    return pathname === href || pathname?.startsWith(href + "/");
   };
 
   // 로그아웃 처리
@@ -81,14 +81,16 @@ export default function Header() {
     try {
       logout();
       setIsUserMenuOpen(false);
+      // 로그아웃 후 즉시 메인화면으로 이동
+      window.location.href = "/";
     } catch (error) {
-      console.error('로그아웃 실패:', error);
+      console.error("로그아웃 실패:", error);
     }
   };
 
   // 사용자 이름 표시
   const getUserDisplayName = () => {
-    if (!user) return '사용자';
+    if (!user) return "사용자";
 
     // 프로필에서 우선 조회
     if (profile?.nickname) return profile.nickname;
@@ -99,7 +101,7 @@ export default function Header() {
     const name = user.user_metadata?.name;
     const email = user.email;
 
-    return nickname || name || email?.split('@')[0] || '사용자';
+    return nickname || name || email?.split("@")[0] || "사용자";
   };
 
   return (
@@ -109,7 +111,7 @@ export default function Header() {
           {/* 로고 */}
           <div className="flex items-center">
             <Link
-              href={isAuthenticated ? '/dashboard' : '/'}
+              href={isAuthenticated ? "/dashboard" : "/"}
               className="text-xl mobile:text-2xl font-bold text-accent-700 hover:text-accent-800 transition-colors"
             >
               DaylyLog
@@ -131,8 +133,8 @@ export default function Header() {
                       flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm laptop:text-base
                       ${
                         isActive
-                          ? 'bg-accent-100 text-accent-700 font-semibold'
-                          : 'text-accent-600 hover:text-accent-800 hover:bg-accent-50'
+                          ? "bg-accent-100 text-accent-700 font-semibold"
+                          : "text-accent-600 hover:text-accent-800 hover:bg-accent-50"
                       }
                     `}
                   >
@@ -237,8 +239,8 @@ export default function Header() {
                       flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200
                       ${
                         isActive
-                          ? 'bg-accent-100 text-accent-700 font-semibold'
-                          : 'text-accent-600 hover:text-accent-800 hover:bg-accent-50'
+                          ? "bg-accent-100 text-accent-700 font-semibold"
+                          : "text-accent-600 hover:text-accent-800 hover:bg-accent-50"
                       }
                     `}
                   >

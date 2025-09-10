@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useQuestionsCategories } from '@/hooks/questions/useQuestionCategories';
+import { useQuestionsCategories } from "@/hooks/questions/useQuestionCategories";
 import {
   DateRangePeriod,
   QuestionFilters,
   QuestionKeyword,
-} from '@/types/questions';
-import { Filter, RefreshCcw, Search } from 'lucide-react';
-import { useMemo, useState } from 'react';
+} from "@/types/questions";
+import { Filter, RefreshCcw, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface QuestionFiltersComponentProps {
   filters: QuestionFilters;
@@ -26,19 +26,19 @@ const QuestionFiltersComponent = ({
 }: QuestionFiltersComponentProps) => {
   const { dailyCategory, growthCategory, customCategory } =
     useQuestionsCategories();
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('전체');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("전체");
   const [showCustomDateRange, setShowCustomDateRange] = useState(false);
 
   // 카테고리별 키워드 분류
   const { dailyKeywords, growthKeywords, customKeywords } = useMemo(() => {
     const daily = keywords.filter(
-      (k) => dailyCategory && k.category_id === dailyCategory.id
+      (k) => dailyCategory && k.category_id === dailyCategory.id,
     );
     const growth = keywords.filter(
-      (k) => growthCategory && k.category_id === growthCategory.id
+      (k) => growthCategory && k.category_id === growthCategory.id,
     );
     const custom = keywords.filter(
-      (k) => customCategory && k.category_id === customCategory.id
+      (k) => customCategory && k.category_id === customCategory.id,
     );
 
     return {
@@ -57,7 +57,7 @@ const QuestionFiltersComponent = ({
     onFiltersChange({ keywords: newKeywords });
   };
 
-  const handleCategoryToggle = (category: 'daily' | 'growth' | 'custom') => {
+  const handleCategoryToggle = (category: "daily" | "growth" | "custom") => {
     const currentCategories = filters.categories || [];
     const isSelected = currentCategories.includes(category);
 
@@ -71,7 +71,7 @@ const QuestionFiltersComponent = ({
   };
 
   const handleVisibilityToggle = (
-    visibility: 'public' | 'neighbors' | 'private'
+    visibility: "public" | "neighbors" | "private",
   ) => {
     const currentVisibility = filters.visibility || [];
     const newVisibility = currentVisibility.includes(visibility)
@@ -84,18 +84,18 @@ const QuestionFiltersComponent = ({
   const handlePeriodToggle = (periodLabel: string) => {
     if (selectedPeriod === periodLabel) {
       // 같은 기간 클릭 시 '전체'로 변경
-      setSelectedPeriod('전체');
+      setSelectedPeriod("전체");
       setShowCustomDateRange(false);
       onFiltersChange({ dateFrom: undefined, dateTo: undefined });
     } else {
       // 다른 기간 선택
       setSelectedPeriod(periodLabel);
-      if (periodLabel === '임의 기간') {
+      if (periodLabel === "임의 기간") {
         setShowCustomDateRange(true);
         // 임의 기간 선택 시 날짜 리셋 (시작일: undefined, 종료일: 오늘)
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toISOString().split("T")[0];
         onFiltersChange({ dateFrom: undefined, dateTo: today });
-      } else if (periodLabel === '전체') {
+      } else if (periodLabel === "전체") {
         setShowCustomDateRange(false);
         onFiltersChange({ dateFrom: undefined, dateTo: undefined });
       } else {
@@ -106,7 +106,7 @@ const QuestionFiltersComponent = ({
   };
 
   const clearFilters = () => {
-    setSelectedPeriod('전체');
+    setSelectedPeriod("전체");
     setShowCustomDateRange(false);
     onFiltersChange({
       categories: [],
@@ -135,7 +135,7 @@ const QuestionFiltersComponent = ({
         <input
           type="text"
           placeholder="질문 제목, 내용, 답변 검색..."
-          value={filters.searchQuery || ''}
+          value={filters.searchQuery || ""}
           onChange={(e) =>
             onFiltersChange({ searchQuery: e.target.value || undefined })
           }
@@ -168,9 +168,9 @@ const QuestionFiltersComponent = ({
             <h4 className="text-sm font-medium text-gray-700 mb-2">카테고리</h4>
             <div className="flex flex-wrap gap-2">
               {[
-                { key: 'daily' as const, label: '일상', color: 'green' },
-                { key: 'growth' as const, label: '성장', color: 'purple' },
-                { key: 'custom' as const, label: '나만의 질문', color: 'blue' },
+                { key: "daily" as const, label: "일상", color: "green" },
+                { key: "growth" as const, label: "성장", color: "purple" },
+                { key: "custom" as const, label: "나만의 질문", color: "blue" },
               ].map((category) => (
                 <button
                   key={category.key}
@@ -201,8 +201,8 @@ const QuestionFiltersComponent = ({
                 }
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                   filters.isAnswered === true
-                    ? 'bg-green-100 text-green-700 border-green-300'
-                    : 'bg-gray-100 text-gray-600 hover:bg-accent-100 border-gray-300'
+                    ? "bg-green-100 text-green-700 border-green-300"
+                    : "bg-gray-100 text-gray-600 hover:bg-accent-100 border-gray-300"
                 } border`}
               >
                 완료
@@ -216,8 +216,8 @@ const QuestionFiltersComponent = ({
                 }
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                   filters.isAnswered === false
-                    ? 'bg-orange-100 text-orange-700 border-orange-300'
-                    : 'bg-gray-100 text-gray-600 hover:bg-orange-100 border-gray-300'
+                    ? "bg-orange-100 text-orange-700 border-orange-300"
+                    : "bg-gray-100 text-gray-600 hover:bg-orange-100 border-gray-300"
                 } border`}
               >
                 대기
@@ -232,17 +232,17 @@ const QuestionFiltersComponent = ({
             </h4>
             <div className="flex flex-wrap gap-2">
               {[
-                { key: 'public' as const, label: '전체', icon: '🌍' },
-                { key: 'neighbors' as const, label: '이웃', icon: '👤' },
-                { key: 'private' as const, label: '비공개', icon: '🔒' },
+                { key: "public" as const, label: "전체", icon: "🌍" },
+                { key: "neighbors" as const, label: "이웃", icon: "👤" },
+                { key: "private" as const, label: "비공개", icon: "🔒" },
               ].map((visibility) => (
                 <button
                   key={visibility.key}
                   onClick={() => handleVisibilityToggle(visibility.key)}
                   className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                     filters.visibility?.includes(visibility.key)
-                      ? 'bg-accent-100 text-gray-700 border-accent-300'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                      ? "bg-accent-100 text-gray-700 border-accent-300"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300"
                   } border`}
                 >
                   {visibility.icon} {visibility.label}
@@ -256,36 +256,36 @@ const QuestionFiltersComponent = ({
             <h4 className="text-sm font-medium text-gray-700 mb-2">기간</h4>
             <div className="flex flex-wrap gap-2 mb-3">
               <button
-                onClick={() => handlePeriodToggle('전체')}
+                onClick={() => handlePeriodToggle("전체")}
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
-                  selectedPeriod === '전체'
-                    ? 'bg-accent-100 text-gray-700 border-accent-300'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                  selectedPeriod === "전체"
+                    ? "bg-accent-100 text-gray-700 border-accent-300"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300"
                 } border`}
               >
                 전체
               </button>
               {periodPresets
-                .filter((p) => p.label !== '전체')
+                .filter((p) => p.label !== "전체")
                 .map((preset) => (
                   <button
                     key={preset.label}
                     onClick={() => handlePeriodToggle(preset.label)}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
                       selectedPeriod === preset.label
-                        ? 'bg-accent-100 text-gray-700 border-accent-300'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                        ? "bg-accent-100 text-gray-700 border-accent-300"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300"
                     } border`}
                   >
                     {preset.label}
                   </button>
                 ))}
               <button
-                onClick={() => handlePeriodToggle('임의 기간')}
+                onClick={() => handlePeriodToggle("임의 기간")}
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors hover:cursor-pointer ${
-                  selectedPeriod === '임의 기간'
-                    ? 'bg-accent-100 text-gray-700 border-accent-300'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                  selectedPeriod === "임의 기간"
+                    ? "bg-accent-100 text-gray-700 border-accent-300"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300"
                 } border`}
               >
                 임의 기간
@@ -302,7 +302,7 @@ const QuestionFiltersComponent = ({
             </label>
             <input
               type="date"
-              value={filters.dateFrom || ''}
+              value={filters.dateFrom || ""}
               onChange={(e) =>
                 onFiltersChange({ dateFrom: e.target.value || undefined })
               }
@@ -315,7 +315,7 @@ const QuestionFiltersComponent = ({
             </label>
             <input
               type="date"
-              value={filters.dateTo || ''}
+              value={filters.dateTo || ""}
               onChange={(e) =>
                 onFiltersChange({ dateTo: e.target.value || undefined })
               }
@@ -343,8 +343,8 @@ const QuestionFiltersComponent = ({
                       onClick={() => handleKeywordToggle(keyword.name)}
                       className={`px-3 py-1 rounded-full text-xs font-medium transition-colors hover:cursor-pointer hover:border-accent-100 ${
                         filters.keywords?.includes(keyword.name)
-                          ? 'bg-green-100 text-green-700 border-green-300'
-                          : 'bg-gray-100 text-gray-600 hover:bg-green-50 border-gray-300'
+                          ? "bg-green-100 text-green-700 border-green-300"
+                          : "bg-gray-100 text-gray-600 hover:bg-green-50 border-gray-300"
                       } border`}
                     >
                       {keyword.name}
@@ -373,8 +373,8 @@ const QuestionFiltersComponent = ({
                       onClick={() => handleKeywordToggle(keyword.name)}
                       className={`px-3 py-1 rounded-full text-xs font-medium transition-colors hover:cursor-pointer hover:border-accent-100 ${
                         filters.keywords?.includes(keyword.name)
-                          ? 'bg-purple-100 text-purple-700 border-purple-300'
-                          : 'bg-gray-100 text-gray-600 hover:bg-purple-50 border-gray-300'
+                          ? "bg-purple-100 text-purple-700 border-purple-300"
+                          : "bg-gray-100 text-gray-600 hover:bg-purple-50 border-gray-300"
                       } border`}
                     >
                       {keyword.name}
@@ -403,8 +403,8 @@ const QuestionFiltersComponent = ({
                       onClick={() => handleKeywordToggle(keyword.name)}
                       className={`px-3 py-1 rounded-full text-xs font-medium transition-colors hover:cursor-pointer hover:border-accent-100 ${
                         filters.keywords?.includes(keyword.name)
-                          ? 'bg-blue-100 text-blue-700 border-blue-300'
-                          : 'bg-gray-100 text-gray-600 hover:bg-blue-50 border-gray-300'
+                          ? "bg-blue-100 text-blue-700 border-blue-300"
+                          : "bg-gray-100 text-gray-600 hover:bg-blue-50 border-gray-300"
                       } border`}
                     >
                       {keyword.name}

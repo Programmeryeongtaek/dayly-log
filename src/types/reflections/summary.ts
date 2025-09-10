@@ -1,4 +1,4 @@
-import { Keyword, PeriodType } from '.';
+import { Keyword, PeriodType } from ".";
 
 export interface ReflectionSummary {
   period: string;

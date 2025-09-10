@@ -1,5 +1,5 @@
-import BudgetPageContent from '@/components/budget/BudgetPageContent';
-import { Suspense } from 'react';
+import BudgetPageContent from "@/components/budget/BudgetPageContent";
+import { Suspense } from "react";
 
 const BudgetPage = () => {
   return (

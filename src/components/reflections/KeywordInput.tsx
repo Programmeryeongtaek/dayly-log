@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { X } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { X } from "lucide-react";
+import { useRef, useState } from "react";
 
 interface KeywordInputProps {
   keywords: string[];
@@ -13,20 +13,20 @@ interface KeywordInputProps {
 const KeywordInput = ({
   keywords,
   onChange,
-  placeholder = '키워드를 입력하고 Enter를 누르세요.',
+  placeholder = "키워드를 입력하고 Enter를 누르세요.",
   maxKeywords = 10,
 }: KeywordInputProps) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ',') {
+    if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       addKeyword();
     } else if (
-      e.key === 'Backspace' &&
-      inputValue === '' &&
+      e.key === "Backspace" &&
+      inputValue === "" &&
       keywords.length > 0
     ) {
       // 빈 입력에서 백스페이스 시 마지막 키워드 제거
@@ -42,7 +42,7 @@ const KeywordInput = ({
       keywords.length < maxKeywords
     ) {
       onChange([...keywords, trimmed]);
-      setInputValue('');
+      setInputValue("");
     }
   };
 
@@ -63,8 +63,8 @@ const KeywordInput = ({
       <div
         className={`min-h-[42px] px-3 py-2 border rounded-lg cursor-text transition-colors ${
           isFocused
-            ? 'border-accent-500 ring-2 ring-accent-200'
-            : 'border-gray-300 hover:border-gray-400'
+            ? "border-accent-500 ring-2 ring-accent-200"
+            : "border-gray-300 hover:border-gray-400"
         }`}
         onClick={handleContainerClick}
       >

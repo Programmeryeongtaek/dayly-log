@@ -1,28 +1,47 @@
-'use client';
+"use client";
 
-import AuthGuard from '@/components/auth/AuthGuard';
-import { useAuth } from '@/hooks/auth';
-import { SignupFormValues, signupSchema } from '@/lib/validations/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import AuthGuard from "@/components/auth/AuthGuard";
+import { useAuth } from "@/hooks/auth";
+import { SignupFormValues, signupSchema } from "@/lib/validations/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function SignupPage() {
-  const router = useRouter();
-  const { signup, isSigningUp, signupError } = useAuth();
+  const {
+    signup,
+    isSigningUp,
+    signupError,
+    checkNickname,
+    isCheckingNickname,
+    nicknameCheckResult,
+    resetNicknameCheck,
+    checkEmail,
+    emailCheckResult,
+  } = useAuth();
   const [isSuccess, setIsSuccess] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
+  const [userEmail, setUserEmail] = useState("");
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isValid },
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
-    mode: 'onChange', // 실시간 검증
+    mode: "onChange", // 실시간 검증
   });
+
+  // 닉네임 입력값이 변경되면 중복 체크 결과 초기화
+  useEffect(() => {
+    const subscription = watch(({ name }) => {
+      if (name === "nickname") {
+        resetNicknameCheck();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, resetNicknameCheck]);
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
@@ -34,7 +53,7 @@ export default function SignupPage() {
       setUserEmail(data.email);
       setIsSuccess(true);
     } catch (error) {
-      console.error('회원가입 상세 에러:', error);
+      console.error("회원가입 상세 에러:", error);
     }
   };
 
@@ -46,7 +65,7 @@ export default function SignupPage() {
           <div className="max-w-md w-full text-center space-y-6 p-6">
             <div className="text-6xl">📧</div>
             <h2 className="text-2xl font-bold text-gray-900">
-              이메일을 확인해주세요
+              이메일을 확인해주세요.
             </h2>
             <div className="space-y-3 text-gray-600">
               <p>
@@ -62,10 +81,10 @@ export default function SignupPage() {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
               <h3 className="font-semibold text-blue-900 mb-2">다음 단계:</h3>
               <ol className="text-sm text-blue-700 space-y-1">
-                <li>1. 이메일 받은편지함을 확인하세요</li>
-                <li>2. 스팸 폴더도 확인해보세요</li>
-                <li>3. 인증 링크를 클릭하세요</li>
-                <li>4. 로그인 페이지로 돌아와서 로그인하세요</li>
+                <li>1. 이메일 받은편지함을 확인하세요.</li>
+                <li>2. 스팸 폴더도 확인해보세요.</li>
+                <li>3. 인증 링크를 클릭하세요.</li>
+                <li>4. 로그인 페이지로 돌아와서 로그인하세요.</li>
               </ol>
             </div>
 
@@ -81,7 +100,7 @@ export default function SignupPage() {
                 <button
                   onClick={() => {
                     setIsSuccess(false);
-                    setUserEmail('');
+                    setUserEmail("");
                   }}
                   className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
                 >
@@ -108,7 +127,7 @@ export default function SignupPage() {
             </Link>
             <h2 className="mt-6 text-2xl font-bold text-gray-900">회원가입</h2>
             <p className="mt-2 text-sm text-gray-600">
-              새로운 계정을 만들어 DaylyLog를 시작해보세요
+              새로운 계정을 만들어 DaylyLog를 시작해보세요.
             </p>
           </div>
 
@@ -117,7 +136,7 @@ export default function SignupPage() {
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                 <p className="text-sm text-red-600">
                   {signupError.message ||
-                    '회원가입에 실패했습니다. 다시 시도해주세요.'}
+                    "회원가입에 실패했습니다. 다시 시도해주세요."}
                 </p>
               </div>
             )}
@@ -128,25 +147,51 @@ export default function SignupPage() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  이메일 *
+                  이메일 <strong className="text-red-500">*</strong>
                 </label>
                 <input
                   id="email"
                   type="email"
                   autoComplete="email"
-                  {...register('email')}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
-                    errors.email
-                      ? 'border-red-300 focus:border-red-500'
-                      : 'border-gray-300 focus:border-accent-500'
+                  {...register("email")}
+                  onBlur={() => {
+                    const email = watch("email");
+                    if (email?.trim() && !errors.email) {
+                      checkEmail(email.trim());
+                    }
+                  }}
+                  className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
+                    errors.email ||
+                    (emailCheckResult && !emailCheckResult.available)
+                      ? "border-red-300 focus:border-red-500"
+                      : "border-gray-300 focus:border-accent-500"
                   }`}
                   placeholder="example@email.com"
                 />
+
+                {/* 이메일 유효성 검사 에러 */}
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-600">
                     {errors.email.message}
                   </p>
                 )}
+
+                {/* 이메일 중복 체크 결과 */}
+                {emailCheckResult &&
+                  watch("email")?.trim() &&
+                  !errors.email && (
+                    <p
+                      className={`mt-1 text-sm ${
+                        emailCheckResult.available
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {emailCheckResult.available
+                        ? "사용 가능한 이메일입니다."
+                        : "이미 가입된 이메일입니다."}
+                    </p>
+                  )}
               </div>
 
               <div>
@@ -154,17 +199,17 @@ export default function SignupPage() {
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  비밀번호 *
+                  비밀번호 <strong className="text-red-500">*</strong>
                 </label>
                 <input
                   id="password"
                   type="password"
                   autoComplete="new-password"
-                  {...register('password')}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
+                  {...register("password")}
+                  className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
                     errors.password
-                      ? 'border-red-300 focus:border-red-500'
-                      : 'border-gray-300 focus:border-accent-500'
+                      ? "border-red-300 focus:border-red-500"
+                      : "border-gray-300 focus:border-accent-500"
                   }`}
                   placeholder="6자 이상 입력"
                 />
@@ -180,17 +225,17 @@ export default function SignupPage() {
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  이름 *
+                  이름 <strong className="text-red-500">*</strong>
                 </label>
                 <input
                   id="name"
                   type="text"
                   autoComplete="name"
-                  {...register('name')}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
+                  {...register("name")}
+                  className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
                     errors.name
-                      ? 'border-red-300 focus:border-red-500'
-                      : 'border-gray-300 focus:border-accent-500'
+                      ? "border-red-300 focus:border-red-500"
+                      : "border-gray-300 focus:border-accent-500"
                   }`}
                   placeholder="홍길동"
                 />
@@ -208,45 +253,84 @@ export default function SignupPage() {
                 >
                   닉네임 (선택)
                 </label>
-                <input
-                  id="nickname"
-                  type="text"
-                  {...register('nickname')}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
-                    errors.nickname
-                      ? 'border-red-300 focus:border-red-500'
-                      : 'border-gray-300 focus:border-accent-500'
-                  }`}
-                  placeholder="다른 사용자에게 표시될 이름"
-                />
-                {errors.nickname && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.nickname.message}
+                <div className="flex gap-2">
+                  <input
+                    id="nickname"
+                    type="text"
+                    {...register("nickname")}
+                    className={`mt-1 block w-2/3 px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
+                      errors.nickname
+                        ? "border-red-300 focus:border-red-500"
+                        : "border-gray-300 focus:border-accent-500"
+                    }`}
+                    placeholder="닉네임 입력"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nickname = watch("nickname");
+                      if (nickname?.trim()) {
+                        checkNickname(nickname.trim());
+                      }
+                    }}
+                    disabled={isCheckingNickname || !watch("nickname")?.trim()}
+                    className="mt-1 px-3 py-2 w-1/3 hover:cursor-pointer bg-accent-200 text-black hover:bg-accent-300 text-sm hover:font-bold rounded-lg disabled:opacity-50 transition-colors"
+                  >
+                    {isCheckingNickname ? "확인중..." : "중복확인"}
+                  </button>
+                </div>
+
+                {/* 닉네임 체크 결과 표시 */}
+                {nicknameCheckResult && watch("nickname")?.trim() ? (
+                  <p
+                    className={`mt-1 text-sm ${
+                      nicknameCheckResult.available
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {nicknameCheckResult.available
+                      ? "사용 가능한 닉네임입니다."
+                      : "이미 사용 중인 닉네임입니다."}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs text-gray-500">
+                    닉네임은 나중에도 변경할 수 있습니다.
                   </p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
-                  닉네임은 나중에 변경할 수 있습니다
-                </p>
               </div>
             </div>
 
             <div>
               <button
                 type="submit"
-                disabled={isSigningUp || !isValid}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={
+                  isSigningUp ||
+                  !isValid ||
+                  (emailCheckResult && !emailCheckResult.available) ||
+                  (nicknameCheckResult && !nicknameCheckResult.available)
+                }
+                className="hover:cursor-pointer w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isSigningUp ? '가입 중...' : '회원가입'}
+                {isSigningUp ? "가입 중..." : "회원가입"}
               </button>
             </div>
 
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <Link
-                href="/auth/login"
+                href="/auth/signup"
                 className="text-accent-600 hover:text-accent-500 text-sm font-medium transition-colors"
               >
-                이미 계정이 있으신가요? 로그인
+                계정이 없으신가요? 회원가입
               </Link>
+              <div>
+                <Link
+                  href="/"
+                  className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+                >
+                  메인 화면으로 돌아가기
+                </Link>
+              </div>
             </div>
           </form>
         </div>

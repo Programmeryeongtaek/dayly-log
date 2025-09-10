@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import AuthGuard from '@/components/auth/AuthGuard';
-import ReflectionForm from '@/components/reflections/ReflectionForm';
-import { useAuth } from '@/hooks/auth';
-import { useReflections } from '@/hooks/reflections/useReflections';
-import { ReflectionFormData } from '@/types/reflections';
-import { ArrowLeft, BookOpen } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import AuthGuard from "@/components/auth/AuthGuard";
+import ReflectionForm from "@/components/reflections/ReflectionForm";
+import { useAuth } from "@/hooks/auth";
+import { useReflections } from "@/hooks/reflections/useReflections";
+import { ReflectionFormData } from "@/types/reflections";
+import { ArrowLeft, BookOpen } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const NewReflectionPage = () => {
   const router = useRouter();
@@ -27,18 +27,18 @@ const NewReflectionPage = () => {
       { ...formData, user_id: user.id },
       {
         onSuccess: () => {
-          router.push('/reflections');
+          router.push("/reflections");
         },
         onError: (error) => {
-          console.error('회고 작성 실패:', error);
-          setError('회고 작성 중 오류가 발생했습니다. 다시 시도해주세요.');
+          console.error("회고 작성 실패:", error);
+          setError("회고 작성 중 오류가 발생했습니다. 다시 시도해주세요.");
         },
-      }
+      },
     );
   };
 
   const handleCancel = () => {
-    if (confirm('작성을 취소하시겠습니까? 작성된 내용이 사라집니다.')) {
+    if (confirm("작성을 취소하시겠습니까? 작성된 내용이 사라집니다.")) {
       router.back();
     }
   };

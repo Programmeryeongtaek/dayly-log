@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { useMemo } from 'react';
+import Link from "next/link";
+import { useMemo } from "react";
 import {
   BarChart3,
   Target,
@@ -16,7 +16,7 @@ import {
   Eye,
   Sparkles,
   ArrowLeft,
-} from 'lucide-react';
+} from "lucide-react";
 
 const DashboardPreview = () => {
   // 샘플 데이터
@@ -27,46 +27,46 @@ const DashboardPreview = () => {
       netAmount: 750000,
       savingsRate: 23.4,
       topCategories: [
-        { name: '식비', amount: 580000, percentage: 23.7 },
-        { name: '교통비', amount: 420000, percentage: 17.1 },
-        { name: '생활용품', amount: 380000, percentage: 15.5 },
+        { name: "식비", amount: 580000, percentage: 23.7 },
+        { name: "교통비", amount: 420000, percentage: 17.1 },
+        { name: "생활용품", amount: 380000, percentage: 15.5 },
       ],
       recentTransactions: [
         {
           id: 1,
-          type: 'expense',
+          type: "expense",
           amount: 25000,
-          category: '식비',
-          description: '점심 식사',
-          date: '2025-09-09',
+          category: "식비",
+          description: "점심 식사",
+          date: "2025-09-09",
         },
         {
           id: 2,
-          type: 'income',
+          type: "income",
           amount: 50000,
-          category: '용돈',
-          description: '부모님 용돈',
-          date: '2025-09-08',
+          category: "용돈",
+          description: "부모님 용돈",
+          date: "2025-09-08",
         },
         {
           id: 3,
-          type: 'expense',
+          type: "expense",
           amount: 15000,
-          category: '교통비',
-          description: '지하철 요금',
-          date: '2025-09-08',
+          category: "교통비",
+          description: "지하철 요금",
+          date: "2025-09-08",
         },
       ],
     }),
-    []
+    [],
   );
 
   const sampleGoals = useMemo(
     () => [
       {
         id: 1,
-        title: '카페 지출 줄이기',
-        type: 'reduce_expense',
+        title: "카페 지출 줄이기",
+        type: "reduce_expense",
         currentAmount: 85000,
         targetAmount: 100000,
         progress: 85,
@@ -75,8 +75,8 @@ const DashboardPreview = () => {
       },
       {
         id: 2,
-        title: '적금 늘리기',
-        type: 'increase_saving',
+        title: "적금 늘리기",
+        type: "increase_saving",
         currentAmount: 750000,
         targetAmount: 1000000,
         progress: 75,
@@ -85,8 +85,8 @@ const DashboardPreview = () => {
       },
       {
         id: 3,
-        title: '운동 주 3회 하기',
-        type: 'habit',
+        title: "운동 주 3회 하기",
+        type: "habit",
         currentCount: 10,
         targetCount: 12,
         progress: 83,
@@ -94,43 +94,43 @@ const DashboardPreview = () => {
         daysLeft: 5,
       },
     ],
-    []
+    [],
   );
 
   const sampleQuestions = useMemo(
     () => [
       {
         id: 1,
-        question: '오늘 가장 감사했던 순간은 무엇인가요?',
-        answer: '동료가 도움을 줬을 때 정말 감사했습니다.',
-        category: 'daily',
-        keywords: ['감사', '동료', '도움'],
-        date: '2025-09-09',
+        question: "오늘 가장 감사했던 순간은 무엇인가요?",
+        answer: "동료가 도움을 줬을 때 정말 감사했습니다.",
+        category: "daily",
+        keywords: ["감사", "동료", "도움"],
+        date: "2025-09-09",
       },
       {
         id: 2,
-        question: '이번 주 가장 성장한 부분은?',
-        answer: '새로운 기술을 배우며 한계를 극복했습니다.',
-        category: 'growth',
-        keywords: ['성장', '기술', '극복'],
-        date: '2025-09-07',
+        question: "이번 주 가장 성장한 부분은?",
+        answer: "새로운 기술을 배우며 한계를 극복했습니다.",
+        category: "growth",
+        keywords: ["성장", "기술", "극복"],
+        date: "2025-09-07",
       },
     ],
-    []
+    [],
   );
 
   const sampleReflections = useMemo(
     () => [
       {
         id: 1,
-        gratefulMoment: '가족과 함께한 저녁 시간',
-        memorableMoment: '프로젝트가 성공적으로 완료됨',
-        improvementPoint: '더 체계적인 시간 관리가 필요',
-        keywords: ['가족', '성공', '시간관리'],
-        date: '2025-09-09',
+        gratefulMoment: "가족과 함께한 저녁 시간",
+        memorableMoment: "프로젝트가 성공적으로 완료됨",
+        improvementPoint: "더 체계적인 시간 관리가 필요",
+        keywords: ["가족", "성공", "시간관리"],
+        date: "2025-09-09",
       },
     ],
-    []
+    [],
   );
 
   return (
@@ -375,16 +375,16 @@ const DashboardPreview = () => {
                     <div className="flex items-center gap-2">
                       <div
                         className={`p-1 rounded ${
-                          goal.type === 'increase_saving'
-                            ? 'bg-green-100 text-green-600'
-                            : goal.type === 'habit'
-                              ? 'bg-blue-100 text-blue-600'
-                              : 'bg-red-100 text-red-600'
+                          goal.type === "increase_saving"
+                            ? "bg-green-100 text-green-600"
+                            : goal.type === "habit"
+                              ? "bg-blue-100 text-blue-600"
+                              : "bg-red-100 text-red-600"
                         }`}
                       >
-                        {goal.type === 'increase_saving' ? (
+                        {goal.type === "increase_saving" ? (
                           <TrendingUp className="w-3 h-3" />
-                        ) : goal.type === 'habit' ? (
+                        ) : goal.type === "habit" ? (
                           <Calendar className="w-3 h-3" />
                         ) : (
                           <TrendingDown className="w-3 h-3" />

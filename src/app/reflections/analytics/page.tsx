@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import AuthGuard from '@/components/auth/AuthGuard';
-import KeywordManagementModal from '@/components/reflections/KeywordManagementModal';
-import KeywordReflectionsModal from '@/components/reflections/KeywordReflectionsModal';
-import { useAuth } from '@/hooks/auth';
-import { useKeywords } from '@/hooks/reflections/useKeywords';
-import { useReflectionCategories } from '@/hooks/reflections/useReflectionCategories';
-import { useReflections } from '@/hooks/reflections/useReflections';
-import { format, subMonths, subWeeks, subYears } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import AuthGuard from "@/components/auth/AuthGuard";
+import KeywordManagementModal from "@/components/reflections/KeywordManagementModal";
+import KeywordReflectionsModal from "@/components/reflections/KeywordReflectionsModal";
+import { useAuth } from "@/hooks/auth";
+import { useKeywords } from "@/hooks/reflections/useKeywords";
+import { useReflectionCategories } from "@/hooks/reflections/useReflectionCategories";
+import { useReflections } from "@/hooks/reflections/useReflections";
+import { format, subMonths, subWeeks, subYears } from "date-fns";
+import { ko } from "date-fns/locale";
 import {
   BarChart3,
   Filter,
@@ -16,20 +16,20 @@ import {
   Heart,
   Lightbulb,
   RefreshCw,
-} from 'lucide-react';
-import { useMemo, useState } from 'react';
+} from "lucide-react";
+import { useMemo, useState } from "react";
 
 const AnalyticsPage = () => {
   const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<
-    'all' | '1week' | '1month' | '3months' | '6months' | '1year'
-  >('3months');
+    "all" | "1week" | "1month" | "3months" | "6months" | "1year"
+  >("3months");
   const [selectedCategory, setSelectedCategory] = useState<
-    'all' | 'gratitude' | 'reflection'
-  >('all');
+    "all" | "gratitude" | "reflection"
+  >("all");
   const [showCustomPeriod, setShowCustomPeriod] = useState(false);
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isKeywordManagementOpen, setIsKeywordManagementOpen] = useState(false);
@@ -43,40 +43,40 @@ const AnalyticsPage = () => {
     const today = new Date();
     return [
       {
-        label: '전체',
-        value: 'all',
-        startDate: '',
-        endDate: '',
+        label: "전체",
+        value: "all",
+        startDate: "",
+        endDate: "",
       },
       {
-        label: '최근 1주일',
-        value: '1week',
-        startDate: format(subWeeks(today, 1), 'yyyy-MM-dd'),
-        endDate: format(today, 'yyyy-MM-dd'),
+        label: "최근 1주일",
+        value: "1week",
+        startDate: format(subWeeks(today, 1), "yyyy-MM-dd"),
+        endDate: format(today, "yyyy-MM-dd"),
       },
       {
-        label: '최근 1개월',
-        value: '1month',
-        startDate: format(subMonths(today, 1), 'yyyy-MM-dd'),
-        endDate: format(today, 'yyyy-MM-dd'),
+        label: "최근 1개월",
+        value: "1month",
+        startDate: format(subMonths(today, 1), "yyyy-MM-dd"),
+        endDate: format(today, "yyyy-MM-dd"),
       },
       {
-        label: '최근 3개월',
-        value: '3months',
-        startDate: format(subMonths(today, 3), 'yyyy-MM-dd'),
-        endDate: format(today, 'yyyy-MM-dd'),
+        label: "최근 3개월",
+        value: "3months",
+        startDate: format(subMonths(today, 3), "yyyy-MM-dd"),
+        endDate: format(today, "yyyy-MM-dd"),
       },
       {
-        label: '최근 6개월',
-        value: '6months',
-        startDate: format(subMonths(today, 6), 'yyyy-MM-dd'),
-        endDate: format(today, 'yyyy-MM-dd'),
+        label: "최근 6개월",
+        value: "6months",
+        startDate: format(subMonths(today, 6), "yyyy-MM-dd"),
+        endDate: format(today, "yyyy-MM-dd"),
       },
       {
-        label: '최근 1년',
-        value: '1year',
-        startDate: format(subYears(today, 1), 'yyyy-MM-dd'),
-        endDate: format(today, 'yyyy-MM-dd'),
+        label: "최근 1년",
+        value: "1year",
+        startDate: format(subYears(today, 1), "yyyy-MM-dd"),
+        endDate: format(today, "yyyy-MM-dd"),
       },
     ];
   }, []);
@@ -88,7 +88,7 @@ const AnalyticsPage = () => {
     if (customStartDate && customEndDate) {
       // 임의기간이 설정된 경우
       cutoffDate = new Date(customStartDate);
-    } else if (selectedPeriod !== 'all') {
+    } else if (selectedPeriod !== "all") {
       // 프리셋 기간이 선택된 경우
       const preset = periodPresets.find((p) => p.value === selectedPeriod);
       if (preset && preset.startDate) {
@@ -108,10 +108,10 @@ const AnalyticsPage = () => {
         }
 
         // 카테고리 필터
-        if (selectedCategory === 'gratitude' && gratitudeCategory) {
+        if (selectedCategory === "gratitude" && gratitudeCategory) {
           return stat.keyword.category_id === gratitudeCategory.id;
         }
-        if (selectedCategory === 'reflection' && reflectionCategory) {
+        if (selectedCategory === "reflection" && reflectionCategory) {
           return stat.keyword.category_id === reflectionCategory.id;
         }
 
@@ -137,7 +137,7 @@ const AnalyticsPage = () => {
     if (customStartDate && customEndDate) {
       cutoffDate = new Date(customStartDate);
       endDate = new Date(customEndDate);
-    } else if (selectedPeriod !== 'all') {
+    } else if (selectedPeriod !== "all") {
       const preset = periodPresets.find((p) => p.value === selectedPeriod);
       if (preset && preset.startDate) {
         cutoffDate = new Date(preset.startDate);
@@ -156,10 +156,10 @@ const AnalyticsPage = () => {
     }
 
     const gratitudeCount = filteredReflections.filter(
-      (r) => r.category?.name === 'gratitude'
+      (r) => r.category?.name === "gratitude",
     ).length;
     const reflectionCount = filteredReflections.filter(
-      (r) => r.category?.name === 'reflection'
+      (r) => r.category?.name === "reflection",
     ).length;
 
     return {
@@ -177,11 +177,11 @@ const AnalyticsPage = () => {
 
   // 필터 핸들러
   const handlePeriodChange = (period: string) => {
-    if (period === 'custom') {
+    if (period === "custom") {
       if (showCustomPeriod || customStartDate) {
         setShowCustomPeriod(false);
-        setCustomStartDate('');
-        setCustomEndDate('');
+        setCustomStartDate("");
+        setCustomEndDate("");
       } else {
         setShowCustomPeriod(true);
       }
@@ -190,19 +190,19 @@ const AnalyticsPage = () => {
 
     // 같은 기간을 다시 클릭하면 전체로 변경
     if (selectedPeriod === period) {
-      setSelectedPeriod('all');
+      setSelectedPeriod("all");
     } else {
       setSelectedPeriod(period as typeof selectedPeriod);
     }
 
     // 임의기간 관련 상태 초기화
     setShowCustomPeriod(false);
-    setCustomStartDate('');
-    setCustomEndDate('');
+    setCustomStartDate("");
+    setCustomEndDate("");
   };
 
   const handleCategoryChange = (category: typeof selectedCategory) => {
-    setSelectedCategory(category === selectedCategory ? 'all' : category);
+    setSelectedCategory(category === selectedCategory ? "all" : category);
   };
 
   const handleCustomPeriodApply = () => {
@@ -212,16 +212,16 @@ const AnalyticsPage = () => {
   };
 
   const clearFilters = () => {
-    setSelectedPeriod('all');
-    setSelectedCategory('all');
+    setSelectedPeriod("all");
+    setSelectedCategory("all");
     setShowCustomPeriod(false);
-    setCustomStartDate('');
-    setCustomEndDate('');
+    setCustomStartDate("");
+    setCustomEndDate("");
   };
 
   const hasActiveFilters =
-    selectedPeriod !== 'all' ||
-    selectedCategory !== 'all' ||
+    selectedPeriod !== "all" ||
+    selectedCategory !== "all" ||
     customStartDate ||
     customEndDate;
 
@@ -304,19 +304,19 @@ const AnalyticsPage = () => {
                     selectedPeriod === preset.value &&
                     !customStartDate &&
                     !showCustomPeriod
-                      ? 'bg-accent-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? "bg-accent-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {preset.label}
                 </button>
               ))}
               <button
-                onClick={() => handlePeriodChange('custom')}
+                onClick={() => handlePeriodChange("custom")}
                 className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                   showCustomPeriod || customStartDate
-                    ? 'bg-accent-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? "bg-accent-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 임의기간
@@ -376,17 +376,17 @@ const AnalyticsPage = () => {
             </label>
             <div className="flex gap-2">
               {[
-                { value: 'all' as const, label: '전체' },
-                { value: 'gratitude' as const, label: '감사' },
-                { value: 'reflection' as const, label: '성찰' },
+                { value: "all" as const, label: "전체" },
+                { value: "gratitude" as const, label: "감사" },
+                { value: "reflection" as const, label: "성찰" },
               ].map((category) => (
                 <button
                   key={category.value}
                   onClick={() => handleCategoryChange(category.value)}
                   className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                     selectedCategory === category.value
-                      ? 'bg-accent-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? "bg-accent-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {category.label}
@@ -433,7 +433,7 @@ const AnalyticsPage = () => {
             <h3 className="font-medium text-gray-900 mb-3">💡 인사이트</h3>
             <div className="space-y-2 text-sm text-gray-700">
               <p>
-                • 가장 많이 사용한 키워드:{' '}
+                • 가장 많이 사용한 키워드:{" "}
                 <strong
                   style={{ color: filteredStats[0]?.keyword.color }}
                   className="cursor-pointer hover:underline"
@@ -442,7 +442,7 @@ const AnalyticsPage = () => {
                   }
                 >
                   {filteredStats[0]?.keyword.name}
-                </strong>{' '}
+                </strong>{" "}
                 ({filteredStats[0]?.usageCount}회)
               </p>
 
@@ -479,7 +479,7 @@ const AnalyticsPage = () => {
                 >
                   <td className="py-3 px-2">
                     <span
-                      className={`text-sm font-bold ${index < 3 ? 'text-accent-600' : 'text-gray-500'}`}
+                      className={`text-sm font-bold ${index < 3 ? "text-accent-600" : "text-gray-500"}`}
                     >
                       {index + 1}
                     </span>
@@ -500,7 +500,7 @@ const AnalyticsPage = () => {
 
                   <td className="py-3 px-4">
                     <span className="text-sm text-gray-500">
-                      {format(new Date(stat.lastUsedDate), 'MM/dd', {
+                      {format(new Date(stat.lastUsedDate), "MM/dd", {
                         locale: ko,
                       })}
                     </span>

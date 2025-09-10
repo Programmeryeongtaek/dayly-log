@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { QuestionWithKeywords } from '@/types/questions';
+import { QuestionWithKeywords } from "@/types/questions";
 import {
   getAnswerStatus,
   getAnswerStatusLabel,
-} from '@/utils/questions/helpers';
-import { format } from 'date-fns';
-import { Edit3, MessageCircle } from 'lucide-react';
+} from "@/utils/questions/helpers";
+import { format } from "date-fns";
+import { Edit3, MessageCircle } from "lucide-react";
 
 interface QuestionAnswerCardProps {
   question: QuestionWithKeywords;
@@ -31,7 +31,7 @@ const QuestionAnswerCard = ({
             {getAnswerStatus(question.is_answered)}
           </span>
           <span className="text-xs text-gray-500">
-            {format(new Date(question.date), 'M월 d일')}
+            {format(new Date(question.date), "M월 d일")}
           </span>
         </div>
 
@@ -65,7 +65,7 @@ const QuestionAnswerCard = ({
               {question.answer}
             </p>
             <div className="mt-2 text-xs text-blue-600">
-              {format(new Date(question.updated_at), 'M월 d일 HH:mm')}에 작성
+              {format(new Date(question.updated_at), "M월 d일 HH:mm")}에 작성
             </div>
           </div>
         ) : (

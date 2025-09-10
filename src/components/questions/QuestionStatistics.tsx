@@ -1,6 +1,6 @@
-import { QuestionWithKeywords } from '@/types/questions';
-import { CheckCircle, Clock, MessageCircle, TrendingUp } from 'lucide-react';
-import { useMemo } from 'react';
+import { QuestionWithKeywords } from "@/types/questions";
+import { CheckCircle, Clock, MessageCircle, TrendingUp } from "lucide-react";
+import { useMemo } from "react";
 
 interface QuestionStatisticsProps {
   questions: QuestionWithKeywords[];
@@ -15,20 +15,20 @@ const QuestionStatistics = ({ questions }: QuestionStatisticsProps) => {
 
     // 카테고리별 통계
     const dailyCount = questions.filter(
-      (q) => q.category?.name === 'daily'
+      (q) => q.category?.name === "daily",
     ).length;
     const growthCount = questions.filter(
-      (q) => q.category?.name === 'growth'
+      (q) => q.category?.name === "growth",
     ).length;
     const customCount = questions.filter(
-      (q) => q.category?.name === 'custom'
+      (q) => q.category?.name === "custom",
     ).length;
 
     // 최근 7일 활동
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     const recentQuestions = questions.filter(
-      (q) => new Date(q.date) >= oneWeekAgo
+      (q) => new Date(q.date) >= oneWeekAgo,
     ).length;
 
     // 가장 많이 사용된 키워드 (상위 3개)
@@ -39,7 +39,7 @@ const QuestionStatistics = ({ questions }: QuestionStatisticsProps) => {
           acc[keyword.name] = (acc[keyword.name] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
     const topKeywords = Object.entries(keywordCounts)
@@ -115,7 +115,7 @@ const QuestionStatistics = ({ questions }: QuestionStatisticsProps) => {
                     width:
                       statistics.total > 0
                         ? `${(statistics.dailyCount / statistics.total) * 100}%`
-                        : '0%',
+                        : "0%",
                   }}
                 />
               </div>
@@ -135,7 +135,7 @@ const QuestionStatistics = ({ questions }: QuestionStatisticsProps) => {
                     width:
                       statistics.total > 0
                         ? `${(statistics.growthCount / statistics.total) * 100}%`
-                        : '0%',
+                        : "0%",
                   }}
                 />
               </div>
@@ -155,7 +155,7 @@ const QuestionStatistics = ({ questions }: QuestionStatisticsProps) => {
                     width:
                       statistics.total > 0
                         ? `${(statistics.customCount / statistics.total) * 100}%`
-                        : '0%',
+                        : "0%",
                   }}
                 />
               </div>

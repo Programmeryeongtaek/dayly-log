@@ -29,14 +29,12 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9.2.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -83,19 +81,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup pnpm
-        uses: pnpm/actions-setup@v4
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'pnpm'
-
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build for production
         run: pnpm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.PROD_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PROD_SUPABASE_ANON_KEY }}
 
       # Vercel 배포 예시 (사용하는 플랫폼에 맞게 수정)
       - name: Deploy to Vercel
@@ -104,7 +104,8 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # TODO: 나중에 배포 후 입력
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # TODO: 나중에 배포 후 입력
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # TODO: 나중에 배포 후 입력
-          vercel-args: '--prod'
+          vercel-args: "--prod"
+
 
       # 배포 성공 알림 (선택사항)
       - name: Deployment success notification

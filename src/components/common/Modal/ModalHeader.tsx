@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
-import { useModalContext } from './ModalContext';
-import { X } from 'lucide-react';
+import { ReactNode } from "react";
+import { useModalContext } from "./ModalContext";
+import { X } from "lucide-react";
 
 interface ModalHeaderProps {
   children: ReactNode;
@@ -13,7 +13,7 @@ interface ModalHeaderProps {
 const ModalHeader = ({
   children,
   showCloseButton,
-  className = '',
+  className = "",
 }: ModalHeaderProps) => {
   const { onClose } = useModalContext();
 

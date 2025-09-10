@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/auth';
-import { useGoalChecker } from '@/hooks/goals/useGoalChecker';
-import { AlertTriangle, Edit3, X } from 'lucide-react';
-import { useState } from 'react';
-import GoalEditModal from './GoalEditModal';
+import { useAuth } from "@/hooks/auth";
+import { useGoalChecker } from "@/hooks/goals/useGoalChecker";
+import { AlertTriangle, Edit3, X } from "lucide-react";
+import { useState } from "react";
+import GoalEditModal from "./GoalEditModal";
 
 interface GoalUpdateNotificationProps {
   categoryName: string;
@@ -18,7 +18,7 @@ const GoalUpdateNotification = ({
   const { user } = useAuth();
   const { affectedGoals, hasAffectedGoals } = useGoalChecker(
     user?.id,
-    categoryName
+    categoryName,
   );
   const [currentEditIndex, setCurrentEditIndex] = useState(-1);
 

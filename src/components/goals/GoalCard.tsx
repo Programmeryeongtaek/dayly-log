@@ -1,7 +1,7 @@
-import { Goal, GoalProgressInfo } from '@/types/goals';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { CheckCircle, TrendingDown, TrendingUp } from 'lucide-react';
+import { Goal, GoalProgressInfo } from "@/types/goals";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { CheckCircle, TrendingDown, TrendingUp } from "lucide-react";
 
 interface GoalCardProps {
   goal: Goal & { progress: GoalProgressInfo };
@@ -14,20 +14,20 @@ const GoalCard = ({ goal }: GoalCardProps) => {
     <div
       className={`bg-white rounded-lg p-6 shadow-sm border transition-all hover:shadow-md ${
         progress.isComplete
-          ? 'border-green-200 bg-green-50/30'
-          : 'border-gray-200'
+          ? "border-green-200 bg-green-50/30"
+          : "border-gray-200"
       }`}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div
             className={`p-2 rounded-lg ${
-              goal.type === 'increase_income'
-                ? 'bg-green-100 text-green-600'
-                : 'bg-red-100 text-red-600'
+              goal.type === "increase_income"
+                ? "bg-green-100 text-green-600"
+                : "bg-red-100 text-red-600"
             }`}
           >
-            {goal.type === 'increase_income' ? (
+            {goal.type === "increase_income" ? (
               <TrendingUp className="w-5 h-5" />
             ) : (
               <TrendingDown className="w-5 h-5" />
@@ -53,7 +53,7 @@ const GoalCard = ({ goal }: GoalCardProps) => {
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
             className={`h-2 rounded-full transition-all duration-300 ${
-              progress.isComplete ? 'bg-green-500' : 'bg-accent-500'
+              progress.isComplete ? "bg-green-500" : "bg-accent-500"
             }`}
             style={{ width: `${Math.min(100, progress.overallProgress)}%` }}
           />
@@ -66,7 +66,7 @@ const GoalCard = ({ goal }: GoalCardProps) => {
           <div className="flex justify-between">
             <span className="text-gray-600">금액 목표:</span>
             <span className="font-medium">
-              {goal.current_amount.toLocaleString()} /{' '}
+              {goal.current_amount.toLocaleString()} /{" "}
               {goal.target_amount.toLocaleString()}원
             </span>
           </div>
@@ -85,7 +85,7 @@ const GoalCard = ({ goal }: GoalCardProps) => {
           <div className="flex justify-between">
             <span className="text-gray-600">마감일:</span>
             <span className="font-medium">
-              {format(new Date(goal.target_date), 'yyyy년 M월 d일', {
+              {format(new Date(goal.target_date), "yyyy년 M월 d일", {
                 locale: ko,
               })}
             </span>

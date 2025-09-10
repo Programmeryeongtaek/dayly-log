@@ -1,9 +1,9 @@
-import { ReflectionFilters } from './ui';
+import { ReflectionFilters } from "./ui";
 export interface Neighbor {
   id: string;
   requester_id: string;
   recipient_id: string;
-  status: 'pending' | 'accepted' | 'declined' | 'blocked';
+  status: "pending" | "accepted" | "declined" | "blocked";
   created_at: string;
   updated_at: string;
   requester_name?: string;
@@ -15,8 +15,8 @@ export interface Neighbor {
 export interface UserPrivacySettings {
   id: string;
   user_id: string;
-  gratitude_default_visibility: 'public' | 'neighbors' | 'private';
-  reflection_default_visibility: 'public' | 'neighbors' | 'private';
+  gratitude_default_visibility: "public" | "neighbors" | "private";
+  reflection_default_visibility: "public" | "neighbors" | "private";
   allow_neighbor_requests: boolean;
   created_at: string;
   updated_at: string;
@@ -36,7 +36,7 @@ export interface Reflection {
   keywords?: Keyword[];
   category?: {
     id: string;
-    name: 'gratitude' | 'reflection';
+    name: "gratitude" | "reflection";
     display_name: string;
     description?: string;
     created_at?: string;
@@ -70,7 +70,7 @@ export interface ReflectionKeyword {
 
 export interface ReflectionCategory {
   id: string;
-  name: 'gratitude' | 'reflection';
+  name: "gratitude" | "reflection";
   display_name: string;
   description: string;
   created_at: string;
@@ -97,8 +97,8 @@ export interface NeighborRequestData {
 }
 
 export interface PrivacySettingsData {
-  gratitude_default_visibility: 'public' | 'neighbors' | 'private';
-  reflection_default_visibility: 'public' | 'neighbors' | 'private';
+  gratitude_default_visibility: "public" | "neighbors" | "private";
+  reflection_default_visibility: "public" | "neighbors" | "private";
   allow_neighbor_requests: boolean;
 }
 
@@ -134,10 +134,12 @@ export interface PeriodKeywordStats {
 
 export interface KeywordNavigationData {
   keyword: Keyword;
-  reflections: Array<Reflection & {
-    sequenceNumber: number;
-    totalCount: number;
-  }>;
+  reflections: Array<
+    Reflection & {
+      sequenceNumber: number;
+      totalCount: number;
+    }
+  >;
   currentIndex: number;
 }
 

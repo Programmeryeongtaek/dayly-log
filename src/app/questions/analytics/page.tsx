@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Modal from '@/components/common/Modal';
-import QuestionCard from '@/components/questions/QuestionCard';
-import { useAuth } from '@/hooks/auth';
-import { useQuestionKeywords } from '@/hooks/questions/useQuestionKeywords';
-import { useQuestions } from '@/hooks/questions/useQuestions';
-import { QuestionKeyword, QuestionWithKeywords } from '@/types/questions';
+import Modal from "@/components/common/Modal";
+import QuestionCard from "@/components/questions/QuestionCard";
+import { useAuth } from "@/hooks/auth";
+import { useQuestionKeywords } from "@/hooks/questions/useQuestionKeywords";
+import { useQuestions } from "@/hooks/questions/useQuestions";
+import { QuestionKeyword, QuestionWithKeywords } from "@/types/questions";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -17,65 +17,65 @@ import {
   Pencil,
   Target,
   X,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useCallback, useMemo, useState } from 'react';
+} from "lucide-react";
+import Link from "next/link";
+import { useCallback, useMemo, useState } from "react";
 
 const QuestionsAnalyticsPage = () => {
   const { user } = useAuth();
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedItems, setSelectedItems] = useState<QuestionWithKeywords[]>(
-    []
+    [],
   );
-  const [modalTitle, setModalTitle] = useState('');
+  const [modalTitle, setModalTitle] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedPeriod, setSelectedPeriod] = useState('전체');
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
+  const [selectedPeriod, setSelectedPeriod] = useState("전체");
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
 
   // 기간 프리셋
   const periodPresets = useMemo(() => {
     const today = new Date();
-    const getDateString = (date: Date) => date.toISOString().split('T')[0];
+    const getDateString = (date: Date) => date.toISOString().split("T")[0];
 
     return [
-      { label: '전체', startDate: '', endDate: '' },
+      { label: "전체", startDate: "", endDate: "" },
       {
-        label: '최근 1주일',
+        label: "최근 1주일",
         startDate: getDateString(
-          new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
       {
-        label: '최근 한 달',
+        label: "최근 한 달",
         startDate: getDateString(
-          new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
       {
-        label: '최근 3개월',
+        label: "최근 3개월",
         startDate: getDateString(
-          new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
       {
-        label: '최근 6개월',
+        label: "최근 6개월",
         startDate: getDateString(
-          new Date(today.getTime() - 180 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 180 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
       {
-        label: '최근 1년',
+        label: "최근 1년",
         startDate: getDateString(
-          new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
-      { label: '임의 기간', startDate: '', endDate: '' },
+      { label: "임의 기간", startDate: "", endDate: "" },
     ];
   }, []);
 
@@ -87,16 +87,16 @@ const QuestionsAnalyticsPage = () => {
 
   // 날짜 에러 메시지
   const dateErrorMessage = useMemo(() => {
-    if (!customStartDate || !customEndDate) return '';
+    if (!customStartDate || !customEndDate) return "";
     if (!isValidDateRange) {
-      return '시작일이 종료일보다 늦을 수 없습니다.';
+      return "시작일이 종료일보다 늦을 수 없습니다.";
     }
-    return '';
+    return "";
   }, [customStartDate, customEndDate, isValidDateRange]);
 
   // 기간 필터 적용
   const filters = useMemo(() => {
-    if (selectedPeriod === '임의 기간') {
+    if (selectedPeriod === "임의 기간") {
       // 임의 기간이지만 날짜가 유효하지 않으면 필터 적용 x
       if (!isValidDateRange) {
         return {};
@@ -111,9 +111,9 @@ const QuestionsAnalyticsPage = () => {
     }
 
     const selectedPreset = periodPresets.find(
-      (p) => p.label === selectedPeriod
+      (p) => p.label === selectedPeriod,
     );
-    if (!selectedPreset || selectedPreset.label === '전체') {
+    if (!selectedPreset || selectedPreset.label === "전체") {
       return {};
     }
     return {
@@ -139,45 +139,45 @@ const QuestionsAnalyticsPage = () => {
 
   // 카테고리별 분석
   const categoryAnalysis = useMemo(() => {
-    const daily = questions.filter((q) => q.category?.name === 'daily');
-    const growth = questions.filter((q) => q.category?.name === 'growth');
-    const custom = questions.filter((q) => q.category?.name === 'custom');
+    const daily = questions.filter((q) => q.category?.name === "daily");
+    const growth = questions.filter((q) => q.category?.name === "growth");
+    const custom = questions.filter((q) => q.category?.name === "custom");
 
     return [
       {
-        name: '일상',
+        name: "일상",
         count: daily.length,
         percentage:
           questions.length > 0
             ? Math.round((daily.length / questions.length) * 100)
             : 0,
-        color: 'bg-green-500',
-        bgColor: 'bg-green-50',
-        textColor: 'text-green-700',
+        color: "bg-green-500",
+        bgColor: "bg-green-50",
+        textColor: "text-green-700",
         questions: daily,
       },
       {
-        name: '성장',
+        name: "성장",
         count: growth.length,
         percentage:
           questions.length > 0
             ? Math.round((growth.length / questions.length) * 100)
             : 0,
-        color: 'bg-purple-500',
-        bgColor: 'bg-purple-50',
-        textColor: 'text-purple-700',
+        color: "bg-purple-500",
+        bgColor: "bg-purple-50",
+        textColor: "text-purple-700",
         questions: growth,
       },
       {
-        name: '나만의 질문',
+        name: "나만의 질문",
         count: custom.length,
         percentage:
           questions.length > 0
             ? Math.round((custom.length / questions.length) * 100)
             : 0,
-        color: 'bg-blue-500',
-        bgColor: 'bg-blue-50',
-        textColor: 'text-blue-700',
+        color: "bg-blue-500",
+        bgColor: "bg-blue-50",
+        textColor: "text-blue-700",
         questions: custom,
       },
     ].sort((a, b) => b.count - a.count);
@@ -223,7 +223,7 @@ const QuestionsAnalyticsPage = () => {
 
     questions.forEach((question) => {
       const date = new Date(question.date);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
       const monthLabel = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
 
       if (!monthMap.has(monthKey)) {
@@ -250,27 +250,27 @@ const QuestionsAnalyticsPage = () => {
 
     return [
       {
-        label: '답변 완료',
+        label: "답변 완료",
         count: answered.length,
         percentage:
           questions.length > 0
             ? Math.round((answered.length / questions.length) * 100)
             : 0,
-        color: 'bg-green-500',
-        bgColor: 'bg-green-50',
-        textColor: 'text-green-700',
+        color: "bg-green-500",
+        bgColor: "bg-green-50",
+        textColor: "text-green-700",
         questions: answered,
       },
       {
-        label: '답변 대기',
+        label: "답변 대기",
         count: unanswered.length,
         percentage:
           questions.length > 0
             ? Math.round((unanswered.length / questions.length) * 100)
             : 0,
-        color: 'bg-orange-500',
-        bgColor: 'bg-orange-50',
-        textColor: 'text-orange-700',
+        color: "bg-orange-500",
+        bgColor: "bg-orange-50",
+        textColor: "text-orange-700",
         questions: unanswered,
       },
     ];
@@ -279,17 +279,17 @@ const QuestionsAnalyticsPage = () => {
   // 기간 선택 핸들러
   const handlePeriodSelect = (periodLabel: string) => {
     if (selectedPeriod === periodLabel) {
-      setSelectedPeriod('전체');
+      setSelectedPeriod("전체");
       // 기간 해제 시 임의 기간 날짜도 초기화
-      setCustomStartDate('');
-      setCustomEndDate('');
+      setCustomStartDate("");
+      setCustomEndDate("");
     } else {
       setSelectedPeriod(periodLabel);
 
-      if (periodLabel === '임의 기간') {
+      if (periodLabel === "임의 기간") {
         // 임의 기간 선택 시 날짜 초기화 후 종료일을 오늘로 설정
-        setCustomStartDate('');
-        const today = new Date().toISOString().split('T')[0];
+        setCustomStartDate("");
+        const today = new Date().toISOString().split("T")[0];
         setCustomEndDate(today);
       } else {
         // 기존 프리셋 클릭 시 해당 날짜를 임의 기간 입력필드에 반영
@@ -299,8 +299,8 @@ const QuestionsAnalyticsPage = () => {
           setCustomEndDate(preset.endDate);
         } else {
           // 프리셋이 없거나 전체인 경우 날짜 초기화
-          setCustomStartDate('');
-          setCustomEndDate('');
+          setCustomStartDate("");
+          setCustomEndDate("");
         }
       }
     }
@@ -316,7 +316,7 @@ const QuestionsAnalyticsPage = () => {
         setCustomEndDate(value);
       }
     },
-    [customEndDate]
+    [customEndDate],
   );
 
   // 종료일 변경 핸들러 (시작일보다 빠르지 않도록 제한)
@@ -333,7 +333,7 @@ const QuestionsAnalyticsPage = () => {
         setCustomStartDate(value);
       }
     },
-    [customStartDate]
+    [customStartDate],
   );
 
   const handlePrevious = () => {
@@ -354,7 +354,7 @@ const QuestionsAnalyticsPage = () => {
   const handleCloseModal = () => {
     setShowDetailModal(false);
     setSelectedItems([]);
-    setModalTitle('');
+    setModalTitle("");
     setCurrentIndex(0);
   };
 
@@ -403,8 +403,8 @@ const QuestionsAnalyticsPage = () => {
                     onClick={() => handlePeriodSelect(preset.label)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border hover:cursor-pointer ${
                       selectedPeriod === preset.label
-                        ? 'bg-accent-100 text-black-500 border-accent-300'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                        ? "bg-accent-100 text-black-500 border-accent-300"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300"
                     }`}
                   >
                     {preset.label}
@@ -590,7 +590,7 @@ const QuestionsAnalyticsPage = () => {
                     onClick={() =>
                       handleShowDetail(
                         item.questions,
-                        `"${item.keyword.name}" 키워드`
+                        `"${item.keyword.name}" 키워드`,
                       )
                     }
                   >

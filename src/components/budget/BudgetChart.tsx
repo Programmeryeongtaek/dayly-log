@@ -1,6 +1,6 @@
-import { BudgetChartProps } from '@/types/budget';
-import { Target, TrendingUp, TrendingDown } from 'lucide-react';
-import { useMemo } from 'react';
+import { BudgetChartProps } from "@/types/budget";
+import { Target, TrendingUp, TrendingDown } from "lucide-react";
+import { useMemo } from "react";
 import {
   Cell,
   Legend,
@@ -8,21 +8,21 @@ import {
   PieChart,
   ResponsiveContainer,
   Tooltip,
-} from 'recharts';
+} from "recharts";
 
 const INCOME_COLORS = [
-  '#22c55e',
-  '#16a34a',
-  '#15803d',
-  '#166534',
-  '#14532d',
+  "#22c55e",
+  "#16a34a",
+  "#15803d",
+  "#166534",
+  "#14532d",
 ] as const;
 const EXPENSE_COLORS = [
-  '#ef4444',
-  '#dc2626',
-  '#b91c1c',
-  '#991b1b',
-  '#7f1d1d',
+  "#ef4444",
+  "#dc2626",
+  "#b91c1c",
+  "#991b1b",
+  "#7f1d1d",
 ] as const;
 
 export default function BudgetChart({
@@ -50,7 +50,7 @@ export default function BudgetChart({
 
     // 실제 transactions를 순회하면서 건수 계산
     transactions.forEach((transaction) => {
-      const categoryName = transaction.category?.name || 'Unknown';
+      const categoryName = transaction.category?.name || "Unknown";
       const existing = categoryMap.get(categoryName) || {
         name: categoryName,
         incomeAmount: 0,
@@ -59,7 +59,7 @@ export default function BudgetChart({
         expenseCount: 0,
       };
 
-      if (transaction.type === 'income') {
+      if (transaction.type === "income") {
         existing.incomeAmount += transaction.amount;
         existing.incomeCount += 1;
       } else {
@@ -71,7 +71,7 @@ export default function BudgetChart({
     });
 
     return Array.from(categoryMap.values()).filter(
-      (category) => category.incomeAmount > 0 || category.expenseAmount > 0
+      (category) => category.incomeAmount > 0 || category.expenseAmount > 0,
     );
   }, [transactions]);
 
@@ -79,7 +79,7 @@ export default function BudgetChart({
     categoryName: string,
     amount: number,
     count: number,
-    type: 'income' | 'expense'
+    type: "income" | "expense",
   ) => {
     if (onChallengeClick) {
       onChallengeClick(categoryName, amount, count, type);
@@ -101,12 +101,12 @@ export default function BudgetChart({
             />
             <div
               className={`w-10 h-5 rounded-full transition-colors ${
-                isFixedEnabled ? 'bg-accent-500' : 'bg-gray-300'
+                isFixedEnabled ? "bg-accent-500" : "bg-gray-300"
               }`}
             >
               <div
                 className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform mt-0.5 ${
-                  isFixedEnabled ? 'translate-x-5  ml-0.5' : 'translate-x-0.5'
+                  isFixedEnabled ? "translate-x-5  ml-0.5" : "translate-x-0.5"
                 }`}
               />
             </div>
@@ -118,9 +118,9 @@ export default function BudgetChart({
         <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg">
           <span className="text-sm font-medium text-gray-700">합계:</span>
           <span
-            className={`font-bold ${totals.net >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            className={`font-bold ${totals.net >= 0 ? "text-green-600" : "text-red-600"}`}
           >
-            {totals.net >= 0 ? '+' : ''}
+            {totals.net >= 0 ? "+" : ""}
             {totals.net.toLocaleString()}원
           </span>
         </div>
@@ -159,7 +159,7 @@ export default function BudgetChart({
                   <Tooltip
                     formatter={(value: number) => [
                       `${value.toLocaleString()}원`,
-                      '금액',
+                      "금액",
                     ]}
                   />
                   <Legend />
@@ -207,7 +207,7 @@ export default function BudgetChart({
                   <Tooltip
                     formatter={(value: number) => [
                       `${value.toLocaleString()}원`,
-                      '금액',
+                      "금액",
                     ]}
                   />
                   <Legend />
@@ -266,7 +266,7 @@ export default function BudgetChart({
                               category.name,
                               category.incomeAmount,
                               category.incomeCount,
-                              'income'
+                              "income",
                             )
                           }
                           className="p-1 text-green-600 hover:text-green-700 hover:bg-green-100 rounded-md transition-colors group"
@@ -319,7 +319,7 @@ export default function BudgetChart({
                               category.name,
                               category.expenseAmount,
                               category.expenseCount,
-                              'expense'
+                              "expense",
                             )
                           }
                           className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-md transition-colors group"

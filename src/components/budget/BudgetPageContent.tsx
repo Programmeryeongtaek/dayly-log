@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { useState, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import { ko } from "date-fns/locale";
 import {
   Calendar,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-} from 'lucide-react';
-import { useAuth } from '@/hooks/auth';
-import { useChallenge } from '@/hooks/budget/useChallenge';
-import ChallengeModal from '@/components/budget/ChallengeModal';
-import { useBudget, useCategories } from '@/hooks/budget';
-import { BudgetCalendar, BudgetChart } from '@/components/budget';
+} from "lucide-react";
+import { useAuth } from "@/hooks/auth";
+import { useChallenge } from "@/hooks/budget/useChallenge";
+import ChallengeModal from "@/components/budget/ChallengeModal";
+import { useBudget, useCategories } from "@/hooks/budget";
+import { BudgetCalendar, BudgetChart } from "@/components/budget";
 
 interface ChallengeFormData {
   title: string;
@@ -34,7 +34,7 @@ interface ExpenseForChallenge {
   amount: number;
   category: string;
   count?: number;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
 }
 
 const BudgetPageContent = () => {
@@ -44,12 +44,12 @@ const BudgetPageContent = () => {
   const searchParams = useSearchParams();
 
   // URL에서 month 파라미터 읽기
-  const monthParam = searchParams.get('month');
+  const monthParam = searchParams.get("month");
 
   // 날짜 상태
   const [currentDate, setCurrentDate] = useState(() => {
     if (monthParam) {
-      const [year, month] = monthParam.split('-');
+      const [year, month] = monthParam.split("-");
       return new Date(parseInt(year), parseInt(month) - 1, 1);
     }
     return new Date();
@@ -65,7 +65,7 @@ const BudgetPageContent = () => {
   const [isTransactionListOpen, setIsTransactionListOpen] = useState(false);
 
   // 현재 월 문자열 생성
-  const currentMonth = format(currentDate, 'yyyy-MM');
+  const currentMonth = format(currentDate, "yyyy-MM");
 
   // 데이터 hooks - 사용자 인증 확인
   const shouldFetchData = !!user?.id;
@@ -83,11 +83,11 @@ const BudgetPageContent = () => {
   });
 
   const { categories, isLoading: isLoadingCategories } = useCategories(
-    shouldFetchData ? user?.id : undefined
+    shouldFetchData ? user?.id : undefined,
   );
 
   // 날짜 포맷 함수
-  const formatDateString = (date: Date) => format(date, 'yyyy-MM-dd');
+  const formatDateString = (date: Date) => format(date, "yyyy-MM-dd");
 
   // 캘린더 날짜 생성
   const calendarDays = useMemo(() => {
@@ -103,15 +103,15 @@ const BudgetPageContent = () => {
 
   // 카테고리별 분류
   const categorizedData = useMemo(() => {
-    const incomeFixed = categories.filter((cat) => cat.type === 'income_fixed');
+    const incomeFixed = categories.filter((cat) => cat.type === "income_fixed");
     const incomeVariable = categories.filter(
-      (cat) => cat.type === 'income_variable'
+      (cat) => cat.type === "income_variable",
     );
     const expenseFixed = categories.filter(
-      (cat) => cat.type === 'expense_fixed'
+      (cat) => cat.type === "expense_fixed",
     );
     const expenseVariable = categories.filter(
-      (cat) => cat.type === 'expense_variable'
+      (cat) => cat.type === "expense_variable",
     );
 
     return {
@@ -157,7 +157,7 @@ const BudgetPageContent = () => {
       },
       net: statistics.net,
     }),
-    [statistics, isFixedEnabled]
+    [statistics, isFixedEnabled],
   );
 
   // 핸들러들
@@ -165,10 +165,10 @@ const BudgetPageContent = () => {
     setIsFixedEnabled(enabled);
   };
 
-  const handleMonthChange = (direction: 'prev' | 'next') => {
+  const handleMonthChange = (direction: "prev" | "next") => {
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
-      if (direction === 'prev') {
+      if (direction === "prev") {
         newDate.setMonth(newDate.getMonth() - 1);
       } else {
         newDate.setMonth(newDate.getMonth() + 1);
@@ -187,7 +187,7 @@ const BudgetPageContent = () => {
     categoryName: string,
     amount: number,
     count: number,
-    type: 'income' | 'expense'
+    type: "income" | "expense",
   ) => {
     if (!user?.id) return;
 
@@ -207,8 +207,8 @@ const BudgetPageContent = () => {
   const handleChallengeSubmit = (
     data: ChallengeFormData & {
       category: string;
-      categoryType: 'income' | 'expense';
-    }
+      categoryType: "income" | "expense";
+    },
   ) => {
     if (!user?.id) return;
 
@@ -274,17 +274,17 @@ const BudgetPageContent = () => {
         <div className="bg-white rounded-lg p-4 shadow-sm border">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold text-gray-900">
-              {format(currentDate, 'yyyy년 M월', { locale: ko })}
+              {format(currentDate, "yyyy년 M월", { locale: ko })}
             </h1>
             <div className="flex gap-1">
               <button
-                onClick={() => handleMonthChange('prev')}
+                onClick={() => handleMonthChange("prev")}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
-                onClick={() => handleMonthChange('next')}
+                onClick={() => handleMonthChange("next")}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
@@ -327,7 +327,7 @@ const BudgetPageContent = () => {
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-semibold">가계내역</h2>
                 <div className="text-xs text-gray-500">
-                  총 {budgetItems.length}건 • 합계: {totals.net >= 0 ? '+' : ''}
+                  총 {budgetItems.length}건 • 합계: {totals.net >= 0 ? "+" : ""}
                   {totals.net.toLocaleString()}원
                 </div>
               </div>
@@ -348,17 +348,17 @@ const BudgetPageContent = () => {
                   >
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <span className="text-xs text-gray-500 flex-shrink-0">
-                        {format(new Date(item.date), 'M/d', { locale: ko })}
+                        {format(new Date(item.date), "M/d", { locale: ko })}
                       </span>
                       <span
                         className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                          item.type === 'income'
-                            ? item.categoryType === 'fixed'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-green-50 text-green-600'
-                            : item.categoryType === 'fixed'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-red-50 text-red-600'
+                          item.type === "income"
+                            ? item.categoryType === "fixed"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-green-50 text-green-600"
+                            : item.categoryType === "fixed"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-red-50 text-red-600"
                         }`}
                       >
                         {item.category}
@@ -369,12 +369,12 @@ const BudgetPageContent = () => {
                     </div>
                     <span
                       className={`font-semibold text-sm flex-shrink-0 ${
-                        item.type === 'income'
-                          ? 'text-green-600'
-                          : 'text-red-600'
+                        item.type === "income"
+                          ? "text-green-600"
+                          : "text-red-600"
                       }`}
                     >
-                      {item.type === 'income' ? '+' : '-'}
+                      {item.type === "income" ? "+" : "-"}
                       {item.amount.toLocaleString()}원
                     </span>
                   </div>
@@ -391,7 +391,7 @@ const BudgetPageContent = () => {
               <Calendar className="w-12 h-12 mx-auto" />
             </div>
             <h3 className="text-lg font-medium text-gray-600 mb-2">
-              {format(currentDate, 'M월', { locale: ko })}에는 아직 거래가
+              {format(currentDate, "M월", { locale: ko })}에는 아직 거래가
               없습니다
             </h3>
             <p className="text-gray-500">

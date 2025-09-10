@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import AuthGuard from '@/components/auth/AuthGuard';
-import GoalCard from '@/components/goals/GoalCard';
-import { useAuth } from '@/hooks/auth';
-import { useGoals } from '@/hooks/goals/useGoals';
+import AuthGuard from "@/components/auth/AuthGuard";
+import GoalCard from "@/components/goals/GoalCard";
+import { useAuth } from "@/hooks/auth";
+import { useGoals } from "@/hooks/goals/useGoals";
 import {
   Calendar,
   Clock,
@@ -13,9 +13,9 @@ import {
   Target,
   TrendingUp,
   Trophy,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useMemo, useState } from 'react';
+} from "lucide-react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 
 const GoalsPage = () => {
   const { user } = useAuth();
@@ -25,18 +25,18 @@ const GoalsPage = () => {
 
   // 필터 상태
   const [activeTab, setActiveTab] = useState<
-    'active' | 'completed' | 'paused' | 'cancelled' | 'all'
-  >('active');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>(
-    'all'
+    "active" | "completed" | "paused" | "cancelled" | "all"
+  >("active");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState<"all" | "income" | "expense">(
+    "all",
   );
 
   // 필터링된 목표들
   const filteredGoals = useMemo(() => {
     let filtered = goals;
 
-    if (activeTab !== 'all') {
+    if (activeTab !== "all") {
       filtered = goals.filter((goal) => goal.status === activeTab);
     }
 
@@ -44,15 +44,15 @@ const GoalsPage = () => {
       filtered = filtered.filter(
         (goal) =>
           goal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          goal.description?.toLowerCase().includes(searchTerm.toLowerCase())
+          goal.description?.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
-    if (typeFilter !== 'all') {
+    if (typeFilter !== "all") {
       filtered = filtered.filter((goal) => {
-        return typeFilter === 'income'
-          ? goal.type === 'increase_income'
-          : goal.type === 'reduce_expense';
+        return typeFilter === "income"
+          ? goal.type === "increase_income"
+          : goal.type === "reduce_expense";
       });
     }
 
@@ -70,7 +70,7 @@ const GoalsPage = () => {
 
   // 핸들러들
   const handleTypeFilterChange = (value: string) => {
-    if (value === 'all' || value === 'income' || value === 'expense') {
+    if (value === "all" || value === "income" || value === "expense") {
       setTypeFilter(value);
     }
   };
@@ -194,51 +194,51 @@ const GoalsPage = () => {
             {/* 탭 */}
             <div className="flex bg-gray-100 rounded-lg p-1">
               <button
-                onClick={() => setActiveTab('active')}
+                onClick={() => setActiveTab("active")}
                 className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  activeTab === 'active'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                  activeTab === "active"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 진행 ({statistics.active})
               </button>
               <button
-                onClick={() => setActiveTab('completed')}
+                onClick={() => setActiveTab("completed")}
                 className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  activeTab === 'completed'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                  activeTab === "completed"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 완료 ({statistics.completed})
               </button>
               <button
-                onClick={() => setActiveTab('paused')}
+                onClick={() => setActiveTab("paused")}
                 className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  activeTab === 'completed'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                  activeTab === "completed"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 멈춤 ({statistics.completed})
               </button>
               <button
-                onClick={() => setActiveTab('cancelled')}
+                onClick={() => setActiveTab("cancelled")}
                 className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  activeTab === 'completed'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                  activeTab === "completed"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 취소 ({statistics.completed})
               </button>
               <button
-                onClick={() => setActiveTab('all')}
+                onClick={() => setActiveTab("all")}
                 className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  activeTab === 'all'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                  activeTab === "all"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 전체 ({statistics.total})
@@ -286,22 +286,22 @@ const GoalsPage = () => {
               <Target className="w-16 h-16 mx-auto" />
             </div>
             <h3 className="text-xl font-medium text-gray-600 mb-2">
-              {activeTab === 'active'
-                ? '진행 중인 목표가 없습니다.'
-                : activeTab === 'completed'
-                  ? '완료된 목표가 없습니다.'
+              {activeTab === "active"
+                ? "진행 중인 목표가 없습니다."
+                : activeTab === "completed"
+                  ? "완료된 목표가 없습니다."
                   : searchTerm
-                    ? '검색 결과가 없습니다.'
-                    : '아직 목표가 없습니다.'}
+                    ? "검색 결과가 없습니다."
+                    : "아직 목표가 없습니다."}
             </h3>
             <p className="text-gray-500 mb-6">
-              {activeTab === 'active'
-                ? '가계부에서 챌린지를 시작하거나 새로운 목표를 만들어보세요.'
-                : activeTab === 'completed'
-                  ? '목표를 달성하면 여기에 표시됩니다.'
+              {activeTab === "active"
+                ? "가계부에서 챌린지를 시작하거나 새로운 목표를 만들어보세요."
+                : activeTab === "completed"
+                  ? "목표를 달성하면 여기에 표시됩니다."
                   : searchTerm
-                    ? '다른 검색어로 시도해보세요.'
-                    : '첫 번째 목표를 만들어 성장을 시작해보세요.'}
+                    ? "다른 검색어로 시도해보세요."
+                    : "첫 번째 목표를 만들어 성장을 시작해보세요."}
             </p>
             {!searchTerm && (
               <div className="flex flex-col justify-center">

@@ -1,8 +1,8 @@
-import { useAuth } from '@/hooks/auth';
-import { useKeywords } from '@/hooks/reflections/useKeywords';
-import { useReflections } from '@/hooks/reflections/useReflections';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { useAuth } from "@/hooks/auth";
+import { useKeywords } from "@/hooks/reflections/useKeywords";
+import { useReflections } from "@/hooks/reflections/useReflections";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import {
   ArrowRight,
   BookOpen,
@@ -11,9 +11,9 @@ import {
   Lightbulb,
   PencilIcon,
   Plus,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useMemo } from 'react';
+} from "lucide-react";
+import Link from "next/link";
+import { useMemo } from "react";
 
 const DashboardReflectionWidget = () => {
   const { user } = useAuth();
@@ -122,7 +122,7 @@ const DashboardReflectionWidget = () => {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      {reflection.category?.name === 'gratitude' ? (
+                      {reflection.category?.name === "gratitude" ? (
                         <Heart className="w-4 h-4 text-orange-600" />
                       ) : (
                         <Lightbulb className="w-4 h-4 text-blue-600" />
@@ -132,7 +132,7 @@ const DashboardReflectionWidget = () => {
                       </span>
                     </div>
                     <span className="text-xs text-gray-500">
-                      {format(new Date(reflection.date), 'MM/dd', {
+                      {format(new Date(reflection.date), "MM/dd", {
                         locale: ko,
                       })}
                     </span>

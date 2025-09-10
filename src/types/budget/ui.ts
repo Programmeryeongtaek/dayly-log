@@ -1,4 +1,4 @@
-import { BudgetTransaction, Category } from './database';
+import { BudgetTransaction, Category } from "./database";
 
 export interface BudgetItem {
   id: string;
@@ -6,16 +6,16 @@ export interface BudgetItem {
   amount: number;
   category: string;
   date: string;
-  type: 'income' | 'expense';
-  categoryType: 'fixed' | 'variable';
+  type: "income" | "expense";
+  categoryType: "fixed" | "variable";
 }
 
 export interface NewBudgetItemState {
   name: string;
   amount: string;
   category: string;
-  type: 'income' | 'expense';
-  categoryType: 'fixed' | 'variable';
+  type: "income" | "expense";
+  categoryType: "fixed" | "variable";
   newCategoryName: string;
   isCreatingCategory: boolean;
 }
@@ -24,7 +24,7 @@ export interface BudgetCalendarProps {
   currentDate: Date;
   calendarDays: (Date | null)[];
   dailyTotals: Record<string, { income: number; expense: number; net: number }>;
-  onMonthChange: (direction: 'prev' | 'next') => void;
+  onMonthChange: (direction: "prev" | "next") => void;
   onDateSelect: (date: Date) => void;
   formatDateString: (date: Date) => string;
 }
@@ -46,7 +46,12 @@ export interface BudgetChartProps {
     expenseVariable: Array<{ id: string; name: string; type: string }>;
   };
   transactions?: BudgetTransaction[];
-  onChallengeClick?: (categoryName: string, amount: number, count: number, type: 'income' | 'expense') => void;
+  onChallengeClick?: (
+    categoryName: string,
+    amount: number,
+    count: number,
+    type: "income" | "expense",
+  ) => void;
 }
 
 export interface BudgetFormProps {
@@ -64,7 +69,7 @@ export interface BudgetListProps {
   items: BudgetItem[];
   onDeleteItem: (id: string) => void;
   title: string;
-  type: 'income' | 'expense' | 'all';
+  type: "income" | "expense" | "all";
 }
 
 export interface ChartData {

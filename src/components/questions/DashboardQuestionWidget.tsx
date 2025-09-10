@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/auth';
-import { useQuestions } from '@/hooks/questions/useQuestions';
-import { QuestionKeyword } from '@/types/questions';
+import { useAuth } from "@/hooks/auth";
+import { useQuestions } from "@/hooks/questions/useQuestions";
+import { QuestionKeyword } from "@/types/questions";
 import {
   MessageSquare,
   Hash,
@@ -10,9 +10,9 @@ import {
   ArrowRight,
   CheckCircle,
   Clock,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useMemo } from 'react';
+} from "lucide-react";
+import Link from "next/link";
+import { useMemo } from "react";
 
 const DashboardQuestionWidget = () => {
   const { user } = useAuth();
@@ -28,7 +28,7 @@ const DashboardQuestionWidget = () => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const recentQuestions = questions.filter(
-      (q) => new Date(q.date) >= oneWeekAgo
+      (q) => new Date(q.date) >= oneWeekAgo,
     );
 
     const keywordMap = new Map<
@@ -62,17 +62,17 @@ const DashboardQuestionWidget = () => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const recentQuestions = questions.filter(
-      (q) => new Date(q.date) >= oneWeekAgo
+      (q) => new Date(q.date) >= oneWeekAgo,
     );
 
-    const daily = recentQuestions.filter((q) => q.category?.name === 'daily');
-    const growth = recentQuestions.filter((q) => q.category?.name === 'growth');
-    const custom = recentQuestions.filter((q) => q.category?.name === 'custom');
+    const daily = recentQuestions.filter((q) => q.category?.name === "daily");
+    const growth = recentQuestions.filter((q) => q.category?.name === "growth");
+    const custom = recentQuestions.filter((q) => q.category?.name === "custom");
 
     return [
-      { name: '일상', count: daily.length, color: 'text-green-600' },
-      { name: '성장', count: growth.length, color: 'text-purple-600' },
-      { name: '나만의', count: custom.length, color: 'text-blue-600' },
+      { name: "일상", count: daily.length, color: "text-green-600" },
+      { name: "성장", count: growth.length, color: "text-purple-600" },
+      { name: "나만의", count: custom.length, color: "text-blue-600" },
     ];
   }, [questions]);
 

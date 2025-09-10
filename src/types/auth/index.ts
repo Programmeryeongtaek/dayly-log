@@ -1,6 +1,6 @@
-import { AuthState, AuthError } from './ui';
-import { LoginFormData, SignupFormData, ProfileUpdateData } from './forms';
-import { AuthUser, UserProfile } from './database';
+import { AuthState, AuthError } from "./ui";
+import { LoginFormData, SignupFormData, ProfileUpdateData } from "./forms";
+import { AuthUser, UserProfile } from "./database";
 
 export type {
   // Database types
@@ -18,5 +18,5 @@ export type {
 };
 
 // Utility types
-export type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
-export type AuthAction = 'login' | 'signup' | 'logout' | 'update-profile';
+export type AuthStatus = "loading" | "authenticated" | "unauthenticated";
+export type AuthAction = "login" | "signup" | "logout" | "update-profile";

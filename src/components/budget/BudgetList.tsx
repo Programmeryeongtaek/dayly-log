@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { BudgetListProps } from '@/types/budget';
-import { Trash2, TrendingDown, TrendingUp } from 'lucide-react';
+import { BudgetListProps } from "@/types/budget";
+import { Trash2, TrendingDown, TrendingUp } from "lucide-react";
 
 export default function BudgetList({
   items,
@@ -11,14 +11,14 @@ export default function BudgetList({
 }: BudgetListProps) {
   // 타입에 따라 필터링
   const filteredItems = items.filter((item) => {
-    if (type === 'all') return true;
+    if (type === "all") return true;
     return item.type === type;
   });
 
   if (filteredItems.length === 0) return null;
 
   // 카테고리가 고정인지 확인하는 함수
-  const isFixedCategory = (categoryType: string) => categoryType === 'fixed';
+  const isFixedCategory = (categoryType: string) => categoryType === "fixed";
 
   // 타입별 총합 계산
   const totalAmount = filteredItems.reduce((sum, item) => sum + item.amount, 0);
@@ -27,24 +27,24 @@ export default function BudgetList({
     <div className="flex flex-col">
       <div className="flex items-center justify-between mb-2 border-b pb-2">
         <h3 className="font-medium text-gray-700 text-sm flex items-center gap-2">
-          {type === 'income' && (
+          {type === "income" && (
             <TrendingUp className="w-4 h-4 text-green-600" />
           )}
-          {type === 'expense' && (
+          {type === "expense" && (
             <TrendingDown className="w-4 h-4 text-red-600" />
           )}
           {title} ({filteredItems.length}건)
         </h3>
         <div
           className={`text-sm font-semibold ${
-            type === 'income'
-              ? 'text-green-600'
-              : type === 'expense'
-                ? 'text-red-600'
-                : 'text-gray-700'
+            type === "income"
+              ? "text-green-600"
+              : type === "expense"
+                ? "text-red-600"
+                : "text-gray-700"
           }`}
         >
-          {type === 'income' ? '+' : type === 'expense' ? '-' : ''}
+          {type === "income" ? "+" : type === "expense" ? "-" : ""}
           {totalAmount.toLocaleString()}원
         </div>
       </div>
@@ -52,7 +52,7 @@ export default function BudgetList({
       <div className="space-y-2">
         {filteredItems
           .sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
           )
           .map((item) => (
             <div
@@ -65,12 +65,12 @@ export default function BudgetList({
                   <span
                     className={`inline-block px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
                       isFixedCategory(item.categoryType)
-                        ? item.type === 'income'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-red-100 text-red-700'
-                        : item.type === 'income'
-                          ? 'bg-green-50 text-green-600'
-                          : 'bg-red-50 text-red-600'
+                        ? item.type === "income"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                        : item.type === "income"
+                          ? "bg-green-50 text-green-600"
+                          : "bg-red-50 text-red-600"
                     }`}
                   >
                     {item.category}
@@ -85,10 +85,10 @@ export default function BudgetList({
                 {/* 금액 */}
                 <span
                   className={`font-semibold text-sm flex-shrink-0 ${
-                    item.type === 'income' ? 'text-green-600' : 'text-red-600'
+                    item.type === "income" ? "text-green-600" : "text-red-600"
                   }`}
                 >
-                  {item.type === 'income' ? '+' : '-'}
+                  {item.type === "income" ? "+" : "-"}
                   {item.amount.toLocaleString()}원
                 </span>
               </div>

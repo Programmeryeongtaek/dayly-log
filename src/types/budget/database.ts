@@ -15,7 +15,7 @@ export interface BudgetTransaction {
   name: string;
   amount: number;
   date: string;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
   description: string | null;
   created_at: string;
   updated_at: string;
@@ -26,7 +26,11 @@ export interface Category {
   id: string;
   user_id: string;
   name: string;
-  type: 'income_fixed' | 'income_variable' | 'expense_fixed' | 'expense_variable';
+  type:
+    | "income_fixed"
+    | "income_variable"
+    | "expense_fixed"
+    | "expense_variable";
   color: string;
   is_default: boolean;
   is_deleted?: boolean;
@@ -35,6 +39,10 @@ export interface Category {
   updated_at: string;
 }
 
-export type CategoryType = 'income_fixed' | 'income_variable' | 'expense_fixed' | 'expense_variable';
-export type TransactionType = 'income' | 'expense';
-export type CategorySubType = 'fixed' | 'variable';
+export type CategoryType =
+  | "income_fixed"
+  | "income_variable"
+  | "expense_fixed"
+  | "expense_variable";
+export type TransactionType = "income" | "expense";
+export type CategorySubType = "fixed" | "variable";

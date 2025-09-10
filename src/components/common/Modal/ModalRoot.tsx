@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { ReactNode, useEffect } from 'react';
-import { ModalContext, ModalContextType } from './ModalContext';
+import { ReactNode, useEffect } from "react";
+import { ModalContext, ModalContextType } from "./ModalContext";
 
 interface ModalRootProps {
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }
 
@@ -15,12 +15,12 @@ const ModalRoot = ({
   children,
   isOpen,
   onClose,
-  size = 'md',
-  className = '',
+  size = "md",
+  className = "",
 }: ModalRootProps) => {
   // 컨테이너 클릭 (이벤트 버블링 방지)
   const handleContainerClick = (
-    event: React.MouseEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement>,
   ): void => {
     event.stopPropagation();
   };
@@ -37,7 +37,7 @@ const ModalRoot = ({
     const scrollBarWidth =
       window.innerWidth - document.documentElement.clientWidth;
 
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     document.body.style.paddingRight = `${scrollBarWidth}px`;
 
     return () => {
@@ -50,10 +50,10 @@ const ModalRoot = ({
 
   // 사이즈별 스타일 정의
   const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
+    sm: "max-w-md",
+    md: "max-w-lg",
+    lg: "max-w-2xl",
+    xl: "max-w-4xl",
   } as const;
 
   const contextValue: ModalContextType = {

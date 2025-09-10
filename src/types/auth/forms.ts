@@ -1,4 +1,8 @@
-import { LoginFormValues, ProfileUpdateFormValues, SignupFormValues } from '@/lib/validations/auth';
+import {
+  LoginFormValues,
+  ProfileUpdateFormValues,
+  SignupFormValues,
+} from "@/lib/validations/auth";
 
 // Zoe에서 추출된 타입들
 export type LoginFormData = LoginFormValues;

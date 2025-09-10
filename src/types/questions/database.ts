@@ -1,10 +1,10 @@
-import { QuestionFilters } from './ui';
+import { QuestionFilters } from "./ui";
 
 export interface QuestionNeighbor {
   id: string;
   requester_id: string;
   recipient_id: string;
-  status: 'pending' | 'accepted' | 'declined' | 'blocked';
+  status: "pending" | "accepted" | "declined" | "blocked";
   created_at: string;
   updated_at: string;
   requester_name?: string;
@@ -29,7 +29,7 @@ export interface Question {
   keywords?: QuestionKeyword[];
   category?: {
     id: string;
-    name: 'daily' | 'growth' | 'custom';
+    name: "daily" | "growth" | "custom";
     display_name: string;
     description?: string;
     created_at?: string;
@@ -64,7 +64,7 @@ export interface QuestionKeywordRelation {
 
 export interface QuestionCategory {
   id: string;
-  name: 'daily' | 'growth' | 'custom';
+  name: "daily" | "growth" | "custom";
   display_name: string;
   description?: string;
   created_at: string;
@@ -93,9 +93,9 @@ export interface QuestionNeighborRequestData {
 }
 
 export interface QuestionPrivacySettingsData {
-  daily_default_visibility: 'public' | 'neighbors' | 'private';
-  growth_default_visibility: 'public' | 'neighbors' | 'private';
-  custom_default_visibility: 'public' | 'neighbors' | 'private';
+  daily_default_visibility: "public" | "neighbors" | "private";
+  growth_default_visibility: "public" | "neighbors" | "private";
+  custom_default_visibility: "public" | "neighbors" | "private";
   allow_neighbor_requests: boolean;
 }
 
@@ -133,10 +133,12 @@ export interface PeriodQuestionKeywordStats {
 
 export interface QuestionKeywordNavigationData {
   keyword: QuestionKeyword;
-  questions: Array<Question & {
-    sequenceNumber: number;
-    totalCount: number;
-  }>;
+  questions: Array<
+    Question & {
+      sequenceNumber: number;
+      totalCount: number;
+    }
+  >;
   currentIndex: number;
 }
 
