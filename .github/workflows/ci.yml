@@ -3,7 +3,7 @@ name: CI - Code Quality Check
 on:
   push:
     branches:
-      - 'feat/**'
+      - "feat/**"
   pull_request:
     branches:
       - develop
@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       # 4. 의존성 설치
       - name: Install dependencies
@@ -62,8 +62,8 @@ jobs:
         run: pnpm run build
         env:
           # 빌드 테스트용 더미 환경변수
-          NEXT_PUBLIC_SUPABASE_URL: 'https://dummy.supabase.co'
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'dummy-key-for-build-test'
+          NEXT_PUBLIC_SUPABASE_URL: "https://dummy.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-key-for-build-test"
 
       # 9. 성공 시 체크마크 출력
       - name: All checks passed
