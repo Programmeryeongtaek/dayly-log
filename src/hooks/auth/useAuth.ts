@@ -201,7 +201,7 @@ export const useAuth = () => {
     user: session?.user || null,
     profile,
     session,
-    isLoading: (isSessionLoading || isProfileLoading) && !isInitialized,
+    isLoading: isSessionLoading || (!isInitialized && session === undefined),
     isAuthenticated: !!session?.user,
     emailCheckResult: checkEmailMutation.data,
     nicknameCheckResult: checkNicknameMutation.data,
