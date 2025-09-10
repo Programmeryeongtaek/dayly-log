@@ -68,7 +68,7 @@ export default function LoginPageContent() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  이메일 *
+                  이메일
                 </label>
                 <input
                   id="email"
@@ -94,7 +94,7 @@ export default function LoginPageContent() {
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  비밀번호 *
+                  비밀번호
                 </label>
                 <input
                   id="password"
@@ -120,18 +120,24 @@ export default function LoginPageContent() {
               <button
                 type="submit"
                 disabled={isLoggingIn || !isValid}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="hover:cursor-pointer w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoggingIn ? "로그인 중..." : "로그인"}
               </button>
             </div>
 
-            <div className="text-center space-y-2">
+            <div className="flex flex-col gap-2 items-center">
               <Link
                 href="/auth/signup"
                 className="text-accent-600 hover:text-accent-500 text-sm font-medium transition-colors"
               >
                 계정이 없으신가요? 회원가입
+              </Link>
+              <Link
+                href="/"
+                className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+              >
+                메인 화면으로 돌아가기
               </Link>
             </div>
           </form>
