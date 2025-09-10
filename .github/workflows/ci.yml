@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "feat/**"
+
   pull_request:
     branches:
       - develop
@@ -64,6 +65,7 @@ jobs:
           # 빌드 테스트용 더미 환경변수
           NEXT_PUBLIC_SUPABASE_URL: "https://dummy.supabase.co"
           NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-key-for-build-test"
+
 
       # 9. 성공 시 체크마크 출력
       - name: All checks passed
