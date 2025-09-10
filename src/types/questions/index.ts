@@ -13,7 +13,7 @@ export type {
   PeriodQuestionKeywordStats,
   QuestionKeywordNavigationData,
   QuestionSearchResult,
-} from './database';
+} from "./database";
 
 export type {
   // UI types
@@ -25,7 +25,7 @@ export type {
   UseQuestionKeywordAnalysisReturn,
   UseQuestionKeywordSearchReturn,
   UseQuestionKeywordNavigationReturn,
-} from './ui';
+} from "./ui";
 
 export type {
   // Summary types
@@ -33,23 +33,37 @@ export type {
   QuestionKeywordTrendData,
   QuestionSocialStats,
   PeriodQuestionSummary,
-} from './summary';
+} from "./summary";
 
 // 유틸리티 타입들
-export type QuestionType = 'daily' | 'growth' | 'custom';
-export type QuestionVisibilityType = 'public' | 'neighbors' | 'private';
-export type QuestionNeighborStatus = 'pending' | 'accepted' | 'declined' | 'blocked';
-export type PeriodType = '1week' | '1month' | '3months' | '6months' | '1year' | 'custom';
+export type QuestionType = "daily" | "growth" | "custom";
+export type QuestionVisibilityType = "public" | "neighbors" | "private";
+export type QuestionNeighborStatus =
+  | "pending"
+  | "accepted"
+  | "declined"
+  | "blocked";
+export type PeriodType =
+  | "1week"
+  | "1month"
+  | "3months"
+  | "6months"
+  | "1year"
+  | "custom";
 
 // 타입 가드 함수들
-export const isQuestionType = (type: string): type is QuestionType => 
-  ['daily', 'growth', 'custom'].includes(type);
+export const isQuestionType = (type: string): type is QuestionType =>
+  ["daily", "growth", "custom"].includes(type);
 
-export const isQuestionVisibilityType = (visibility: string): visibility is QuestionVisibilityType =>
-  ['public', 'neighbors', 'private'].includes(visibility);
+export const isQuestionVisibilityType = (
+  visibility: string,
+): visibility is QuestionVisibilityType =>
+  ["public", "neighbors", "private"].includes(visibility);
 
-export const isQuestionNeighborStatus = (status: string): status is QuestionNeighborStatus =>
-  ['pending', 'accepted', 'declined', 'blocked'].includes(status);
+export const isQuestionNeighborStatus = (
+  status: string,
+): status is QuestionNeighborStatus =>
+  ["pending", "accepted", "declined", "blocked"].includes(status);
 
 export const isPeriodType = (period: string): period is PeriodType =>
-  ['1week', '1month', '3months', '6months', '1year', 'custom'].includes(period);
+  ["1week", "1month", "3months", "6months", "1year", "custom"].includes(period);

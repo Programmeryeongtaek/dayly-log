@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import Modal from '@/components/common/Modal';
-import QuestionFiltersComponent from '@/components/questions/QuestionFiltersComponent';
-import QuestionForm from '@/components/questions/QuestionForm';
-import QuestionList from '@/components/questions/QuestionList';
-import QuestionStatistics from '@/components/questions/QuestionStatistics';
-import { useAuth } from '@/hooks/auth';
-import { useQuestionKeywords } from '@/hooks/questions/useQuestionKeywords';
-import { useQuestions } from '@/hooks/questions/useQuestions';
+import Modal from "@/components/common/Modal";
+import QuestionFiltersComponent from "@/components/questions/QuestionFiltersComponent";
+import QuestionForm from "@/components/questions/QuestionForm";
+import QuestionList from "@/components/questions/QuestionList";
+import QuestionStatistics from "@/components/questions/QuestionStatistics";
+import { useAuth } from "@/hooks/auth";
+import { useQuestionKeywords } from "@/hooks/questions/useQuestionKeywords";
+import { useQuestions } from "@/hooks/questions/useQuestions";
 import {
   DateRangePeriod,
   QuestionFilters,
   QuestionFormData,
   QuestionWithKeywords,
-} from '@/types/questions';
-import { Plus, TrendingUp, X } from 'lucide-react';
-import Link from 'next/link';
-import { useMemo, useState } from 'react';
+} from "@/types/questions";
+import { Plus, TrendingUp, X } from "lucide-react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 
 const QuestionsPage = () => {
   const { user } = useAuth();
@@ -25,40 +25,40 @@ const QuestionsPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingQuestion, setEditingQuestion] =
     useState<QuestionWithKeywords | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState('전체');
+  const [selectedPeriod, setSelectedPeriod] = useState("전체");
 
   // 기간 프리셋
   const periodPresets: DateRangePeriod[] = useMemo(() => {
     const today = new Date();
-    const getDateString = (date: Date) => date.toISOString().split('T')[0];
+    const getDateString = (date: Date) => date.toISOString().split("T")[0];
 
     return [
-      { label: '전체', startDate: '', endDate: '' },
+      { label: "전체", startDate: "", endDate: "" },
       {
-        label: '최근 1주',
+        label: "최근 1주",
         startDate: getDateString(
-          new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
       {
-        label: '최근 1개월',
+        label: "최근 1개월",
         startDate: getDateString(
-          new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
       {
-        label: '최근 3개월',
+        label: "최근 3개월",
         startDate: getDateString(
-          new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
       {
-        label: '최근 6개월',
+        label: "최근 6개월",
         startDate: getDateString(
-          new Date(today.getTime() - 180 * 24 * 60 * 60 * 1000)
+          new Date(today.getTime() - 180 * 24 * 60 * 60 * 1000),
         ),
         endDate: getDateString(today),
       },
@@ -105,7 +105,7 @@ const QuestionsPage = () => {
     const period = periodPresets.find((p) => p.label === periodLabel);
 
     if (period) {
-      if (period.label === '전체') {
+      if (period.label === "전체") {
         handleFiltersChange({ dateFrom: undefined, dateTo: undefined });
       } else {
         handleFiltersChange({
@@ -135,12 +135,12 @@ const QuestionsPage = () => {
 
   // 질문 삭제 핸들러
   const handleDeleteQuestion = async (questionId: string) => {
-    if (confirm('정말로 이 질문을 삭제하시겠습니까?')) {
+    if (confirm("정말로 이 질문을 삭제하시겠습니까?")) {
       try {
         await deleteQuestion(questionId);
       } catch (error) {
-        console.error('질문 삭제 실패:', error);
-        alert('질문 삭제 중 오류가 발생했습니다.');
+        console.error("질문 삭제 실패:", error);
+        alert("질문 삭제 중 오류가 발생했습니다.");
       }
     }
   };
@@ -157,8 +157,8 @@ const QuestionsPage = () => {
       setShowEditModal(false);
       setEditingQuestion(null);
     } catch (error) {
-      console.error('질문 수정 실패:', error);
-      alert('질문 수정 중 오류가 발생했습니다.');
+      console.error("질문 수정 실패:", error);
+      alert("질문 수정 중 오류가 발생했습니다.");
     }
   };
 

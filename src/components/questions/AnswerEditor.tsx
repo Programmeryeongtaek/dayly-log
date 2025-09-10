@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Save, X } from 'lucide-react';
-import { useState } from 'react';
+import { Save, X } from "lucide-react";
+import { useState } from "react";
 
 interface AnswerEditorProps {
   initialAnswer?: string;
@@ -11,7 +11,7 @@ interface AnswerEditorProps {
 }
 
 const AnswerEditor = ({
-  initialAnswer = '',
+  initialAnswer = "",
   onSave,
   onCancel,
   isLoading = false,
@@ -25,7 +25,7 @@ const AnswerEditor = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.ctrlKey && e.key === 'Enter') {
+    if (e.ctrlKey && e.key === "Enter") {
       e.preventDefault();
       handleSave();
     }
@@ -58,7 +58,7 @@ const AnswerEditor = ({
           className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <Save className="w-4 h-4" />
-          {isLoading ? '저장 중...' : '저장'}
+          {isLoading ? "저장 중..." : "저장"}
         </button>
 
         <button

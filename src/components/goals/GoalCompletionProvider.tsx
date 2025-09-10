@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useGoalCompletionAlert } from '@/hooks/goals/useFoalCompletionAlert';
-import { ReactNode } from 'react';
-import GoalCompletionNotification from './GoalCompletionNotification';
+import { useGoalCompletionAlert } from "@/hooks/goals/useFoalCompletionAlert";
+import { ReactNode } from "react";
+import GoalCompletionNotification from "./GoalCompletionNotification";
 
 interface GoalCompletionProviderProps {
   children: ReactNode;

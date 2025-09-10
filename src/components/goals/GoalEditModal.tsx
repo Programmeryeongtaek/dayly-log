@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useGoals } from '@/hooks/goals/useGoals';
-import { Goal } from '@/types/goals';
-import { useState } from 'react';
-import Modal from '../common/Modal';
-import { Target, TrendingDown, TrendingUp } from 'lucide-react';
-import { format } from 'date-fns';
+import { useGoals } from "@/hooks/goals/useGoals";
+import { Goal } from "@/types/goals";
+import { useState } from "react";
+import Modal from "../common/Modal";
+import { Target, TrendingDown, TrendingUp } from "lucide-react";
+import { format } from "date-fns";
 
 interface GoalEditModalProps {
   isOpen: boolean;
@@ -28,9 +28,9 @@ const GoalEditModal = ({
   const { goal, currentAmount, currentCount } = currentGoalData;
 
   const [formData, setFormData] = useState({
-    target_amount: goal.target_amount?.toString() || '',
-    target_count: goal.target_count?.toString() || '',
-    target_date: goal.target_date?.toString() || '',
+    target_amount: goal.target_amount?.toString() || "",
+    target_count: goal.target_count?.toString() || "",
+    target_date: goal.target_date?.toString() || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,16 +52,16 @@ const GoalEditModal = ({
       // 다음 목표의 데이터로 폼 초기화
       const nextGoal = goals[currentIndex + 1].goal;
       setFormData({
-        target_amount: nextGoal.target_amount?.toString() || '',
-        target_count: nextGoal.target_count?.toString() || '',
-        target_date: nextGoal.target_date?.toString() || '',
+        target_amount: nextGoal.target_amount?.toString() || "",
+        target_count: nextGoal.target_count?.toString() || "",
+        target_date: nextGoal.target_date?.toString() || "",
       });
     }
 
     onClose(); // 부모 컴포넌트에서 다음 목표 처리
   };
 
-  const isIncome = goal.type === 'increase_income';
+  const isIncome = goal.type === "increase_income";
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md">
@@ -180,7 +180,7 @@ const GoalEditModal = ({
                     target_date: e.target.value,
                   }))
                 }
-                min={format(new Date(), 'yyyy-MM-dd')}
+                min={format(new Date(), "yyyy-MM-dd")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
               />
             </div>

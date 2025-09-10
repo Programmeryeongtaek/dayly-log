@@ -1,49 +1,49 @@
-'use client';
+"use client";
 
-import { supabase } from '@/lib/supabase';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-type ConfirmationStatus = 'loading' | 'success' | 'error' | 'already_confirmed';
+type ConfirmationStatus = "loading" | "success" | "error" | "already_confirmed";
 
 export default function EmailConfirmPage() {
   const router = useRouter();
-  const [status, setStatus] = useState<ConfirmationStatus>('loading');
-  const [error, setError] = useState<string>('');
+  const [status, setStatus] = useState<ConfirmationStatus>("loading");
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const handleMagicLink = async () => {
       try {
-        console.log('Magic Link 처리 시작');
-        console.log('현재 URL:', window.location.href);
-        console.log('URL hash:', window.location.hash);
+        console.log("Magic Link 처리 시작");
+        console.log("현재 URL:", window.location.href);
+        console.log("URL hash:", window.location.hash);
 
         // Magic Link는 URL hash에 정보를 담을 수 있음
         const hashParams = new URLSearchParams(
-          window.location.hash.substring(1)
+          window.location.hash.substring(1),
         );
         const urlParams = new URLSearchParams(window.location.search);
 
-        console.log('Hash 파라미터:', Object.fromEntries(hashParams.entries()));
-        console.log('URL 파라미터:', Object.fromEntries(urlParams.entries()));
+        console.log("Hash 파라미터:", Object.fromEntries(hashParams.entries()));
+        console.log("URL 파라미터:", Object.fromEntries(urlParams.entries()));
 
         // Supabase Auth state change 리스너 등록
         const { data: authListener } = supabase.auth.onAuthStateChange(
           async (event, session) => {
-            console.log('Auth state change:', event, session);
+            console.log("Auth state change:", event, session);
 
-            if (event === 'SIGNED_IN' && session) {
-              console.log('Magic Link 로그인 성공!');
-              setStatus('success');
+            if (event === "SIGNED_IN" && session) {
+              console.log("Magic Link 로그인 성공!");
+              setStatus("success");
 
               setTimeout(() => {
-                router.push('/dashboard');
+                router.push("/dashboard");
               }, 3000);
-            } else if (event === 'TOKEN_REFRESHED') {
-              console.log('토큰 갱신됨');
+            } else if (event === "TOKEN_REFRESHED") {
+              console.log("토큰 갱신됨");
             }
-          }
+          },
         );
 
         // 현재 세션 확인
@@ -52,14 +52,14 @@ export default function EmailConfirmPage() {
           error: sessionError,
         } = await supabase.auth.getSession();
 
-        console.log('현재 세션:', session);
-        console.log('세션 에러:', sessionError);
+        console.log("현재 세션:", session);
+        console.log("세션 에러:", sessionError);
 
         if (session) {
-          console.log('이미 로그인된 상태');
-          setStatus('success');
+          console.log("이미 로그인된 상태");
+          setStatus("success");
           setTimeout(() => {
-            router.push('/dashboard');
+            router.push("/dashboard");
           }, 1000);
         } else {
           // 세션이 없으면 잠시 더 기다려봄 (Magic Link 처리 시간)
@@ -69,15 +69,15 @@ export default function EmailConfirmPage() {
             } = await supabase.auth.getSession();
 
             if (retrySession) {
-              console.log('재시도 후 세션 확인됨');
-              setStatus('success');
+              console.log("재시도 후 세션 확인됨");
+              setStatus("success");
               setTimeout(() => {
-                router.push('/dashboard');
+                router.push("/dashboard");
               }, 2000);
             } else {
-              console.log('세션 생성 실패');
-              setStatus('error');
-              setError('이메일 인증 처리 중 문제가 발생했습니다.');
+              console.log("세션 생성 실패");
+              setStatus("error");
+              setError("이메일 인증 처리 중 문제가 발생했습니다.");
             }
           }, 2000);
         }
@@ -87,9 +87,9 @@ export default function EmailConfirmPage() {
           authListener.subscription.unsubscribe();
         };
       } catch (err) {
-        console.error('Magic Link 처리 중 에러:', err);
-        setStatus('error');
-        setError('예상치 못한 에러가 발생했습니다.');
+        console.error("Magic Link 처리 중 에러:", err);
+        setStatus("error");
+        setError("예상치 못한 에러가 발생했습니다.");
       }
     };
 
@@ -98,7 +98,7 @@ export default function EmailConfirmPage() {
 
   const renderContent = () => {
     switch (status) {
-      case 'loading':
+      case "loading":
         return (
           <div className="text-center space-y-6">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent-500 mx-auto"></div>
@@ -109,7 +109,7 @@ export default function EmailConfirmPage() {
           </div>
         );
 
-      case 'success':
+      case "success":
         return (
           <div className="text-center space-y-6">
             <div className="text-6xl">✅</div>
@@ -130,7 +130,7 @@ export default function EmailConfirmPage() {
           </div>
         );
 
-      case 'already_confirmed':
+      case "already_confirmed":
         return (
           <div className="text-center space-y-6">
             <div className="text-6xl">ℹ️</div>
@@ -150,7 +150,7 @@ export default function EmailConfirmPage() {
           </div>
         );
 
-      case 'error':
+      case "error":
         return (
           <div className="text-center space-y-6">
             <div className="text-6xl">❌</div>

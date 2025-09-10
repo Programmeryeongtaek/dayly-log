@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { createContext, ReactNode, useContext } from 'react';
-import GoalUpdateNotification from '../goals/GoalUpdateNotification';
-import { useTransactionAlert } from '@/hooks/budget/useTransactionAlert';
+import { createContext, ReactNode, useContext } from "react";
+import GoalUpdateNotification from "../goals/GoalUpdateNotification";
+import { useTransactionAlert } from "@/hooks/budget/useTransactionAlert";
 
 interface TransactionAlertContextType {
-  showAlert: (categoryName: string, type: 'income' | 'expense') => void;
+  showAlert: (categoryName: string, type: "income" | "expense") => void;
   hideAlert: (categoryName: string) => void;
   clearAllAlerts: () => void;
 }
@@ -17,7 +17,7 @@ export const useTransactionAlertContext = () => {
   const context = useContext(TransactionAlertContext);
   if (!context) {
     throw new Error(
-      'useTransactionAlertContext must be used within a TransactionAlertProvider'
+      "useTransactionAlertContext must be used within a TransactionAlertProvider",
     );
   }
   return context;

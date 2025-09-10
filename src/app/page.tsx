@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 import {
   ArrowRight,
   BarChart3,
@@ -14,7 +14,7 @@ import {
   Hash,
   PlayCircle,
   Sparkles,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function Home() {
   return (
@@ -30,7 +30,7 @@ export default function Home() {
                 DaylyLog
               </h1>
               <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
-                매일의 기록이 만드는{' '}
+                매일의 기록이 만드는{" "}
                 <span className="font-bold text-accent-600">특별한 변화</span>
                 <br />
                 <span className="text-wrap">
@@ -95,7 +95,7 @@ export default function Home() {
                     <div className="h-2 bg-gray-200 rounded-full">
                       <div
                         className="h-2 bg-green-500 rounded-full"
-                        style={{ width: '76%' }}
+                        style={{ width: "76%" }}
                       ></div>
                     </div>
                     <div className="text-center text-lg font-bold text-green-600">
@@ -126,7 +126,7 @@ export default function Home() {
                     <div className="h-2 bg-gray-200 rounded-full">
                       <div
                         className="h-2 bg-green-500 rounded-full"
-                        style={{ width: '85%' }}
+                        style={{ width: "85%" }}
                       ></div>
                     </div>
                     <div className="flex items-center gap-1 text-sm text-green-600">
@@ -156,7 +156,7 @@ export default function Home() {
                     <div className="h-2 bg-gray-200 rounded-full">
                       <div
                         className="h-2 bg-blue-500 rounded-full"
-                        style={{ width: '75%' }}
+                        style={{ width: "75%" }}
                       ></div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -531,7 +531,7 @@ export default function Home() {
       <section className="py-20 bg-gradient-to-br from-accent-900 to-accent-800">
         <div className="max-w-4xl mx-auto text-center px-4">
           <h2 className="text-5xl font-bold text-white mb-6">
-            변화는{' '}
+            변화는{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-accent-300">
               오늘
             </span>

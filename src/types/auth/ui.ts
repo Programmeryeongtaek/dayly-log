@@ -1,4 +1,4 @@
-import { AuthUser, UserProfile } from './database';
+import { AuthUser, UserProfile } from "./database";
 
 export interface AuthState {
   user: AuthUser | null;

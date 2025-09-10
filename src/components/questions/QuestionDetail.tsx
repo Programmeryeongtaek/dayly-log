@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { QuestionWithKeywords } from '@/types/questions';
+import { QuestionWithKeywords } from "@/types/questions";
 import {
   getAnswerStatus,
   getAnswerStatusLabel,
   getQuestionTypeColor,
   getQuestionVisibilityLabel,
   getQuestionVisibilityStatus,
-} from '@/utils/questions/helpers';
-import { format } from 'date-fns';
+} from "@/utils/questions/helpers";
+import { format } from "date-fns";
 import {
   ArrowLeft,
   Calendar,
@@ -16,10 +16,10 @@ import {
   MessageCircle,
   Share2,
   Trash2,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import AnswerEditor from './AnswerEditor';
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import AnswerEditor from "./AnswerEditor";
 
 interface QuestionDetailProps {
   question: QuestionWithKeywords;
@@ -55,7 +55,7 @@ const QuestionDetail = ({
     } catch {
       // 공유 API를 지원하지 않는 경우 클립보드에 복사
       await navigator.clipboard.writeText(window.location.href);
-      alert('링크가 클립보드에 복사되었습니다.');
+      alert("링크가 클립보드에 복사되었습니다.");
     }
   };
 
@@ -83,10 +83,10 @@ const QuestionDetail = ({
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                   question.category
                     ? `${getQuestionTypeColor(question.category.name)} bg-gray-100`
-                    : 'text-gray-500 bg-gray-100'
+                    : "text-gray-500 bg-gray-100"
                 }`}
               >
-                {question.category?.display_name || '알 수 없음'}
+                {question.category?.display_name || "알 수 없음"}
               </span>
 
               {/* 답변 상태 */}
@@ -101,13 +101,13 @@ const QuestionDetail = ({
               <span
                 title={getQuestionVisibilityLabel(
                   question.is_public,
-                  question.is_neighbor_visible
+                  question.is_neighbor_visible,
                 )}
                 className="text-lg"
               >
                 {getQuestionVisibilityStatus(
                   question.is_public,
-                  question.is_neighbor_visible
+                  question.is_neighbor_visible,
                 )}
               </span>
             </div>
@@ -152,7 +152,7 @@ const QuestionDetail = ({
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
-              <span>{format(new Date(question.date), 'yyyy년 M월 d일')}</span>
+              <span>{format(new Date(question.date), "yyyy년 M월 d일")}</span>
             </div>
 
             {!isOwner && question.author_name && (
@@ -217,14 +217,14 @@ const QuestionDetail = ({
                 onClick={() => setIsEditing(true)}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
-                {question.answer ? '답변 수정' : '답변 작성'}
+                {question.answer ? "답변 수정" : "답변 작성"}
               </button>
             )}
           </div>
 
           {isEditing ? (
             <AnswerEditor
-              initialAnswer={question.answer || ''}
+              initialAnswer={question.answer || ""}
               onSave={handleAnswerSave}
               onCancel={() => setIsEditing(false)}
               isLoading={isUpdatingAnswer}
@@ -239,7 +239,7 @@ const QuestionDetail = ({
               <div className="mt-3 text-xs text-blue-600">
                 {format(
                   new Date(question.updated_at),
-                  'yyyy년 M월 d일 HH:mm에 작성'
+                  "yyyy년 M월 d일 HH:mm에 작성",
                 )}
               </div>
             </div>

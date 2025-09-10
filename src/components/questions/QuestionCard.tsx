@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { QuestionWithKeywords } from '@/types/questions';
+import { QuestionWithKeywords } from "@/types/questions";
 import {
   getAnswerStatus,
   getAnswerStatusLabel,
-} from '@/utils/questions/helpers';
-import { format } from 'date-fns';
-import { Calendar, Edit, Trash2 } from 'lucide-react';
-import Link from 'next/link';
+} from "@/utils/questions/helpers";
+import { format } from "date-fns";
+import { Calendar, Edit, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 interface QuestionCardProps {
   question: QuestionWithKeywords;
@@ -53,7 +53,7 @@ const QuestionCard = ({
             <div className="flex items-center gap-1 text-sm text-gray-500 min-w-0">
               <Calendar className="w-4 h-4 flex-shrink-0" />
               <span className="truncate">
-                {format(new Date(question.date), 'yyyy. M. d.')}
+                {format(new Date(question.date), "yyyy. M. d.")}
               </span>
             </div>
           </div>
@@ -63,10 +63,10 @@ const QuestionCard = ({
             className={`py-1 px-3 rounded-full text-xs font-medium ${
               question.category
                 ? `bg-accent-200 text-black`
-                : 'text-gray-500 bg-gray-100'
+                : "text-gray-500 bg-gray-100"
             }`}
           >
-            {question.category?.display_name || '알 수 없음'}
+            {question.category?.display_name || "알 수 없음"}
           </span>
         </div>
 

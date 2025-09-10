@@ -1,15 +1,15 @@
-import { Inter } from 'next/font/google';
-import './globals.css';
-import Providers from './providers';
-import Header from '@/components/layout/Header';
-import TransactionAlertProvider from '@/components/budget/TransactionAlertProvider';
-const inter = Inter({ subsets: ['latin'] });
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Providers from "./providers";
+import Header from "@/components/layout/Header";
+import TransactionAlertProvider from "@/components/budget/TransactionAlertProvider";
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'DaylyLog - 매일의 기록이 만드는 특별한 변화',
+  title: "DaylyLog - 매일의 기록이 만드는 특별한 변화",
   description:
-    '일상을 기록하고, 목표를 달성하며, 성장을 추적하는 스마트한 방법',
-  keywords: '가계부, 목표달성, 일상기록, 성찰, 자기계발',
+    "일상을 기록하고, 목표를 달성하며, 성장을 추적하는 스마트한 방법",
+  keywords: "가계부, 목표달성, 일상기록, 성찰, 자기계발",
 };
 
 export default function RootLayout({

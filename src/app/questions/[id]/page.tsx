@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import Modal from '@/components/common/Modal';
-import QuestionForm from '@/components/questions/QuestionForm';
-import { useAuth } from '@/hooks/auth';
-import { useQuestions } from '@/hooks/questions/useQuestions';
-import { QuestionFormData } from '@/types/questions';
+import Modal from "@/components/common/Modal";
+import QuestionForm from "@/components/questions/QuestionForm";
+import { useAuth } from "@/hooks/auth";
+import { useQuestions } from "@/hooks/questions/useQuestions";
+import { QuestionFormData } from "@/types/questions";
 import {
   getAnswerStatus,
   getAnswerStatusLabel,
-} from '@/utils/questions/helpers';
-import { format } from 'date-fns';
+} from "@/utils/questions/helpers";
+import { format } from "date-fns";
 import {
   ArrowLeft,
   Calendar,
@@ -18,10 +18,10 @@ import {
   Share2,
   Trash2,
   X,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { use, useMemo, useState } from 'react';
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { use, useMemo, useState } from "react";
 
 interface QuestionDetailPageProps {
   params: Promise<{
@@ -50,7 +50,7 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
   // 현재 질문 찾기
   const question = useMemo(
     () => questions.find((q) => q.id === id),
-    [questions, id]
+    [questions, id],
   );
 
   const isOwner = question?.user_id === user?.id;
@@ -62,13 +62,13 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
   const handleDelete = async () => {
     if (!question) return;
 
-    if (confirm('정말 이 질문을 삭제하시겠습니까?')) {
+    if (confirm("정말 이 질문을 삭제하시겠습니까?")) {
       try {
         await deleteQuestion(question.id);
-        router.push('/questions');
+        router.push("/questions");
       } catch (error) {
-        console.error('질문 삭제 실패:', error);
-        alert('질문 삭제 중 오류가 발생했습니다.');
+        console.error("질문 삭제 실패:", error);
+        alert("질문 삭제 중 오류가 발생했습니다.");
       }
     }
   };
@@ -78,7 +78,7 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
 
     const shareData = {
       title: question.title,
-      text: question.content || '질문을 확인해보세요.',
+      text: question.content || "질문을 확인해보세요.",
       url: window.location.href,
     };
 
@@ -87,10 +87,10 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert('링크가 클립보드에 복사되었습니다.');
+        alert("링크가 클립보드에 복사되었습니다.");
       }
     } catch (error) {
-      console.error('공유 실패:', error);
+      console.error("공유 실패:", error);
     }
   };
 
@@ -104,8 +104,8 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
       });
       setShowEditModal(false);
     } catch (error) {
-      console.error('질문 수정 실패:', error);
-      alert('질문 수정 중 오류가 발생했습니다.');
+      console.error("질문 수정 실패:", error);
+      alert("질문 수정 중 오류가 발생했습니다.");
     }
   };
 
@@ -180,7 +180,7 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
                 {/* 날짜 */}
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Calendar className="w-4 h-4" />
-                  <span>{format(new Date(question.date), 'yyyy. M. d.')}</span>
+                  <span>{format(new Date(question.date), "yyyy. M. d.")}</span>
                 </div>
               </div>
 
@@ -216,7 +216,7 @@ const QuestionDetailPage = ({ params }: QuestionDetailPageProps) => {
             {/* 카테고리 배지 */}
             <div>
               <span className="px-3 py-1 bg-accent-200 text-gray-800 rounded-full font-medium">
-                {question.category?.display_name || '알 수 없음'}
+                {question.category?.display_name || "알 수 없음"}
               </span>
             </div>
           </div>

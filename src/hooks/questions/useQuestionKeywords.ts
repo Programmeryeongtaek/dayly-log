@@ -1,30 +1,34 @@
-import { supabase } from '@/lib/supabase';
-import { QuestionKeyword, QuestionKeywordFormData } from '@/types/questions';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from "@/lib/supabase";
+import { QuestionKeyword, QuestionKeywordFormData } from "@/types/questions";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface UseQuestionKeywordsProps {
   userId?: string;
   categoryId?: string;
 }
 
-export const useQuestionKeywords = ({ userId, categoryId }: UseQuestionKeywordsProps = {}) => {
+export const useQuestionKeywords = ({
+  userId,
+  categoryId,
+}: UseQuestionKeywordsProps = {}) => {
   const queryClient = useQueryClient();
 
   // 키워드 목록 조회
-  const { data: keywords = [], isLoading, error } = useQuery({
-    queryKey: ['question-keywords', userId, categoryId],
+  const {
+    data: keywords = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["question-keywords", userId, categoryId],
     queryFn: async (): Promise<QuestionKeyword[]> => {
-      let query = supabase
-        .from('question_keywords')
-        .select('*')
-        .order('name');
+      let query = supabase.from("question_keywords").select("*").order("name");
 
       if (userId) {
-        query = query.eq('user_id', userId);
+        query = query.eq("user_id", userId);
       }
 
       if (categoryId) {
-        query = query.eq('category_id', categoryId);
+        query = query.eq("category_id", categoryId);
       }
 
       const { data, error } = await query;
@@ -36,13 +40,17 @@ export const useQuestionKeywords = ({ userId, categoryId }: UseQuestionKeywordsP
 
   // 키워드 생성
   const createKeywordMutation = useMutation({
-    mutationFn: async (formData: QuestionKeywordFormData & { user_id: string }) => {
+    mutationFn: async (
+      formData: QuestionKeywordFormData & { user_id: string },
+    ) => {
       const { data, error } = await supabase
-        .from('question_keywords')
-        .insert([{
-          ...formData,
-          color: formData.color || '#3b82f6',
-        }])
+        .from("question_keywords")
+        .insert([
+          {
+            ...formData,
+            color: formData.color || "#3b82f6",
+          },
+        ])
         .select()
         .single();
 
@@ -50,17 +58,20 @@ export const useQuestionKeywords = ({ userId, categoryId }: UseQuestionKeywordsP
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['question-keywords'] });
+      queryClient.invalidateQueries({ queryKey: ["question-keywords"] });
     },
   });
 
   // 키워드 수정
   const updateKeywordMutation = useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string } & Partial<QuestionKeywordFormData>) => {
+    mutationFn: async ({
+      id,
+      ...updates
+    }: { id: string } & Partial<QuestionKeywordFormData>) => {
       const { data, error } = await supabase
-        .from('question_keywords')
+        .from("question_keywords")
         .update(updates)
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .single();
 
@@ -68,8 +79,8 @@ export const useQuestionKeywords = ({ userId, categoryId }: UseQuestionKeywordsP
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['question-keywords'] });
-      queryClient.invalidateQueries({ queryKey: ['questions'] });
+      queryClient.invalidateQueries({ queryKey: ["question-keywords"] });
+      queryClient.invalidateQueries({ queryKey: ["questions"] });
     },
   });
 
@@ -77,15 +88,15 @@ export const useQuestionKeywords = ({ userId, categoryId }: UseQuestionKeywordsP
   const deleteKeywordMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from('question_keywords')
+        .from("question_keywords")
         .delete()
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['question-keywords'] });
-      queryClient.invalidateQueries({ queryKey: ['questions'] });
+      queryClient.invalidateQueries({ queryKey: ["question-keywords"] });
+      queryClient.invalidateQueries({ queryKey: ["questions"] });
     },
   });
 

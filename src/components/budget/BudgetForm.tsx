@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/auth';
-import { supabase } from '@/lib/supabase';
-import { BudgetFormProps, Category } from '@/types/budget';
-import { useQueryClient } from '@tanstack/react-query';
-import { format, parseISO } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { useAuth } from "@/hooks/auth";
+import { supabase } from "@/lib/supabase";
+import { BudgetFormProps, Category } from "@/types/budget";
+import { useQueryClient } from "@tanstack/react-query";
+import { format, parseISO } from "date-fns";
+import { ko } from "date-fns/locale";
 import {
   ArrowLeft,
   ChevronDown,
@@ -17,9 +17,9 @@ import {
   TrendingDown,
   TrendingUp,
   X,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function BudgetForm({
   selectedDate,
@@ -36,7 +36,7 @@ export default function BudgetForm({
 
   const deletedCategories = allCategories.filter(
     (cat) =>
-      cat.type === `${newItem.type}_${newItem.categoryType}` && cat.is_deleted
+      cat.type === `${newItem.type}_${newItem.categoryType}` && cat.is_deleted,
   );
 
   // 삭제된 카테고리 관리
@@ -53,7 +53,7 @@ export default function BudgetForm({
     e.preventDefault();
 
     if (!newItem.newCategoryName.trim()) {
-      console.error('카테고리 이름이 비어있습니다');
+      console.error("카테고리 이름이 비어있습니다");
       return;
     }
 
@@ -63,18 +63,18 @@ export default function BudgetForm({
       (cat) =>
         cat.name === newItem.newCategoryName.trim() &&
         cat.type === categoryType &&
-        cat.is_deleted
+        cat.is_deleted,
     );
 
     if (existingCategory) {
       const shouldRestore = confirm(
-        `'${newItem.newCategoryName.trim()}' 카테고리를 복원하시겠습니까?`
+        `'${newItem.newCategoryName.trim()}' 카테고리를 복원하시겠습니까?`,
       );
 
       if (shouldRestore) {
         await handleRestoreCategory(existingCategory.id);
         onNewItemChange({
-          newCategoryName: '',
+          newCategoryName: "",
           category: existingCategory.name,
           isCreatingCategory: false,
         });
@@ -86,17 +86,17 @@ export default function BudgetForm({
   };
 
   // 날짜 네비게이션 핸들러 추가
-  const handleDateChange = (direction: 'prev' | 'next') => {
+  const handleDateChange = (direction: "prev" | "next") => {
     const currentDateObj = parseISO(selectedDate);
     const newDate = new Date(currentDateObj);
 
-    if (direction === 'prev') {
+    if (direction === "prev") {
       newDate.setDate(newDate.getDate() - 1);
     } else {
       newDate.setDate(newDate.getDate() + 1);
     }
 
-    const newDateString = format(newDate, 'yyyy-MM-dd');
+    const newDateString = format(newDate, "yyyy-MM-dd");
     router.push(`/budget/${newDateString}`);
   };
 
@@ -112,28 +112,28 @@ export default function BudgetForm({
     // 선택된 카테고리 해제
     const deletedCategory = allCategories.find((cat) => cat.id === categoryId);
     if (newItem.category === deletedCategory?.name) {
-      onNewItemChange({ category: '' });
+      onNewItemChange({ category: "" });
     }
 
     // 올바른 queryClient 인스턴스 사용
     queryClient.setQueryData(
-      ['categories', user?.id],
+      ["categories", user?.id],
       (oldData: Category[] = []) =>
         oldData.map((cat) =>
-          cat.id === categoryId ? { ...cat, is_deleted: true } : cat
-        )
+          cat.id === categoryId ? { ...cat, is_deleted: true } : cat,
+        ),
     );
 
     try {
       const { error } = await supabase
-        .from('categories')
+        .from("categories")
         .update({ is_deleted: true })
-        .eq('id', categoryId);
+        .eq("id", categoryId);
 
       if (error) throw error;
     } catch (error) {
-      console.error('카테고리 삭제 실패:', error);
-      queryClient.invalidateQueries({ queryKey: ['categories', user?.id] });
+      console.error("카테고리 삭제 실패:", error);
+      queryClient.invalidateQueries({ queryKey: ["categories", user?.id] });
     }
   };
 
@@ -141,24 +141,24 @@ export default function BudgetForm({
   const handleRestoreCategory = async (categoryId: string) => {
     // 낙관적 업데이트
     queryClient.setQueryData(
-      ['categories', user?.id],
+      ["categories", user?.id],
       (oldData: Category[] = []) =>
         oldData.map((cat) =>
-          cat.id === categoryId ? { ...cat, is_deleted: false } : cat
-        )
+          cat.id === categoryId ? { ...cat, is_deleted: false } : cat,
+        ),
     );
 
     try {
       const { error } = await supabase
-        .from('categories')
+        .from("categories")
         .update({ is_deleted: false })
-        .eq('id', categoryId);
+        .eq("id", categoryId);
 
       if (error) throw error;
     } catch (error) {
-      console.error('카테고리 복구 실패:', error);
+      console.error("카테고리 복구 실패:", error);
       // 실패 시 롤백
-      queryClient.invalidateQueries({ queryKey: ['categories', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["categories", user?.id] });
     }
   };
 
@@ -167,18 +167,18 @@ export default function BudgetForm({
       <div className="flex justify-between">
         <div className="flex items-center">
           <button
-            onClick={() => handleDateChange('prev')}
+            onClick={() => handleDateChange("prev")}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
 
           <h2 className="text-xl font-semibold">
-            {format(parseISO(selectedDate), 'M월 d일', { locale: ko })}
+            {format(parseISO(selectedDate), "M월 d일", { locale: ko })}
           </h2>
 
           <button
-            onClick={() => handleDateChange('next')}
+            onClick={() => handleDateChange("next")}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ChevronRight className="w-6 h-6" />
@@ -217,15 +217,15 @@ export default function BudgetForm({
             type="button"
             onClick={() =>
               onNewItemChange({
-                type: 'income',
-                categoryType: 'fixed',
-                category: '',
+                type: "income",
+                categoryType: "fixed",
+                category: "",
               })
             }
             className={`flex-1 px-3 py-2 rounded-l-lg border text-sm transition-colors flex items-center justify-center gap-2 ${
-              newItem.type === 'income'
-                ? 'bg-green-500 text-white border-green-500'
-                : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+              newItem.type === "income"
+                ? "bg-green-500 text-white border-green-500"
+                : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
             }`}
           >
             <TrendingUp className="w-4 h-4" />
@@ -235,15 +235,15 @@ export default function BudgetForm({
             type="button"
             onClick={() =>
               onNewItemChange({
-                type: 'expense',
-                categoryType: 'variable',
-                category: '',
+                type: "expense",
+                categoryType: "variable",
+                category: "",
               })
             }
             className={`flex-1 px-3 py-2 rounded-r-lg border text-sm transition-colors flex items-center justify-center gap-2 ${
-              newItem.type === 'expense'
-                ? 'bg-red-500 text-white border-red-500'
-                : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+              newItem.type === "expense"
+                ? "bg-red-500 text-white border-red-500"
+                : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
             }`}
           >
             <TrendingDown className="w-4 h-4" />
@@ -256,12 +256,12 @@ export default function BudgetForm({
           <button
             type="button"
             onClick={() =>
-              onNewItemChange({ categoryType: 'fixed', category: '' })
+              onNewItemChange({ categoryType: "fixed", category: "" })
             }
             className={`flex-1 px-3  py-2 rounded-l-lg border text-sm transition-colors ${
-              newItem.categoryType === 'fixed'
-                ? 'bg-accent-500 text-white border-accent-500'
-                : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+              newItem.categoryType === "fixed"
+                ? "bg-accent-500 text-white border-accent-500"
+                : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
             }`}
           >
             고정
@@ -269,12 +269,12 @@ export default function BudgetForm({
           <button
             type="button"
             onClick={() =>
-              onNewItemChange({ categoryType: 'variable', category: '' })
+              onNewItemChange({ categoryType: "variable", category: "" })
             }
             className={`flex-1 px-3  py-2 rounded-r-lg border text-sm  transition-colors ${
-              newItem.categoryType === 'variable'
-                ? 'bg-accent-500 text-white border-accent-500'
-                : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+              newItem.categoryType === "variable"
+                ? "bg-accent-500 text-white border-accent-500"
+                : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
             }`}
           >
             변동
@@ -313,7 +313,7 @@ export default function BudgetForm({
                       onClick={() =>
                         onNewItemChange({
                           isCreatingCategory: false,
-                          newCategoryName: '',
+                          newCategoryName: "",
                         })
                       }
                       className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 text-sm transition-colors"
@@ -331,17 +331,17 @@ export default function BudgetForm({
                         (cat) =>
                           cat.type ===
                             `${newItem.type}_${newItem.categoryType}` &&
-                          !cat.is_deleted
+                          !cat.is_deleted,
                       )
                       .map((category) => (
                         <div
                           key={category.id}
                           className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                             newItem.category === category.name
-                              ? newItem.type === 'income'
-                                ? 'bg-green-500 text-white'
-                                : 'bg-red-500 text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              ? newItem.type === "income"
+                                ? "bg-green-500 text-white"
+                                : "bg-red-500 text-white"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                           }`}
                         >
                           <button
@@ -358,8 +358,8 @@ export default function BudgetForm({
                             onClick={() => handleDeleteCategory(category.id)}
                             className={`ml-1 w-4 h-4 flex items-center justify-center hover:opacity-70 ${
                               newItem.category === category.name
-                                ? 'text-white'
-                                : 'text-gray-500 hover:text-red-500'
+                                ? "text-white"
+                                : "text-gray-500 hover:text-red-500"
                             }`}
                             title="카테고리 삭제"
                           >
@@ -466,9 +466,9 @@ export default function BudgetForm({
               <button
                 type="submit"
                 className={`w-full rounded-lg px-3 py-1.5 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm transition-colors ${
-                  newItem.type === 'income'
-                    ? 'bg-green-500 text-white hover:bg-green-600'
-                    : 'bg-red-500 text-white hover:bg-red-600'
+                  newItem.type === "income"
+                    ? "bg-green-500 text-white hover:bg-green-600"
+                    : "bg-red-500 text-white hover:bg-red-600"
                 }`}
                 disabled={
                   !newItem.name.trim() || !newItem.amount || !newItem.category

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { useAuth } from '@/hooks/auth';
-import { useBudget } from '@/hooks/budget';
-import { format, subMonths } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { useMemo } from "react";
+import { useAuth } from "@/hooks/auth";
+import { useBudget } from "@/hooks/budget";
+import { format, subMonths } from "date-fns";
+import { ko } from "date-fns/locale";
 import {
   ArrowRight,
   Plus,
@@ -12,16 +12,16 @@ import {
   TrendingUp,
   Wallet,
   Calendar,
-} from 'lucide-react';
-import Link from 'next/link';
+} from "lucide-react";
+import Link from "next/link";
 
 const DashboardBudgetWidget = () => {
   const { user } = useAuth();
   const currentDate = new Date();
 
   // 현재 월과 이전 월 데이터
-  const currentMonth = format(currentDate, 'yyyy-MM');
-  const previousMonth = format(subMonths(currentDate, 1), 'yyyy-MM');
+  const currentMonth = format(currentDate, "yyyy-MM");
+  const previousMonth = format(subMonths(currentDate, 1), "yyyy-MM");
 
   // 현재 월 데이터
   const {
@@ -59,7 +59,7 @@ const DashboardBudgetWidget = () => {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const recentItems = currentItems.filter(
-      (item) => new Date(item.date) >= sevenDaysAgo
+      (item) => new Date(item.date) >= sevenDaysAgo,
     );
 
     const netAmount = currentIncome - currentExpense;
@@ -67,14 +67,14 @@ const DashboardBudgetWidget = () => {
 
     // 상위 지출 카테고리 (상위 3개)
     const categoryTotals = currentItems
-      .filter((item) => item.type === 'expense')
+      .filter((item) => item.type === "expense")
       .reduce(
         (acc, item) => {
           const categoryName = item.category;
           acc[categoryName] = (acc[categoryName] || 0) + item.amount;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
     const topExpenseCategories = Object.entries(categoryTotals)
@@ -148,8 +148,8 @@ const DashboardBudgetWidget = () => {
               <span
                 className={`text-xs font-medium ${
                   budgetStats.incomeChange > 0
-                    ? 'text-green-500'
-                    : 'text-red-500'
+                    ? "text-green-500"
+                    : "text-red-500"
                 }`}
               >
                 {Math.abs(budgetStats.incomeChange).toFixed(1)}%
@@ -172,8 +172,8 @@ const DashboardBudgetWidget = () => {
               <span
                 className={`text-xs font-medium ${
                   budgetStats.expenseChange > 0
-                    ? 'text-red-500'
-                    : 'text-green-500'
+                    ? "text-red-500"
+                    : "text-green-500"
                 }`}
               >
                 {Math.abs(budgetStats.expenseChange).toFixed(1)}%
@@ -195,19 +195,19 @@ const DashboardBudgetWidget = () => {
         </div>
         <div
           className={`text-center p-3 rounded-lg ${
-            budgetStats.netAmount >= 0 ? 'bg-green-50' : 'bg-red-50'
+            budgetStats.netAmount >= 0 ? "bg-green-50" : "bg-red-50"
           }`}
         >
           <div
             className={`text-xl font-bold ${
-              budgetStats.netAmount >= 0 ? 'text-green-600' : 'text-red-600'
+              budgetStats.netAmount >= 0 ? "text-green-600" : "text-red-600"
             }`}
           >
-            {budgetStats.netAmount >= 0 ? '+' : ''}
+            {budgetStats.netAmount >= 0 ? "+" : ""}
             {budgetStats.netAmount.toLocaleString()}원
           </div>
           <div className="text-xs text-gray-600">
-            {budgetStats.netAmount >= 0 ? '흑자' : '적자'}
+            {budgetStats.netAmount >= 0 ? "흑자" : "적자"}
           </div>
         </div>
       </div>
@@ -228,15 +228,15 @@ const DashboardBudgetWidget = () => {
                   <div className="flex items-center gap-2">
                     <span
                       className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                        transaction.type === 'income'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-red-100 text-red-700'
+                        transaction.type === "income"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
                       }`}
                     >
                       {transaction.category}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {format(new Date(transaction.date), 'M/d', {
+                      {format(new Date(transaction.date), "M/d", {
                         locale: ko,
                       })}
                     </span>
@@ -247,12 +247,12 @@ const DashboardBudgetWidget = () => {
                 </div>
                 <span
                   className={`text-sm font-semibold ${
-                    transaction.type === 'income'
-                      ? 'text-green-600'
-                      : 'text-red-600'
+                    transaction.type === "income"
+                      ? "text-green-600"
+                      : "text-red-600"
                   }`}
                 >
-                  {transaction.type === 'income' ? '+' : '-'}
+                  {transaction.type === "income" ? "+" : "-"}
                   {transaction.amount.toLocaleString()}
                 </span>
               </div>

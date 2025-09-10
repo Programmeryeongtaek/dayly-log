@@ -1,5 +1,5 @@
-import { PeriodType } from '../reflections';
-import { QuestionKeyword } from './database';
+import { PeriodType } from "../reflections";
+import { QuestionKeyword } from "./database";
 
 export interface QuestionSummary {
   period: string;

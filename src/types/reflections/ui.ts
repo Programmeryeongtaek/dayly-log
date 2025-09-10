@@ -1,9 +1,16 @@
-import { PeriodType } from '.';
-import { Keyword, KeywordAnalysis, KeywordNavigationData, Neighbor, Reflection, SearchResult } from './database';
+import { PeriodType } from ".";
+import {
+  Keyword,
+  KeywordAnalysis,
+  KeywordNavigationData,
+  Neighbor,
+  Reflection,
+  SearchResult,
+} from "./database";
 
 export interface ReflectionWithKeywords extends Reflection {
   keywords: Keyword[];
-  effective_visibility: 'public' | 'neighbors' | 'private';
+  effective_visibility: "public" | "neighbors" | "private";
 }
 
 export interface KeywordUsageStats {
@@ -16,12 +23,12 @@ export interface KeywordUsageStats {
 }
 
 export interface ReflectionFilters {
-  type?: 'gratitude' | 'reflection' | 'all';
+  type?: "gratitude" | "reflection" | "all";
   keywords?: string[];
   startDate?: string;
   endDate?: string;
   searchTerm?: string;
-  visibility?: 'public' | 'neighbors' | 'private' | 'all';
+  visibility?: "public" | "neighbors" | "private" | "all";
   author_id?: string;
 }
 
@@ -44,7 +51,10 @@ export interface UseKeywordAnalysisReturn {
   keywordAnalysis: KeywordAnalysis[];
   isLoading: boolean;
   error: Error | null;
-  getKeywordAnalysis: (keywordId: string, period?: PeriodType) => KeywordAnalysis | undefined;
+  getKeywordAnalysis: (
+    keywordId: string,
+    period?: PeriodType,
+  ) => KeywordAnalysis | undefined;
   refreshAnalysis: () => Promise<void>;
 }
 
@@ -52,8 +62,14 @@ export interface UseKeywordSearchReturn {
   searchResults: SearchResult | null;
   isLoading: boolean;
   error: Error | null;
-  searchByKeyword: (keywordId: string, filters?: Partial<ReflectionFilters>) => Promise<void>;
-  searchByText: (query: string, filters?: Partial<ReflectionFilters>) => Promise<void>;
+  searchByKeyword: (
+    keywordId: string,
+    filters?: Partial<ReflectionFilters>,
+  ) => Promise<void>;
+  searchByText: (
+    query: string,
+    filters?: Partial<ReflectionFilters>,
+  ) => Promise<void>;
   clearSearch: () => void;
 }
 
@@ -61,7 +77,10 @@ export interface UseKeywordNavigationReturn {
   navigationData: KeywordNavigationData | null;
   isLoading: boolean;
   error: Error | null;
-  navigateToKeyword: (keywordId: string, initialReflectionId?: string) => Promise<void>;
+  navigateToKeyword: (
+    keywordId: string,
+    initialReflectionId?: string,
+  ) => Promise<void>;
   goToNext: () => void;
   goToPrevious: () => void;
   goToIndex: (index: number) => void;

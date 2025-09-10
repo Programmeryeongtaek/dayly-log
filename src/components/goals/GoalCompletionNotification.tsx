@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { CheckCircle, Trophy, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { CheckCircle, Trophy, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface GoalCompletionNotificationProps {
   goalTitle: string;

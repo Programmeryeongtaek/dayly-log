@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/auth';
-import { useQuestionsCategories } from '@/hooks/questions/useQuestionCategories';
-import { useQuestionKeywords } from '@/hooks/questions/useQuestionKeywords';
-import { QuestionFormData } from '@/types/questions';
-import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useAuth } from "@/hooks/auth";
+import { useQuestionsCategories } from "@/hooks/questions/useQuestionCategories";
+import { useQuestionKeywords } from "@/hooks/questions/useQuestionKeywords";
+import { QuestionFormData } from "@/types/questions";
+import { X } from "lucide-react";
+import { useState } from "react";
 
 interface QuestionFormProps {
   initialData?: Partial<QuestionFormData>;
@@ -23,11 +23,11 @@ const QuestionForm = ({
   const { user } = useAuth();
   const { categories } = useQuestionsCategories();
   const [formData, setFormData] = useState<QuestionFormData>({
-    title: initialData?.title || '',
-    content: initialData?.content || '',
-    answer: initialData?.answer || '',
-    category_id: initialData?.category_id || categories[0]?.id || '',
-    date: initialData?.date || new Date().toISOString().split('T')[0],
+    title: initialData?.title || "",
+    content: initialData?.content || "",
+    answer: initialData?.answer || "",
+    category_id: initialData?.category_id || categories[0]?.id || "",
+    date: initialData?.date || new Date().toISOString().split("T")[0],
     is_public: initialData?.is_public ?? true,
     is_neighbor_visible: initialData?.is_neighbor_visible ?? true,
     is_answered: initialData?.is_answered ?? false,
@@ -39,9 +39,9 @@ const QuestionForm = ({
     categoryId: formData.category_id,
   });
 
-  const [newKeyword, setNewKeyword] = useState('');
+  const [newKeyword, setNewKeyword] = useState("");
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>(
-    initialData?.keywords || []
+    initialData?.keywords || [],
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,7 +55,7 @@ const QuestionForm = ({
   const handleAddKeyword = () => {
     if (newKeyword.trim() && !selectedKeywords.includes(newKeyword.trim())) {
       setSelectedKeywords((prev) => [...prev, newKeyword.trim()]);
-      setNewKeyword('');
+      setNewKeyword("");
     }
   };
 
@@ -90,8 +90,8 @@ const QuestionForm = ({
               onClick={() => handleCategorySelect(category.id)}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border hover:cursor-pointer ${
                 formData.category_id === category.id
-                  ? 'bg-accent-100 text-black-700 border-accent-500'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+                  ? "bg-accent-100 text-black-700 border-accent-500"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300"
               }`}
             >
               {category.display_name}
@@ -123,7 +123,7 @@ const QuestionForm = ({
           설명 (선택)
         </label>
         <textarea
-          value={formData.content || ''}
+          value={formData.content || ""}
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, content: e.target.value }))
           }
@@ -139,7 +139,7 @@ const QuestionForm = ({
           답변
         </label>
         <textarea
-          value={formData.answer || ''}
+          value={formData.answer || ""}
           onChange={(e) => {
             const answer = e.target.value;
             setFormData((prev) => ({
@@ -183,7 +183,7 @@ const QuestionForm = ({
             value={newKeyword}
             onChange={(e) => setNewKeyword(e.target.value)}
             onKeyPress={(e) =>
-              e.key === 'Enter' && (e.preventDefault(), handleAddKeyword())
+              e.key === "Enter" && (e.preventDefault(), handleAddKeyword())
             }
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-500"
             placeholder="새 키워드 추가"
@@ -209,8 +209,8 @@ const QuestionForm = ({
                   onClick={() => handleKeywordClick(keyword.name)}
                   className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
                     selectedKeywords.includes(keyword.name)
-                      ? 'bg-accent-200 text-black-800'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? "bg-accent-200 text-black-800"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {keyword.name}
@@ -312,7 +312,7 @@ const QuestionForm = ({
           disabled={isLoading}
           className="flex-1 bg-accent-500 text-white py-2 px-4 rounded-md hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          {isLoading ? '저장 중...' : '저장'}
+          {isLoading ? "저장 중..." : "저장"}
         </button>
 
         {onCancel && (

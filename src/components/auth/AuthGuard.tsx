@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/auth';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useAuth } from "@/hooks/auth";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -24,11 +24,11 @@ export default function AuthGuard({
       if (requireAuth && !isAuthenticated) {
         // 인증이 필요한데 로그인하지 않은 경우
         router.push(
-          redirectTo || `/auth/login?redirect=${encodeURIComponent(pathname)}`
+          redirectTo || `/auth/login?redirect=${encodeURIComponent(pathname)}`,
         );
       } else if (!requireAuth && isAuthenticated) {
         // 인증이 불필요한데 로그인한 경우 (로그인/회원가입 페이지)
-        router.push(redirectTo || '/dashboard');
+        router.push(redirectTo || "/dashboard");
       }
     }
   }, [isAuthenticated, isLoading, requireAuth, redirectTo, router, pathname]);

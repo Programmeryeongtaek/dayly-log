@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 interface ModalDescriptionProps {
   children: ReactNode;
@@ -9,7 +9,7 @@ interface ModalDescriptionProps {
 
 const ModalDescription = ({
   children,
-  className = '',
+  className = "",
 }: ModalDescriptionProps) => (
   <div className={`text-sm text-gray-600 mt-1 ${className}`}>{children}</div>
 );

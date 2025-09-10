@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import AuthGuard from '@/components/auth/AuthGuard';
-import { useAuth } from '@/hooks/auth';
-import { SignupFormValues, signupSchema } from '@/lib/validations/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import AuthGuard from "@/components/auth/AuthGuard";
+import { useAuth } from "@/hooks/auth";
+import { SignupFormValues, signupSchema } from "@/lib/validations/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function SignupPage() {
   const {
@@ -21,7 +21,7 @@ export default function SignupPage() {
     emailCheckResult,
   } = useAuth();
   const [isSuccess, setIsSuccess] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
+  const [userEmail, setUserEmail] = useState("");
 
   const {
     register,
@@ -30,13 +30,13 @@ export default function SignupPage() {
     formState: { errors, isValid },
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
-    mode: 'onChange', // 실시간 검증
+    mode: "onChange", // 실시간 검증
   });
 
   // 닉네임 입력값이 변경되면 중복 체크 결과 초기화
   useEffect(() => {
     const subscription = watch(({ name }) => {
-      if (name === 'nickname') {
+      if (name === "nickname") {
         resetNicknameCheck();
       }
     });
@@ -53,7 +53,7 @@ export default function SignupPage() {
       setUserEmail(data.email);
       setIsSuccess(true);
     } catch (error) {
-      console.error('회원가입 상세 에러:', error);
+      console.error("회원가입 상세 에러:", error);
     }
   };
 
@@ -100,7 +100,7 @@ export default function SignupPage() {
                 <button
                   onClick={() => {
                     setIsSuccess(false);
-                    setUserEmail('');
+                    setUserEmail("");
                   }}
                   className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
                 >
@@ -136,7 +136,7 @@ export default function SignupPage() {
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                 <p className="text-sm text-red-600">
                   {signupError.message ||
-                    '회원가입에 실패했습니다. 다시 시도해주세요.'}
+                    "회원가입에 실패했습니다. 다시 시도해주세요."}
                 </p>
               </div>
             )}
@@ -153,9 +153,9 @@ export default function SignupPage() {
                   id="email"
                   type="email"
                   autoComplete="email"
-                  {...register('email')}
+                  {...register("email")}
                   onBlur={() => {
-                    const email = watch('email');
+                    const email = watch("email");
                     if (email?.trim() && !errors.email) {
                       checkEmail(email.trim());
                     }
@@ -163,8 +163,8 @@ export default function SignupPage() {
                   className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
                     errors.email ||
                     (emailCheckResult && !emailCheckResult.available)
-                      ? 'border-red-300 focus:border-red-500'
-                      : 'border-gray-300 focus:border-accent-500'
+                      ? "border-red-300 focus:border-red-500"
+                      : "border-gray-300 focus:border-accent-500"
                   }`}
                   placeholder="example@email.com"
                 />
@@ -178,18 +178,18 @@ export default function SignupPage() {
 
                 {/* 이메일 중복 체크 결과 */}
                 {emailCheckResult &&
-                  watch('email')?.trim() &&
+                  watch("email")?.trim() &&
                   !errors.email && (
                     <p
                       className={`mt-1 text-sm ${
                         emailCheckResult.available
-                          ? 'text-green-600'
-                          : 'text-red-600'
+                          ? "text-green-600"
+                          : "text-red-600"
                       }`}
                     >
                       {emailCheckResult.available
-                        ? '사용 가능한 이메일입니다.'
-                        : '이미 가입된 이메일입니다.'}
+                        ? "사용 가능한 이메일입니다."
+                        : "이미 가입된 이메일입니다."}
                     </p>
                   )}
               </div>
@@ -205,11 +205,11 @@ export default function SignupPage() {
                   id="password"
                   type="password"
                   autoComplete="new-password"
-                  {...register('password')}
+                  {...register("password")}
                   className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
                     errors.password
-                      ? 'border-red-300 focus:border-red-500'
-                      : 'border-gray-300 focus:border-accent-500'
+                      ? "border-red-300 focus:border-red-500"
+                      : "border-gray-300 focus:border-accent-500"
                   }`}
                   placeholder="6자 이상 입력"
                 />
@@ -231,11 +231,11 @@ export default function SignupPage() {
                   id="name"
                   type="text"
                   autoComplete="name"
-                  {...register('name')}
+                  {...register("name")}
                   className={`mt-1 block w-full px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
                     errors.name
-                      ? 'border-red-300 focus:border-red-500'
-                      : 'border-gray-300 focus:border-accent-500'
+                      ? "border-red-300 focus:border-red-500"
+                      : "border-gray-300 focus:border-accent-500"
                   }`}
                   placeholder="홍길동"
                 />
@@ -257,41 +257,41 @@ export default function SignupPage() {
                   <input
                     id="nickname"
                     type="text"
-                    {...register('nickname')}
+                    {...register("nickname")}
                     className={`mt-1 block w-2/3 px-3 py-2 border-2 rounded-lg hover:border-accent-400 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-accent-500 transition-colors ${
                       errors.nickname
-                        ? 'border-red-300 focus:border-red-500'
-                        : 'border-gray-300 focus:border-accent-500'
+                        ? "border-red-300 focus:border-red-500"
+                        : "border-gray-300 focus:border-accent-500"
                     }`}
                     placeholder="닉네임 입력"
                   />
                   <button
                     type="button"
                     onClick={() => {
-                      const nickname = watch('nickname');
+                      const nickname = watch("nickname");
                       if (nickname?.trim()) {
                         checkNickname(nickname.trim());
                       }
                     }}
-                    disabled={isCheckingNickname || !watch('nickname')?.trim()}
+                    disabled={isCheckingNickname || !watch("nickname")?.trim()}
                     className="mt-1 px-3 py-2 w-1/3 hover:cursor-pointer bg-accent-200 text-black hover:bg-accent-300 text-sm hover:font-bold rounded-lg disabled:opacity-50 transition-colors"
                   >
-                    {isCheckingNickname ? '확인중...' : '중복확인'}
+                    {isCheckingNickname ? "확인중..." : "중복확인"}
                   </button>
                 </div>
 
                 {/* 닉네임 체크 결과 표시 */}
-                {nicknameCheckResult && watch('nickname')?.trim() ? (
+                {nicknameCheckResult && watch("nickname")?.trim() ? (
                   <p
                     className={`mt-1 text-sm ${
                       nicknameCheckResult.available
-                        ? 'text-green-600'
-                        : 'text-red-600'
+                        ? "text-green-600"
+                        : "text-red-600"
                     }`}
                   >
                     {nicknameCheckResult.available
-                      ? '사용 가능한 닉네임입니다.'
-                      : '이미 사용 중인 닉네임입니다.'}
+                      ? "사용 가능한 닉네임입니다."
+                      : "이미 사용 중인 닉네임입니다."}
                   </p>
                 ) : (
                   <p className="mt-1 text-xs text-gray-500">
@@ -312,7 +312,7 @@ export default function SignupPage() {
                 }
                 className="hover:cursor-pointer w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isSigningUp ? '가입 중...' : '회원가입'}
+                {isSigningUp ? "가입 중..." : "회원가입"}
               </button>
             </div>
 

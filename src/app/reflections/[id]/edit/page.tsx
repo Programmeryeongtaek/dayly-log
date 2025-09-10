@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import AuthGuard from '@/components/auth/AuthGuard';
-import ReflectionForm from '@/components/reflections/ReflectionForm';
-import { useAuth } from '@/hooks/auth';
-import { useReflections } from '@/hooks/reflections/useReflections';
-import { ReflectionFormData } from '@/types/reflections';
-import { ArrowLeft, Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import AuthGuard from "@/components/auth/AuthGuard";
+import ReflectionForm from "@/components/reflections/ReflectionForm";
+import { useAuth } from "@/hooks/auth";
+import { useReflections } from "@/hooks/reflections/useReflections";
+import { ReflectionFormData } from "@/types/reflections";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 
 const ReflectionEditPage = () => {
   const router = useRouter();
@@ -39,7 +39,7 @@ const ReflectionEditPage = () => {
     if (!reflection) return undefined;
 
     return {
-      title: reflection.title || '',
+      title: reflection.title || "",
       content: reflection.content,
       category_id: reflection.category_id,
       date: reflection.date,
@@ -69,10 +69,10 @@ const ReflectionEditPage = () => {
       });
 
       // 성공 시 회고 목록으로 이동
-      router.push('/reflections');
+      router.push("/reflections");
     } catch (err) {
-      setError('회고 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
-      console.error('Failed to update reflection:', err);
+      setError("회고 수정 중 오류가 발생했습니다. 다시 시도해주세요.");
+      console.error("Failed to update reflection:", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -80,7 +80,7 @@ const ReflectionEditPage = () => {
 
   // 취소 처리
   const handleCancel = () => {
-    router.push('/reflections');
+    router.push("/reflections");
   };
 
   // 로딩 상태

@@ -3,10 +3,10 @@ import {
   QuestionFilters,
   QuestionKeyword,
   QuestionWithKeywords,
-} from '@/types/questions';
-import QuestionCard from './QuestionCard';
-import { Loader2, Search } from 'lucide-react';
-import { useMemo } from 'react';
+} from "@/types/questions";
+import QuestionCard from "./QuestionCard";
+import { Loader2, Search } from "lucide-react";
+import { useMemo } from "react";
 
 interface QuestionListProps {
   questions: QuestionWithKeywords[];
@@ -44,7 +44,7 @@ const QuestionList = ({
       const matchingPreset = periodPresets.find(
         (preset) =>
           preset.startDate === filters.dateFrom &&
-          preset.endDate === filters.dateTo
+          preset.endDate === filters.dateTo,
       );
 
       if (matchingPreset) {
@@ -52,9 +52,9 @@ const QuestionList = ({
       }
 
       // 매치하는 프리셋이 없으면 날짜 범위 표시
-      return '임의기간';
+      return "임의기간";
     }
-    return '';
+    return "";
   };
 
   // 필터링된 키워드 통계
@@ -65,14 +65,14 @@ const QuestionList = ({
       .map((keywordName) => {
         const keyword = keywords.find((k) => k.name === keywordName);
         const usageCount = questions.filter((q) =>
-          q.keywords?.some((k) => k.name === keywordName)
+          q.keywords?.some((k) => k.name === keywordName),
         ).length;
 
         return {
           keyword: keyword || {
             id: keywordName,
             name: keywordName,
-            color: '#3b82f6',
+            color: "#3b82f6",
           },
           usageCount,
         };
@@ -95,13 +95,13 @@ const QuestionList = ({
         <div className="text-gray-400 text-lg mb-2">🤔</div>
         <p className="text-gray-600 mb-4">
           {hasActiveFilters
-            ? '검색 조건에 맞는 질문이 없습니다.'
-            : '아직 질문이 없습니다.'}
+            ? "검색 조건에 맞는 질문이 없습니다."
+            : "아직 질문이 없습니다."}
         </p>
         <p className="text-sm text-gray-500">
           {hasActiveFilters
-            ? '다른 조건으로 검색해보세요.'
-            : '새로운 질문을 작성해보세요!'}
+            ? "다른 조건으로 검색해보세요."
+            : "새로운 질문을 작성해보세요!"}
         </p>
       </div>
     );
@@ -115,7 +115,7 @@ const QuestionList = ({
           <div className="flex items-center gap-2">
             <Search className="w-5 h-5 text-accent-600" />
             <h2 className="text-lg font-semibold text-gray-900">
-              {hasActiveFilters ? '검색 결과' : '전체'}
+              {hasActiveFilters ? "검색 결과" : "전체"}
             </h2>
           </div>
           {hasActiveFilters && (
@@ -140,20 +140,20 @@ const QuestionList = ({
                   <span>
                     {filters.categories
                       .map((cat) =>
-                        cat === 'daily'
-                          ? '일상'
-                          : cat === 'growth'
-                            ? '성장'
-                            : '나만의 질문'
+                        cat === "daily"
+                          ? "일상"
+                          : cat === "growth"
+                            ? "성장"
+                            : "나만의 질문",
                       )
-                      .join(', ')}
+                      .join(", ")}
                   </span>
                 </>
               )}
               {filters.isAnswered !== undefined && (
                 <>
                   <span>•</span>
-                  <span>{filters.isAnswered ? '완료' : '대기'}</span>
+                  <span>{filters.isAnswered ? "완료" : "대기"}</span>
                 </>
               )}
             </div>

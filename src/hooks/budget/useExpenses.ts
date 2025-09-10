@@ -1,12 +1,12 @@
-import { supabase } from '@/lib/supabase';
-import { 
-  CategoryTotal, 
-  BudgetTransaction, 
-  BudgetFormData, 
-  BudgetStatistics 
-} from '@/types/budget';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { supabase } from "@/lib/supabase";
+import {
+  CategoryTotal,
+  BudgetTransaction,
+  BudgetFormData,
+  BudgetStatistics,
+} from "@/types/budget";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 interface UseExpensesProps {
   userId?: string;
@@ -18,31 +18,39 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
   const queryClient = useQueryClient();
 
   // 지출 데이터 조회
-  const { data: expenses = [], isLoading, error } = useQuery({
-    queryKey: ['expenses', userId, date, month],
+  const {
+    data: expenses = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["expenses", userId, date, month],
     queryFn: async (): Promise<BudgetTransaction[]> => {
       let query = supabase
-        .from('expenses')
-        .select(`
+        .from("expenses")
+        .select(
+          `
           *,
           category:categories(*)
-        `)
-        .order('date', { ascending: false });
+        `,
+        )
+        .order("date", { ascending: false });
 
       if (userId) {
-        query = query.eq('user_id', userId);
+        query = query.eq("user_id", userId);
       }
 
       if (date) {
-        query = query.eq('date', date);
+        query = query.eq("date", date);
       } else if (month) {
         const startOfMonth = `${month}-01`;
         const endOfMonth = new Date(
           new Date(month).getFullYear(),
           new Date(month).getMonth() + 1,
-          0
-        ).toISOString().split('T')[0];
-        query = query.gte('date', startOfMonth).lte('date', endOfMonth);
+          0,
+        )
+          .toISOString()
+          .split("T")[0];
+        query = query.gte("date", startOfMonth).lte("date", endOfMonth);
       }
 
       const { data, error } = await query;
@@ -55,21 +63,25 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
 
   // 지출 추가
   const addExpenseMutation = useMutation({
-    mutationFn: async (newExpense: BudgetFormData & { user_id: string; category_id: string }) => {
+    mutationFn: async (
+      newExpense: BudgetFormData & { user_id: string; category_id: string },
+    ) => {
       const { data, error } = await supabase
-        .from('expenses')
+        .from("expenses")
         .insert([newExpense])
-        .select(`
+        .select(
+          `
           *,
           category:categories(*)
-        `)
+        `,
+        )
         .single();
 
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
     },
   });
 
@@ -77,35 +89,40 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
   const deleteExpenseMutation = useMutation({
     mutationFn: async (expenseId: string) => {
       const { error } = await supabase
-        .from('expenses')
+        .from("expenses")
         .delete()
-        .eq('id', expenseId);
+        .eq("id", expenseId);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
     },
   });
 
   // 지출 수정
   const updateExpenseMutation = useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<BudgetFormData> & { id: string }) => {
+    mutationFn: async ({
+      id,
+      ...updates
+    }: Partial<BudgetFormData> & { id: string }) => {
       const { data, error } = await supabase
-        .from('expenses')
+        .from("expenses")
         .update(updates)
-        .eq('id', id)
-        .select(`
+        .eq("id", id)
+        .select(
+          `
           *,
           category:categories(*)
-        `)
+        `,
+        )
         .single();
 
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
     },
   });
 
@@ -118,20 +135,20 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
       totalTransactions: expenses.length,
     };
 
-    expenses.forEach(expense => {
+    expenses.forEach((expense) => {
       const amount = expense.amount;
       const categoryType = expense.category?.type;
 
-      if (expense.type === 'expense') {
+      if (expense.type === "expense") {
         stats.expense.count++;
-        if (categoryType === 'expense_fixed') {
+        if (categoryType === "expense_fixed") {
           stats.expense.fixed += amount;
         } else {
           stats.expense.variable += amount;
         }
-      } else if (expense.type === 'income') {
+      } else if (expense.type === "income") {
         stats.income.count++;
-        if (categoryType === 'income_fixed') {
+        if (categoryType === "income_fixed") {
           stats.income.fixed += amount;
         } else {
           stats.income.variable += amount;
@@ -150,9 +167,9 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
   const categoryTotals: CategoryTotal[] = useMemo(() => {
     const totalsMap: Record<string, CategoryTotal> = {};
 
-    expenses.forEach(expense => {
-      const categoryName = expense.category?.name || 'Unknown';
-      const categoryType = expense.category?.type || 'expense_variable';
+    expenses.forEach((expense) => {
+      const categoryName = expense.category?.name || "Unknown";
+      const categoryType = expense.category?.type || "expense_variable";
       const amount = expense.amount;
 
       if (!totalsMap[categoryName]) {
@@ -170,8 +187,8 @@ export const useExpenses = ({ userId, date, month }: UseExpensesProps = {}) => {
     });
 
     const totalAmount = statistics.income.total + statistics.expense.total;
-    
-    return Object.values(totalsMap).map(category => ({
+
+    return Object.values(totalsMap).map((category) => ({
       ...category,
       percentage: totalAmount > 0 ? (category.amount / totalAmount) * 100 : 0,
     }));

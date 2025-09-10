@@ -1,6 +1,6 @@
-import { supabase } from '@/lib/supabase';
-import { GoalFormData } from '@/types/goals';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from "@/lib/supabase";
+import { GoalFormData } from "@/types/goals";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface CreateChallengeData {
   title: string;
@@ -12,7 +12,7 @@ interface CreateChallengeData {
   targetCount: string;
   targetDate: string;
   category: string;
-  categoryType: 'income' | 'expense';
+  categoryType: "income" | "expense";
   userId: string;
 }
 
@@ -22,16 +22,17 @@ export const useChallenge = () => {
   const createChallengeMutation = useMutation({
     mutationFn: async (data: CreateChallengeData) => {
       // 챌린지 모드 결정
-      let challengeMode: 'amount' | 'count' | 'both' = 'amount';
+      let challengeMode: "amount" | "count" | "both" = "amount";
       if (data.enableAmountGoal && data.enableCountGoal) {
-        challengeMode = 'both';
+        challengeMode = "both";
       } else if (data.enableCountGoal) {
-        challengeMode = 'count';
+        challengeMode = "count";
       }
 
       // 목표 타입 결정
-      const goalType = data.categoryType === 'income' ? 'increase_income' : 'reduce_expense';
-      
+      const goalType =
+        data.categoryType === "income" ? "increase_income" : "reduce_expense";
+
       const goalData: GoalFormData & { user_id: string } = {
         user_id: data.userId,
         title: data.title,
@@ -46,18 +47,22 @@ export const useChallenge = () => {
       };
 
       const { data: result, error } = await supabase
-        .from('goals')
-        .insert([{
-          ...goalData,
-          current_amount: 0,
-          current_count: 0,
-          status: 'active',
-          created_from_date: new Date().toISOString().split('T')[0],
-        }])
-        .select(`
+        .from("goals")
+        .insert([
+          {
+            ...goalData,
+            current_amount: 0,
+            current_count: 0,
+            status: "active",
+            created_from_date: new Date().toISOString().split("T")[0],
+          },
+        ])
+        .select(
+          `
           *,
           category:categories(*)
-        `)
+        `,
+        )
         .single();
 
       if (error) throw error;
@@ -65,7 +70,7 @@ export const useChallenge = () => {
     },
     onSuccess: () => {
       // goals 관련 쿼리들 무효화
-      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
     },
   });
 

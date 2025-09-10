@@ -1,10 +1,16 @@
-import { Question, QuestionKeyword, QuestionKeywordAnalysis, QuestionKeywordNavigationData, QuestionSearchResult } from './database';
+import {
+  Question,
+  QuestionKeyword,
+  QuestionKeywordAnalysis,
+  QuestionKeywordNavigationData,
+  QuestionSearchResult,
+} from "./database";
 
 export interface QuestionWithKeywords extends Question {
   keywords: QuestionKeyword[];
   category: {
     id: string;
-    name: 'daily' | 'growth' | 'custom';
+    name: "daily" | "growth" | "custom";
     display_name: string;
     description?: string;
   };
@@ -17,16 +23,16 @@ export interface QuestionKeywordUsageStats {
   growthUsage: number;
   customUsage: number;
   recentUsageCount: number;
-  trendDirection: 'up' | 'down' | 'stable';
+  trendDirection: "up" | "down" | "stable";
 }
 
 export interface QuestionFilters {
-  categories?: ('daily' | 'growth' | 'custom')[];
+  categories?: ("daily" | "growth" | "custom")[];
   keywords?: string[];
   dateFrom?: string;
   dateTo?: string;
   isAnswered?: boolean;
-  visibility?: ('public' | 'neighbors' | 'private')[];
+  visibility?: ("public" | "neighbors" | "private")[];
   searchQuery?: string;
 }
 
@@ -41,7 +47,7 @@ export interface QuestionNeighborListItem {
   name: string;
   nickname?: string;
   avatar_url?: string;
-  status: 'pending' | 'accepted' | 'declined' | 'blocked';
+  status: "pending" | "accepted" | "declined" | "blocked";
   relationship_created_at: string;
   is_requester: boolean;
   recent_questions_count: number;
