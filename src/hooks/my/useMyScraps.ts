@@ -1,6 +1,5 @@
-import { ScrapWithContent } from '@/types/my/database'
-import { ScrapsFilters } from '@/types/my/ui';
-import { useCallback, useEffect, useState } from 'react'
+import { ScrapsFilters, ScrapWithContent } from '@/types/my';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useMyScraps = () => {
   const [scraps, setScraps] = useState<ScrapWithContent[]>([]);
@@ -15,13 +14,13 @@ export const useMyScraps = () => {
   const fetchScraps = useCallback(async (loadMore = false) => {
     try {
       setLoading(true);
-
+      
       const mockScraps: ScrapWithContent[] = [
         {
           id: '1',
           user_id: 'user1',
           content_type: 'reflection',
-          scraped_st: '2024-12-19T14:30:00Z',
+          scraped_at: '2024-12-19T14:30:00Z', // 수정: 'scraped_st' → 'scraped_at'
           author: {
             id: 'author1',
             name: '김지은',
@@ -43,7 +42,7 @@ export const useMyScraps = () => {
           id: '2',
           user_id: 'user1',
           content_type: 'question',
-          scraped_st: '2024-12-18T10:15:00Z',
+          scraped_at: '2024-12-18T10:15:00Z', // 수정: 'scraped_st' → 'scraped_at'
           author: {
             id: 'author2',
             name: '박민수',
@@ -67,7 +66,7 @@ export const useMyScraps = () => {
           id: '3',
           user_id: 'user1',
           content_type: 'reflection',
-          scraped_st: '2024-12-17T16:45:00Z',
+          scraped_at: '2024-12-17T16:45:00Z', // 수정: 'scraped_st' → 'scraped_at'
           author: {
             id: 'author3',
             name: '이현우',
@@ -87,13 +86,13 @@ export const useMyScraps = () => {
       ];
 
       await new Promise(resolve => setTimeout(resolve, 500));
-
+      
       if (loadMore) {
         setScraps(prev => [...prev, ...mockScraps]);
       } else {
         setScraps(mockScraps);
       }
-
+      
       setHasMore(false);
       setError(null);
     } catch (err) {

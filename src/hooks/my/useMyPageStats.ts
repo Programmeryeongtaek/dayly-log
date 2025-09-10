@@ -1,5 +1,5 @@
-import { MyStats } from '@/types/my/database'
-import { useCallback, useEffect, useState } from 'react'
+import { MyStats } from '@/types/my';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useMyPageStats = () => {
   const [stats, setStats] = useState<MyStats | null>(null);
@@ -19,10 +19,10 @@ export const useMyPageStats = () => {
         pending_requests: 2,
         total_scraps: 8,
         this_week_posts: 3,
-        this_weeks_scraps: 2,
+        this_week_scraps: 2,
         this_week_new_neighbors: 1,
-    };
-
+      };
+      
       await new Promise(resolve => setTimeout(resolve, 500));
       setStats(mockStats);
       setError(null);

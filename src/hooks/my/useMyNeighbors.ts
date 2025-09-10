@@ -1,6 +1,5 @@
-import { NeighborInfo, NeighborRequest } from '@/types/my/database'
-import { NeighborFilters } from '@/types/my/ui';
-import { useCallback, useEffect, useState } from 'react'
+import { NeighborFilters, NeighborInfo, NeighborRequest } from '@/types/my';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useMyNeighbors = () => {
   const [requests, setRequests] = useState<NeighborRequest[]>([]);
@@ -14,7 +13,7 @@ export const useMyNeighbors = () => {
   const fetchNeighbors = useCallback(async () => {
     try {
       setLoading(true);
-
+      
       const mockRequests: NeighborRequest[] = [
         {
           id: '1',
@@ -87,10 +86,8 @@ export const useMyNeighbors = () => {
       
       const acceptedRequest = requests.find(req => req.id === requestId);
       if (acceptedRequest) {
-        // 요청 목록에서 제거
         setRequests(prev => prev.filter(req => req.id !== requestId));
         
-        // 이웃 목록에 추가
         const newNeighbor: NeighborInfo = {
           id: `neighbor_${Date.now()}`,
           user_id: acceptedRequest.requester_id,

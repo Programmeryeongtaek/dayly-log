@@ -41,7 +41,7 @@ export interface NeighborInfo {
 
 // 회고 관련 타입들
 export interface ReflectionItem {
-  is: string;
+  id: string;
   user_id: string;
   category_id: string;
   title?: string;
@@ -62,7 +62,7 @@ export interface ReflectionCategory {
 }
 
 export interface ReflectionKeyword {
-  is: string;
+  id: string;
   user_id: string;
   category_id: string;
   name: string;
@@ -115,7 +115,7 @@ export interface QuestionKeyword {
 export interface QuestionKeywordRelation {
   id: string;
   question_id: string;
-  keyword_is: string;
+  keyword_id: string;
   created_at: string;
 }
 
@@ -134,7 +134,7 @@ export interface ScrapWithContent {
   id: string;
   user_id: string;
   content_type: 'reflection' | 'question';
-  scraped_st: string;
+  scraped_at: string;
   author: {
     id: string;
     name: string;
@@ -166,7 +166,7 @@ export interface MyStats {
   pending_requests: number;
   total_scraps: number;
   this_week_posts: number;
-  this_weeks_scraps: number;
+  this_week_scraps: number;
   this_week_new_neighbors: number;
 }
 

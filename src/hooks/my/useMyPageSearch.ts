@@ -1,17 +1,6 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-interface Keyword {
-  id: string;
-  name: string;
-  color: string;
-}
-
-interface SearchableItem {
-  content: string;
-  keywords?: Keyword[];
-}
-
-export const useMyPageSearch = <T extends SearchableItem>(
+export const useMyPageSearch = <T extends { content: string; keywords?: { name: string }[] }>(
   data: T[],
   searchTerm: string,
 ) => {
@@ -28,4 +17,38 @@ export const useMyPageSearch = <T extends SearchableItem>(
       return contentMatch || keywordMatch;
     });
   }, [data, searchTerm]);
+};
+
+// 액션 로딩 상태 Hook
+export const useActionLoading = () => {
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
+  const setLoading = useCallback((actionId: string, loading: boolean) => {
+    setLoadingStates(prev => ({
+      ...prev,
+      [actionId]: loading,
+    }));
+  }, []);
+
+  const isLoading = useCallback((actionId: string) => {
+    return loadingStates[actionId] || false;
+  }, [loadingStates]);
+
+  const withLoading = useCallback(async <T>(
+    actionId: string,
+    action: () => Promise<T>,
+  ): Promise<T> => {
+    setLoading(actionId, true);
+    try {
+      return await action();
+    } finally {
+      setLoading(actionId, false);
+    }
+  }, [setLoading]);
+
+  return {
+    isLoading,
+    setLoading,
+    withLoading,
+  };
 };
