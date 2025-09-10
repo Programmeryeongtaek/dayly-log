@@ -1,0 +1,116 @@
+name: Production - Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+# 배포는 순차적으로 실행
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+env:
+  # Production 환경 변수
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.PROD_SUPABASE_URL }}
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PROD_SUPABASE_ANON_KEY }}
+
+jobs:
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+
+    outputs:
+      should-deploy: ${{ steps.quality-check.outputs.result }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.2.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 프로덕션 배포 전 엄격한 품질 검사
+      - name: Format check
+        run: pnpm run format:check
+
+      - name: Link check
+        run: pnpm run lint
+
+      - name: Type check
+        run: pnpm run type-check
+
+      - name: production build
+        run: pnpm run build
+
+      # Jest 테스트 (나중에 활성화)
+      # - name: Run all tests
+      #   run: pnpm run test:coverage
+
+      # E2E 테스트 (나중에 활성화)
+      # - name: E2E tests
+      #   run: pnpm exec playwright test
+
+      - name: Quality gate passed
+        id: quality-check
+        run: |
+          echo "result=true" >> $GITHUB_OUTPUT
+          echo "모든 품질 검사 통과!"
+
+  deploy:
+    name: Deploy to Production
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    if: needs.quality-gate.outputs.should-deploy == 'true'
+
+    environment:
+      name: production
+      # url: https://your-app.vercel.app // TODO: 나중에 배포 후 입력
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/actions-setup@v4
+        with:
+          version: 9.2.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build for production
+        run: pnpm run build
+
+      # Vercel 배포 예시 (사용하는 플랫폼에 맞게 수정)
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # TODO: 나중에 배포 후 입력
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # TODO: 나중에 배포 후 입력
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # TODO: 나중에 배포 후 입력
+          vercel-args: '--prod'
+
+      # 배포 성공 알림 (선택사항)
+      - name: Deployment success notification
+        run: |
+          echo "프로덕션 배포 완료!"
+          echo "배포 시간: ${date}"
+          echo "커밋: ${{ github.sha}}"

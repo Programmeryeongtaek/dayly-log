@@ -1,5 +1,5 @@
 import { BudgetChartProps } from '@/types/budget';
-import { Target, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { Target, TrendingUp, TrendingDown } from 'lucide-react';
 import { useMemo } from 'react';
 import {
   Cell,
