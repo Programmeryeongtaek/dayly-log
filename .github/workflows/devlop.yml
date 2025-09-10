@@ -1,0 +1,83 @@
+name: Develop - Integration Test
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+# 동시 실행 제한
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Develop 환경 변수 (GitHub Secrets 사용)
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+jobs:
+  integration-test:
+    name: Integration Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. pnpm 설정
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      # 3. Node.js 설정
+      - name: Setup Node.js ${{ matrix.node-version}}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      # 4. 의존성 설치
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 5. 코드 품질 검사
+      - name: Code formatting check
+        run: pnpm run format:check
+
+      - name: Lint check
+        run: pnpm run lint
+
+      - name: Type check
+        run: pnpm run type-check
+
+      # 6. 실제 환경변수로 빌드 테스트
+      - name: Build for develop
+        run: pnpm run build
+
+      # # 7. Jest 테스트 (나중에 활성화)
+      # - name: Run Tests
+      #   run: pnpm run test
+
+      # 8. E2E 테스트 (Playwright - 나중에 활성화)
+      # - name: E2E Tests
+      #   run: pnpm exec playwright test
+
+      # 9. 빌드 결과물 업로드 (디버깅용)
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: build-output
+          path: .next/
+          retention-days: 1
+
+      # 10. 성공 알림
+      - name: Integration test passed
+        run: echo "Develop 브랜치 통합 테스트 완료!"
