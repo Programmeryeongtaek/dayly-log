@@ -116,12 +116,93 @@ export const useAuth = () => {
   // 로그아웃
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      try {
+        // 1단계: Supabase 로그아웃
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.warn('Supabase 로그아웃 오류:', error);
+        }
+        
+        // 2단계: access_token 강제 제거
+        if (typeof window !== 'undefined') {
+          // 현재 Supabase 프로젝트의 정확한 storage key 찾기
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+          const projectRef = supabaseUrl.split('//')[1].split('.')[0];
+          const storageKey = `sb-${projectRef}-auth-token`;
+          
+          // access_token이 포함된 키들 정리
+          const keysToRemove = [
+            storageKey,
+            'supabase.auth.token',
+            'sb-auth-token',
+            `sb-${projectRef}-auth-token`,
+            'daylylog-auth-token'
+          ];
+          
+          keysToRemove.forEach(key => {
+            try {
+              localStorage.removeItem(key);
+              sessionStorage.removeItem(key);
+            } catch (e) {
+              console.warn(`토큰 키 제거 실패: ${key}`, e);
+            }
+          });
+          
+          // localStorage에서 access_token이 포함된 모든 키 검색 및 제거
+          const allKeys = Object.keys(localStorage);
+          allKeys.forEach(key => {
+            try {
+              const value = localStorage.getItem(key);
+              if (value && (
+                value.includes('access_token') || 
+                value.includes('refresh_token') ||
+                key.includes('supabase') ||
+                key.includes('sb-')
+              )) {
+                localStorage.removeItem(key);
+              }
+            } catch (e) {
+              // 파싱 오류 무시
+            }
+          });
+          
+          // 세션 스토리지도 동일하게 처리
+          const sessionKeys = Object.keys(sessionStorage);
+          sessionKeys.forEach(key => {
+            try {
+              const value = sessionStorage.getItem(key);
+              if (value && (
+                value.includes('access_token') || 
+                value.includes('refresh_token') ||
+                key.includes('supabase') ||
+                key.includes('sb-')
+              )) {
+                sessionStorage.removeItem(key);
+              }
+            } catch (e) {
+              // 파싱 오류 무시
+            }
+          });
+        }
+        
+      } catch (error) {
+        console.error('로그아웃 처리 중 오류:', error);
+        // 오류 발생 시에도 강제 정리
+        if (typeof window !== 'undefined') {
+          localStorage.clear();
+          sessionStorage.clear();
+        }
+      }
     },
     onSuccess: () => {
       queryClient.clear();
     },
+    onSettled: () => {
+      // 성공/실패 관계없이 페이지 새로고침으로 완전 초기화
+      if (typeof window !== 'undefined') {
+        window.location.replace('/');
+      }
+    }
   });
 
   // 프로필 업데이트
