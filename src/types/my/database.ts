@@ -39,6 +39,42 @@ export interface NeighborInfo {
   last_active: string;
 }
 
+export interface NeighborProfile {
+  id: string;
+  name: string;
+  nickname: string;
+  accepted_at: string;
+  mutual_friends_count: number;
+  last_active: string;
+}
+
+export interface DomainStats  {
+  gratitude: number;
+  reflection: number;
+  daily: number;
+  growth: number;
+  custom: number;
+}
+
+export interface NeighborPost {
+  id: string;
+  title?: string;
+  content: string;
+  date: string;
+  category_id: string;
+  category_name: 'gratitude' | 'reflection' | 'daily' | 'growth' | 'custom';
+  category_display_name: string;
+  is_answered?: boolean;
+  answer?: string;
+  keywords: Array<{
+    id: string;
+    name: string;
+    color: string;
+  }>;
+  created_at: string;
+  updated_at: string;
+}
+
 // 회고 관련 타입들
 export interface ReflectionItem {
   id: string;

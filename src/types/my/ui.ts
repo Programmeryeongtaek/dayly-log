@@ -1,6 +1,6 @@
+import { DomainType } from './index';
 // 마이페이지 UI 관련 타입
-
-import { NeighborInfo, NeighborRequest, QuestionWithKeywords, ReflectionWithKeywords, ScrapWithContent } from './database';
+import { DomainStats, NeighborInfo, NeighborPost, NeighborProfile, NeighborRequest, QuestionWithKeywords, ReflectionWithKeywords, ScrapWithContent } from './database';
 
 // 타입
 export type MyPageType = 'main' | 'posts' | 'neighbor' | 'scraps';
@@ -208,4 +208,35 @@ export interface ActivitySummaryProps {
     date: string;
     onClick?: () => void;
   }>;
+}
+
+// 이웃관련
+export interface NeighborProfileData {
+  profile: NeighborProfile;
+  domainStats: DomainStats;
+  posts: Record<DomainType, NeighborPost[]>;
+}
+
+export interface NeighborProfileModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  neighborId: string;
+}
+
+export interface DomainTabProps {
+  domain: DomainType;
+  count: number;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+export interface NeighborPostCardProps {
+  post: NeighborPost;
+  showActions?: boolean;
+}
+
+export interface NeighborProfileStatsProps {
+  stats: DomainStats;
+  onDomainClick: (domain: DomainType) => void;
+  activeDomain?: DomainType;
 }

@@ -24,6 +24,9 @@ export type {
   NeighborActionData,
   ScrapCreateData,
   SearchParams,
+  NeighborProfile,
+  DomainStats,
+  NeighborPost,
 } from './database';
 
 // UI types
@@ -56,6 +59,11 @@ export type {
   UserAvatarProps,
   BreadcrumbProps,
   ActivitySummaryProps,
+  NeighborProfileData,
+  NeighborProfileModalProps,
+  DomainTabProps,
+  NeighborPostCardProps,
+  NeighborProfileStatsProps,
 } from './ui';
 
 // 유틸리티 타입들
@@ -63,6 +71,7 @@ export type MyPageContentType = 'reflection' | 'question';
 export type MyPageVisibilityType = 'public' | 'neighbors' | 'private';
 export type MyPageNeighborStatus = 'pending' | 'accepted' | 'declined' | 'blocked';
 export type MyPageActionType = 'edit' | 'delete' | 'scrap' | 'share' | 'view';
+export type DomainType = 'gratitude' | 'reflection' | 'daily' | 'growth' | 'custom';
 
 // 타입 가드 함수들
 export const isMyPageContentType = (type: string): type is MyPageContentType =>
