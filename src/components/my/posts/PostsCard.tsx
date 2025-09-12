@@ -35,7 +35,7 @@ const PostCard = ({
   onEdit: () => void;
   onDelete: () => void;
 }) => (
-  <div className="p-6 bg-white border rounded-lg hover:shadow-md transition-shadow">
+  <div className="p-4 bg-white border rounded-lg hover:shadow-md transition-shadow hover:border-accent-500">
     {/* 헤더 */}
     <div className="flex items-start justify-between mb-4">
       <div className="flex items-center space-x-3">
@@ -49,22 +49,6 @@ const PostCard = ({
           </div>
         )}
         <div>
-          <div className="flex items-center space-x-2">
-            <span
-              className={`text-sm px-2 py-1 rounded-md ${
-                item.type === 'reflection'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-green-100 text-green-700'
-              }`}
-            >
-              {item.category.display_name}
-            </span>
-            {item.type === 'question' && item.is_answered && (
-              <span className="text-xs px-2 py-1 rounded-md bg-orange-100 text-orange-700">
-                답변완료
-              </span>
-            )}
-          </div>
           <div className="flex items-center space-x-2 mt-1">
             <span className="text-sm text-gray-500 flex items-center">
               <Calendar className="w-4 h-4 mr-1" />
@@ -107,7 +91,7 @@ const PostCard = ({
 
     {/* 답변 (질문인 경우) */}
     {item.type === 'question' && item.answer && (
-      <div className="bg-gray-50 p-3 rounded-lg mb-4">
+      <div className="bg-accent-50 p-3 rounded-lg mb-4">
         <p className="text-sm font-medium text-gray-700 mb-1">답변:</p>
         <p className="text-gray-600 text-sm line-clamp-2">{item.answer}</p>
       </div>

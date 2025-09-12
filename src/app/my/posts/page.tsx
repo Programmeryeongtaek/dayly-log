@@ -6,8 +6,11 @@ import PostsFilterBar from '@/components/my/posts/PostsFilterBar';
 import PostsTabNavigation from '@/components/my/posts/PostsTabNavigation';
 import { useMyPosts } from '@/hooks/my/useMyPosts';
 import { PostsTabType } from '@/types/my';
+import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const MyPostsPage = () => {
+  const router = useRouter();
   const {
     posts,
     filters,
@@ -59,15 +62,13 @@ const MyPostsPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="flex flex-col gap-4 max-w-4xl mx-auto py-8 p-4">
       {/* 헤더 */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          내가 작성한 글
-        </h1>
-        <p className="text-gray-600">
-          지금까지 작성한 회고와 질문들을 한 번에 확인하세요
-        </p>
+      <div className="flex flex-col gap-4 items-start justify-start">
+        <button onClick={() => router.push('/my')}>
+          <ArrowLeft className="w-6 h-6 text-gray-500 hover:text-accent-400 hover:cursor-pointer" />
+        </button>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">작성한 글</h1>
       </div>
 
       {/* 탭 네비게이션 */}
