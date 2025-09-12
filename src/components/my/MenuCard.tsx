@@ -3,14 +3,12 @@ import { ChevronRight } from 'lucide-react';
 const MenuCard = ({
   icon,
   title,
-  description,
   count,
   badge,
   onClick,
 }: {
   icon: React.ReactNode;
   title: string;
-  description: string;
   count?: number;
   badge?: number;
   onClick: () => void;
@@ -22,10 +20,7 @@ const MenuCard = ({
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center space-x-3">
         <div className="p-2 bg-blue-50 rounded-lg">{icon}</div>
-        <div>
-          <h3 className="font-semibold text-gray-900">{title}</h3>
-          <p className="text-sm text-gray-600">{description}</p>
-        </div>
+        <h3 className="font-semibold text-gray-900">{title}</h3>
       </div>
       <div className="flex items-center space-x-2">
         {badge && badge > 0 && (

@@ -7,7 +7,6 @@ import { useMyPageStats } from '@/hooks/my/useMyPageStats';
 import {
   Bookmark,
   BookOpen,
-  Clock,
   FileText,
   MessageCircleQuestion,
   Settings,
@@ -73,9 +72,9 @@ const MyPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="flex flex-col gap-8 container bg-gray-50 mx-auto py-8 px-4 max-w-4xl">
       {/* 헤더 */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">마이페이지</h1>
         <QuickActionButton
           icon={<Settings className="w-4 h-4" />}
@@ -85,20 +84,17 @@ const MyPage = () => {
       </div>
 
       {/* 빠른 액션 */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">빠른 액션</h2>
-        <div className="flex space-x-4">
-          <QuickActionButton
-            icon={<BookOpen className="w-4 h-4" />}
-            label="회고 작성"
-            onClick={handleCreateReflection}
-          />
-          <QuickActionButton
-            icon={<MessageCircleQuestion className="w-4 h-4" />}
-            label="질문 작성"
-            onClick={handleCreateQuestion}
-          />
-        </div>
+      <div className="flex gap-4">
+        <QuickActionButton
+          icon={<BookOpen className="w-4 h-4" />}
+          label="회고 작성"
+          onClick={handleCreateReflection}
+        />
+        <QuickActionButton
+          icon={<MessageCircleQuestion className="w-4 h-4" />}
+          label="질문 작성"
+          onClick={handleCreateQuestion}
+        />
       </div>
 
       {/* 세부 통계 */}
@@ -130,7 +126,7 @@ const MyPage = () => {
       </div>
 
       {/* 이번 주 통계 */}
-      <div className="mb-8">
+      <div className="">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           이번 주 활동
         </h2>
@@ -167,13 +163,12 @@ const MyPage = () => {
       </div>
 
       {/* 메인 메뉴 */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">내 활동 관리</h2>
+      <div className="flex flex-col gap-4">
+        <h2 className="text-lg font-semibold text-gray-900">활동 관리</h2>
 
         <MenuCard
           icon={<Users className="w-6 h-6 text-blue-600" />}
           title="이웃 관리"
-          description="이웃 요청 확인 및 이웃 목록 관리"
           count={stats.total_neighbors}
           badge={stats.pending_requests}
           onClick={handleNavigateToNeighbors}
@@ -181,8 +176,7 @@ const MyPage = () => {
 
         <MenuCard
           icon={<FileText className="w-6 h-6 text-green-600" />}
-          title="내가 작성한 글"
-          description="회고와 질문을 한 번에 확인"
+          title="작성한 글"
           count={stats.total_posts}
           onClick={handleNavigateToPosts}
         />
@@ -190,7 +184,6 @@ const MyPage = () => {
         <MenuCard
           icon={<Bookmark className="w-6 h-6 text-orange-600" />}
           title="스크랩한 글"
-          description="저장한 회고와 질문 모음"
           count={stats.total_scraps}
           onClick={handleNavigateToScraps}
         />
