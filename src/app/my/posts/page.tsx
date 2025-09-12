@@ -17,6 +17,7 @@ const MyPostsPage = () => {
     loading,
     hasMore,
     error,
+    totalCounts,
     actions: { updateFilters, loadMore, editPost, deletePost, refresh },
   } = useMyPosts();
 
@@ -39,10 +40,10 @@ const MyPostsPage = () => {
   };
 
   // 카운트 계산
-  const counts = {
-    all: posts.length,
-    reflections: posts.filter((p) => p.type === 'reflection').length,
-    questions: posts.filter((p) => p.type === 'question').length,
+  const counts = totalCounts || {
+    all: 0,
+    reflections: 0,
+    questions: 0,
   };
 
   if (error) {

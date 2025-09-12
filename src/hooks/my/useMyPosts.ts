@@ -1,8 +1,10 @@
-import { PostCardProps, PostsFilters, QuestionWithKeywords, ReflectionWithKeywords } from '@/types/my';
+import { PostsFilters, QuestionWithKeywords, ReflectionWithKeywords } from '@/types/my';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
-type PostItem = PostCardProps['item'];
+type PostItem = (ReflectionWithKeywords | QuestionWithKeywords) & {
+  type: 'reflection' | 'question';
+};
 
 export const useMyPosts = () => {
   const router = useRouter();
@@ -15,6 +17,7 @@ export const useMyPosts = () => {
     search: '',
     sort: 'latest',
   });
+  const [allPosts, setAllPosts] = useState<PostItem[]>([]);
 
   const fetchPosts = useCallback(async (loadMore = false) => {
     try {
@@ -170,7 +173,12 @@ export const useMyPosts = () => {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // 전체 데이터 결합
-      const allPosts: PostItem[] = [...mockReflections, ...mockQuestions];
+      const allPostsData: PostItem[] = [...mockReflections, ...mockQuestions];
+
+      // 전체 데이터 저장 (처음 로드시)
+      if (!loadMore) {
+        setAllPosts(allPostsData);
+      }
 
       // 탭 필터링
       let filteredPosts = allPosts;
@@ -212,6 +220,12 @@ export const useMyPosts = () => {
       setLoading(false);
     }
   }, [filters]);
+
+  const totalCounts = {
+    all: allPosts.length,
+    reflections: allPosts.filter(post => post.type === 'reflection').length,
+    questions: allPosts.filter(post => post.type === 'question').length,
+  };
 
   const updateFilters = useCallback((newFilters: Partial<PostsFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -258,6 +272,7 @@ export const useMyPosts = () => {
     loading,
     hasMore,
     error,
+    totalCounts,
     actions: {
       updateFilters,
       loadMore,
