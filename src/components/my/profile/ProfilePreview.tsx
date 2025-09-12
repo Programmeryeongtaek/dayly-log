@@ -84,8 +84,8 @@ const ProfilePreview = ({
                   type="text"
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  className="px-2 py-1 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="닉네임을 입력하세요"
+                  className="px-2 py-1 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-accent-500"
+                  placeholder="닉네임을 입력하세요."
                   disabled={isUpdatingNickname}
                 />
                 <button
@@ -95,28 +95,28 @@ const ProfilePreview = ({
                     !nickname.trim() ||
                     nickname.trim() === user.nickname
                   }
-                  className="p-1 text-green-600 hover:bg-green-50 rounded disabled:opacity-50"
+                  className="p-1 text-accent-600 rounded disabled:opacity-50 hover:cursor-pointer"
                 >
-                  <Save className="w-3 h-3" />
+                  <Save className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleCancelEdit}
                   disabled={isUpdatingNickname}
-                  className="p-1 text-gray-600 hover:bg-gray-50 rounded disabled:opacity-50"
+                  className="p-1 text-red-600 hover:cursor-pointer rounded disabled:opacity-50"
                 >
-                  <X className="w-3 h-3" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <p className="text-gray-600">
+                <p className="text-accent-600">
                   @{user.nickname || '닉네임 없음'}
                 </p>
                 <button
                   onClick={() => setIsEditingNickname(true)}
-                  className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                  className="p-1 text-accent-600 rounded transition-colors hover:cursor-pointer"
                 >
-                  <Edit3 className="w-3 h-3" />
+                  <Edit3 className="w-4 h-4" />
                 </button>
               </div>
             )}

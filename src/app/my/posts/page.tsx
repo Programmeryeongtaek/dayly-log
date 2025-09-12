@@ -53,9 +53,9 @@ const MyPostsPage = () => {
           <p className="text-red-500 mb-4">{error}</p>
           <button
             onClick={refresh}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="px-4 py-2 bg-accent-400 text-white rounded-lg hover:bg-accent-500"
           >
-            다시 시도
+            재시도
           </button>
         </div>
       </div>
@@ -85,7 +85,7 @@ const MyPostsPage = () => {
       {/* 로딩 상태 */}
       {loading && posts.length === 0 && (
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-500"></div>
         </div>
       )}
 
@@ -95,13 +95,13 @@ const MyPostsPage = () => {
           type={filters.search ? 'search' : 'posts'}
           title={
             filters.search
-              ? '검색 결과가 없습니다'
-              : '아직 작성한 글이 없습니다'
+              ? '검색 결과가 없습니다.'
+              : '아직 작성한 글이 없습니다.'
           }
           description={
             filters.search
-              ? '다른 검색어로 시도해보세요'
-              : '첫 번째 회고나 질문을 작성해보세요'
+              ? '다른 검색어로 시도해보세요.'
+              : '첫 번째 회고나 질문을 작성해보세요.'
           }
         />
       ) : (
@@ -121,7 +121,7 @@ const MyPostsPage = () => {
               <button
                 onClick={loadMore}
                 disabled={loading}
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-accent-400 text-white rounded-lg hover:bg-accent-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? '불러오는 중...' : '더 보기'}
               </button>
