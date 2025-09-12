@@ -1,3 +1,4 @@
+import { supabase } from '@/lib/supabase';
 import { NeighborFilters, NeighborInfo, NeighborRequest } from '@/types/my';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -13,62 +14,59 @@ export const useMyNeighbors = () => {
   const fetchNeighbors = useCallback(async () => {
     try {
       setLoading(true);
+
+      // 현재 사용자 ID 가져오기
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('인증이 필요합니다.');
+
+      // 이웃 요청 목록 가져오기
+      const { data: requestsData, error: requestsError } = await supabase
+        .from('neighbor_status_view')
+        .select('*')
+        .eq('recipient_id', user.id)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (requestsError) throw requestsError;
+
+      // 이웃 목록 가져오기
+      const { data: neighborsData, error: neighborsError } = await supabase
+        .from('neighbor_status_view')
+        .select('*')
+        .or(`and(requester_id.eq.${user.id},status.eq.accepted),and(recipient_id.eq.${user.id},status.eq.accepted)`)
+        .order('updated_at', { ascending: false });
       
-      const mockRequests: NeighborRequest[] = [
-        {
-          id: '1',
-          requester_id: 'user1',
-          requester_name: '김민수',
-          requester_nickname: 'minsu_kim',
-          created_at: '2024-12-19T10:00:00Z',
-          status: 'pending',
-        },
-        {
-          id: '2',
-          requester_id: 'user2',
-          requester_name: '박지은',
-          requester_nickname: 'jieun_park',
-          created_at: '2024-12-18T15:30:00Z',
-          status: 'pending',
-        },
-      ];
+      if (neighborsError) throw neighborsError;
 
-      const mockNeighbors: NeighborInfo[] = [
-        {
-          id: '1',
-          user_id: 'neighbor1',
-          name: '이지은',
-          nickname: 'jieun_lee',
-          accepted_at: '2024-12-15T14:30:00Z',
-          mutual_friends_count: 3,
-          last_active: '2024-12-19T09:00:00Z',
-        },
-        {
-          id: '2',
-          user_id: 'neighbor2',
-          name: '최현우',
-          nickname: 'hyunwoo_choi',
-          accepted_at: '2024-12-10T11:20:00Z',
-          mutual_friends_count: 1,
-          last_active: '2024-12-18T20:15:00Z',
-        },
-        {
-          id: '3',
-          user_id: 'neighbor3',
-          name: '정수아',
-          nickname: 'sua_jung',
-          accepted_at: '2024-12-05T09:45:00Z',
-          mutual_friends_count: 0,
-          last_active: '2024-12-17T14:20:00Z',
-        },
-      ];
+      // 요청 데이터 변환
+      const requests: NeighborRequest[] = (requestsData || []).map(req => ({
+        id: req.id,
+        requester_id: req.requester_id,
+        requester_name: req.requester_name,
+        requester_nickname: req.requester.nickname,
+        created_at: req.created_at,
+        status: req.status,
+      }));
 
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setRequests(mockRequests);
-      setNeighbors(mockNeighbors);
-      setError(null);
+      // 이웃 데이터 변환
+      const neighbors: NeighborInfo[] = (neighborsData || []).map(neighbor => {
+        const isRequester = neighbor.requester_id === user.id;
+        return {
+          id: neighbor.id,
+          user_id: isRequester ? neighbor.recipient_id : neighbor.requester_id,
+          name: isRequester ? neighbor.recipient_name : neighbor.requester_name,
+          nickname: isRequester ? neighbor.recipient_nickname : neighbor.requester_nickname,
+          accepted_at: neighbor.updated_at,
+          mutual_friends_count: 0, // TODO: 상호 이웃 수 계산 쿼리 필요
+          last_active: neighbor.updated_at,
+        };
+      });
+
+      setRequests(requests);
+      setNeighbors(neighbors);
     } catch (err) {
-      setError('이웃 데이터를 불러오는데 실패했습니다.');
+      setError(err instanceof Error ? err.message : '이웃 데이터를 불러오는데 실패했습니다.');
       console.error('Failed to fetch neighbors:', err);
     } finally {
       setLoading(false);
@@ -81,50 +79,51 @@ export const useMyNeighbors = () => {
 
   const acceptRequest = useCallback(async (requestId: string) => {
     try {
-      console.log('Accepting request:', requestId);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const acceptedRequest = requests.find(req => req.id === requestId);
-      if (acceptedRequest) {
-        setRequests(prev => prev.filter(req => req.id !== requestId));
-        
-        const newNeighbor: NeighborInfo = {
-          id: `neighbor_${Date.now()}`,
-          user_id: acceptedRequest.requester_id,
-          name: acceptedRequest.requester_name,
-          nickname: acceptedRequest.requester_nickname,
-          accepted_at: new Date().toISOString(),
-          mutual_friends_count: 0,
-          last_active: new Date().toISOString(),
-        };
-        setNeighbors(prev => [newNeighbor, ...prev]);
-      }
+      const { error } = await supabase
+        .from('neighbor_relationships')
+        .update({ status: 'accepted' })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      // 데이터 새로고침
+      await fetchNeighbors();
     } catch (err) {
-      setError('이웃 요청 수락에 실패했습니다.');
+      setError(err instanceof Error ? err.message :'이웃 요청 수락에 실패했습니다.');
       console.error('Failed to accept request:', err);
     }
-  }, [requests]);
+  }, [fetchNeighbors]);
 
   const declineRequest = useCallback(async (requestId: string) => {
     try {
-      console.log('Declining request:', requestId);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const { error } = await supabase
+        .from('neighbor_relationships')
+        .update({ status: 'declined' })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      // 요청 목록에서 제거
       setRequests(prev => prev.filter(req => req.id !== requestId));
     } catch (err) {
-      setError('이웃 요청 거절에 실패했습니다.');
+      setError(err instanceof Error ? err.message : '이웃 요청 거절에 실패했습니다.');
       console.error('Failed to decline request:', err);
     }
   }, []);
 
   const removeNeighbor = useCallback(async (neighborId: string) => {
     try {
-      console.log('Removing neighbor:', neighborId);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const { error } = await supabase
+        .from('neighbor_relationships')
+        .delete()
+        .eq('id', neighborId);
+
+      if (error) throw error;
+
+      // 이웃 목록에서 제거
       setNeighbors(prev => prev.filter(neighbor => neighbor.id !== neighborId));
     } catch (err) {
-      setError('이웃 삭제에 실패했습니다.');
+      setError(err instanceof Error ? err.message :'이웃 삭제에 실패했습니다.');
       console.error('Failed to remove neighbor:', err);
     }
   }, []);
