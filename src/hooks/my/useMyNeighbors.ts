@@ -44,7 +44,7 @@ export const useMyNeighbors = () => {
         id: req.id,
         requester_id: req.requester_id,
         requester_name: req.requester_name,
-        requester_nickname: req.requester.nickname,
+        requester_nickname: req.requester_nickname,
         created_at: req.created_at,
         status: req.status,
       }));
