@@ -56,23 +56,25 @@ export interface DomainStats  {
   custom: number;
 }
 
+// NeighborPost 타입 정의
 export interface NeighborPost {
   id: string;
-  title?: string;
+  type: 'reflection' | 'question';
+  title: string;
   content: string;
   date: string;
+  created_at: string;
+  updated_at: string;
   category_id: string;
-  category_name: 'gratitude' | 'reflection' | 'daily' | 'growth' | 'custom';
+  category_name: string;
   category_display_name: string;
   is_answered?: boolean;
-  answer?: string;
-  keywords: Array<{
+  answer?: string | null;
+  keywords?: Array<{
     id: string;
     name: string;
     color: string;
   }>;
-  created_at: string;
-  updated_at: string;
 }
 
 // 회고 관련 타입들
