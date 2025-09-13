@@ -1,153 +1,204 @@
 import { supabase } from '@/lib/supabase';
-import { DomainStats, DomainType, NeighborProfileData } from '@/types/my'
-import { useCallback, useMemo, useState } from 'react'
-export const useNeighborProfile = (neighborId: string) => {
-  const [data, setData] = useState<NeighborProfileData | null>(null);
+import { Profile } from '@/types/my'
+import { useCallback, useEffect, useState } from 'react'
+
+interface NeighborProfileStats {
+  total_posts: number;
+  total_reflections: number;
+  total_questions: number;
+  answered_questions: number;
+  neighbor_count: number;
+}
+
+interface NeighborActivity {
+  type: 'reflection' | 'question';
+  title: string;
+  date: string;
+  content_preview: string;
+}
+
+interface NeighborProfileData extends Profile {
+  stats: NeighborProfileStats;
+  recent_activity: NeighborActivity[];
+}
+
+interface UseNeighborProfileParams {
+  neighborId: string | null;
+  enabled?: boolean;
+}
+
+interface UseNeighborProfileReturn {
+  profile: NeighborProfileData | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
+}
+
+export const useNeighborProfile = ({ 
+  neighborId, 
+  enabled = true 
+}: UseNeighborProfileParams): UseNeighborProfileReturn => {
+  const [profile, setProfile] = useState<NeighborProfileData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeDomain, setActiveDomain] = useState<DomainType>('gratitude');
 
-  const fetchNeighborProfile = useCallback(async () => {
-    if (!neighborId) return;
-
-    setLoading(true);
-    setError(null);
+  const fetchProfile = useCallback(async () => {
+    if (!neighborId || !enabled) return;
 
     try {
-      // 프로필 정보 가져오기
-      const { data: profile, error: profileError } = await supabase
+      setLoading(true);
+      setError(null);
+
+      console.log('Fetching profile for neighborId:', neighborId);
+
+      // 현재 사용자 ID 가져오기
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('인증이 필요합니다.');
+
+      // 이웃 관계 확인
+      const { data: neighborRelation, error: relationError } = await supabase
+        .from('neighbor_relationships')
+        .select('*')
+        .or(`and(requester_id.eq.${user.id},recipient_id.eq.${neighborId},status.eq.accepted),and(requester_id.eq.${neighborId},recipient_id.eq.${user.id},status.eq.accepted)`)
+        .single();
+
+      if (relationError || !neighborRelation) {
+        throw new Error('이웃 관계를 찾을 수 없습니다.');
+      }
+
+      // 프로필 기본 정보 조회
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('id, name, nickname, created_at')
+        .select('id, name, nickname, created_at, updated_at, email')
         .eq('id', neighborId)
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError || !profileData) {
+        throw new Error('프로필 정보를 불러올 수 없습니다.');
+      }
 
-      // 이웃 관계 확인
-      const { data: relation, error: relationError } = await supabase
-        .from('neighbor_relationships')
-        .select('*')
-        .or(
-          `and(requester_id.eq.${supabase.auth.getUser().then(u => u.data.user?.id)},recipient_id.eq.${neighborId}),and(requester_id.eq.${neighborId},recipient_id.eq.${supabase.auth.getUser().then(u => u.data.user?.id)})`
-        )
-        .eq('status', 'accepted')
-        .maybeSingle();
+      // 통계 데이터를 위한 병렬 쿼리 실행
+      const [
+        reflectionsStatsResult,
+        questionsStatsResult,
+        answeredQuestionsResult,
+        neighborsCountResult
+      ] = await Promise.all([
+        // 회고 총 개수 (전체)
+        supabase
+          .from('reflections')
+          .select('id', { count: 'exact' })
+          .eq('user_id', neighborId),
+          
+        // 질문 총 개수 (전체)
+        supabase
+          .from('questions')
+          .select('id', { count: 'exact' })
+          .eq('user_id', neighborId),
+          
+        // 답변완료 질문 개수 (전체)
+        supabase
+          .from('questions')
+          .select('id', { count: 'exact' })
+          .eq('user_id', neighborId)
+          .eq('is_answered', true),
+          
+        // 이웃 수
+        supabase
+          .from('neighbor_relationships')
+          .select('id', { count: 'exact' })
+          .or(`requester_id.eq.${neighborId},recipient_id.eq.${neighborId}`)
+          .eq('status', 'accepted')
+      ]);
 
-      if (relationError) throw relationError;
-      if (!relation) throw new Error('이웃 관계가 없습니다.');
+      // 최근 활동을 위한 공개된 데이터만 조회 (미리보기용)
+      const [recentReflectionsResult, recentQuestionsResult] = await Promise.all([
+        supabase
+          .from('reflections')
+          .select('id, title, content, date, created_at')
+          .eq('user_id', neighborId)
+          .or('is_public.eq.true,is_neighbor_visible.eq.true')
+          .order('date', { ascending: false })
+          .limit(3),
+          
+        supabase
+          .from('questions')
+          .select('id, title, content, date, is_answered, created_at')
+          .eq('user_id', neighborId)
+          .or('is_public.eq.true,is_neighbor_visible.eq.true')
+          .order('date', { ascending: false })
+          .limit(3)
+      ]);
 
-      // 회고 데이터 가져오기 (공개된 것만)
-      const { data: reflections, error: reflectionsError } = await supabase
-        .from('reflections_with_keywords')
-        .select('*')
-        .eq('user_id', neighborId)
-        .eq('is_public', true)
-        .eq('is_neighbor_visible', true)
-        .order('date', { ascending: false });
+      // 통계 계산
+      const totalReflections = reflectionsStatsResult.count || 0;
+      const totalQuestions = questionsStatsResult.count || 0;
+      const answeredQuestions = answeredQuestionsResult.count || 0;
+      const neighborCount = neighborsCountResult.count || 0;
 
-      if (reflectionsError) throw reflectionsError;
+      // 최근 활동 데이터 처리
+      const reflectionsData = recentReflectionsResult.data || [];
+      const questionsData = recentQuestionsResult.data || [];
 
-      // 질문 데이터 가져오기 (공개된 것만)
-      const { data: questions, error: questionsError } = await supabase
-        .from('questions_with_keywords')
-        .select('*')
-        .eq('user_id', neighborId)
-        .eq('is_public', true)
-        .eq('is_neighbor_visible', true)
-        .order('date', { ascending: false });
+      // 최근 활동 데이터 합치기 및 정렬
+      const recentActivity: NeighborActivity[] = [
+        ...reflectionsData.map(item => ({
+          type: 'reflection' as const,
+          title: item.title || '제목 없음',
+          date: item.date,
+          content_preview: item.content.substring(0, 100) + (item.content.length > 100 ? '...' : ''),
+        })),
+        ...questionsData.map(item => ({
+          type: 'question' as const,
+          title: item.title,
+          date: item.date,
+          content_preview: item.content?.substring(0, 100) + (item.content && item.content.length > 100 ? '...' : '') || '',
+        })),
+      ]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5);
 
-      if (questionsError) throw questionsError;
-
-      // 각 도메인별로 공개 설정 확인
-      const { data: reflectionVisibility } = await supabase
-        .from('neighbor_visibility_settings')
-        .select('category_id, is_visible_to_neighbors')
-        .eq('user_id', neighborId)
-        .eq('is_visible_to_neighbors', true);
-
-      const { data: questionVisibility } = await supabase
-        .from('question_neighbor_visibility_settings')
-        .select('category_id, is_visible_to_neighbors')
-        .eq('user_id', neighborId)
-        .eq('is_visible_to_neighbors', true);
-
-      const visibleReflectionCategories = new Set(
-        reflectionVisibility?.map(v => v.category_id) || []
-      );
-      const visibleQuestionCategories = new Set(
-        questionVisibility?.map(v => v.category_id) || []
-      );
-
-      // 필터링된 데이터 정리
-      const filteredReflections = (reflections || [])
-        .filter(r => visibleReflectionCategories.has(r.category_id))
-        .map(r => ({
-          ...r,
-          keywords: r.keywords || []
-        }));
-
-      const filteredQuestions = (questions || [])
-        .filter(q => visibleQuestionCategories.has(q.category_id))
-        .map(q => ({
-          ...q,
-          keywords: q.keywords || []
-        }));
-
-    // 도메인별 통계 계산
-    const domainStats: DomainStats = {
-        gratitude: filteredReflections.filter(r => r.category_name === 'gratitude').length,
-        reflection: filteredReflections.filter(r => r.category_name === 'reflection').length,
-        daily: filteredQuestions.filter(q => q.category_name === 'daily').length,
-        growth: filteredQuestions.filter(q => q.category_name === 'growth').length,
-        custom: filteredQuestions.filter(q => q.category_name === 'custom').length,
-      };
-
-      // 도메인별 게시글 분류
-      const posts = {
-        gratitude: filteredReflections.filter(r => r.category_name === 'gratitude'),
-        reflection: filteredReflections.filter(r => r.category_name === 'reflection'),
-        daily: filteredQuestions.filter(q => q.category_name === 'daily'),
-        growth: filteredQuestions.filter(q => q.category_name === 'growth'),
-        custom: filteredQuestions.filter(q => q.category_name === 'custom'),
-      };
-
-      setData({
-        profile: {
-          id: profile.id,
-          name: profile.name,
-          nickname: profile.nickname,
-          accepted_at: relation.created_at,
-          mutual_friends_count: 0, // 실제로는 상호 이웃 수 계산
-          last_active: profile.created_at,
+      const profileWithStats: NeighborProfileData = {
+        id: profileData.id,
+        email: profileData.email,
+        name: profileData.name,
+        nickname: profileData.nickname,
+        created_at: profileData.created_at,
+        updated_at: profileData.updated_at,
+        stats: {
+          total_posts: totalReflections + totalQuestions,
+          total_reflections: totalReflections,
+          total_questions: totalQuestions,
+          answered_questions: answeredQuestions,
+          neighbor_count: neighborCount,
         },
-        domainStats,
-        posts,
-      });
+        recent_activity: recentActivity,
+      };
 
+      setProfile(profileWithStats);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '데이터를 가져오는데 실패했습니다.');
+      const errorMessage = err instanceof Error ? err.message : '프로필을 불러오는데 실패했습니다.';
+      setError(errorMessage);
+      console.error('Failed to fetch neighbor profile:', err);
     } finally {
       setLoading(false);
     }
-  }, [neighborId, supabase]);
+  }, [neighborId, enabled]);
 
-  const currentPosts = useMemo(() => {
-    return data?.posts[activeDomain] || [];
-  }, [data, activeDomain]);
-
-  const totalPosts = useMemo(() => {
-    if (!data) return 0;
-    return Object.values(data.domainStats).reduce((sum, count) => sum + count, 0);
-  }, [data]);
+  useEffect(() => {
+    if (neighborId && enabled) {
+      fetchProfile();
+    } else {
+      setProfile(null);
+      setError(null);
+    }
+  }, [fetchProfile, neighborId, enabled]);
 
   return {
-    data,
+    profile,
     loading,
     error,
-    activeDomain,
-    currentPosts,
-    totalPosts,
-    setActiveDomain,
-    fetchNeighborProfile
-  }
-}
+    refetch: fetchProfile,
+  };
+};
