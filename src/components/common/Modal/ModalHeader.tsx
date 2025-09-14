@@ -26,7 +26,7 @@ const ModalHeader = ({
         <button
           type="button"
           onClick={onClose}
-          className="ml-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 flex-shrink-0"
+          className="ml-4 text-gray-400 hover:text-accent-400 hover:bg-gray-100 rounded-lg transition-all duration-200 flex-shrink-0 hover:cursor-pointer"
           aria-label="모달 닫기"
         >
           <X className="w-5 h-5" />

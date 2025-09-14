@@ -149,16 +149,16 @@ const ReflectionEditPage = () => {
 
   return (
     <AuthGuard>
-      <div className="max-w-4xl mx-auto p-4 space-y-4">
+      <div className="flex flex-col gap-4 px-4 py-8 max-w-4xl mx-auto">
         {/* 헤더 */}
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
               <Link
                 href="/reflections"
-                className="flex items-center gap-1 hover:text-gray-900 transition-colors"
+                className="flex items-center transition-colors hover:text-accent-500 hover:cursor-pointer"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-5h-5" />
               </Link>
             </div>
           </div>

@@ -242,20 +242,14 @@ const ReflectionsPage = () => {
 
   return (
     <AuthGuard>
-      <div className="max-w-7xl mx-auto p-4 space-y-6">
+      <div className="flex flex-col gap-6 max-w-7xl mx-auto px-4 py-8">
         {/* 헤더 */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">회고</h1>
-            <p className="text-gray-600 mt-1">
-              감사와 성찰을 통해 성장하는 하루를 기록해보세요.
-            </p>
-          </div>
-
+        <div className="flex justify-between gap-4">
+          <h1 className="text-2xl font-bold text-gray-900">회고</h1>
           <div className="flex justify-end gap-3">
             <Link
               href="/reflections/analytics"
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-accent-100 text-gray-700 rounded-lg hover:bg-accent-200 transition-colors"
             >
               <BarChart3 className="w-4 h-4" />
               분석
@@ -274,7 +268,7 @@ const ReflectionsPage = () => {
         <div className="bg-white border-b-2 pb-4 border-accent-200">
           <h3 className="text-md font-bold text-gray-700 mb-3">전체 현황</h3>
           <div className="grid grid-cols-3 gap-3">
-            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-2 p-2 bg-accent-50 rounded-lg">
               <Heart className="w-4 h-4 text-orange-600" />
               <div>
                 <p className="text-xs text-gray-600">감사</p>
@@ -284,7 +278,7 @@ const ReflectionsPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-2 p-2 bg-accent-50 rounded-lg">
               <Lightbulb className="w-4 h-4 text-blue-600" />
               <div>
                 <p className="text-xs text-gray-600">성찰</p>
@@ -294,7 +288,7 @@ const ReflectionsPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-2 p-2 bg-accent-50 rounded-lg">
               <Hash className="w-4 h-4 text-green-600" />
               <div>
                 <p className="text-xs text-gray-600">키워드</p>
@@ -329,7 +323,7 @@ const ReflectionsPage = () => {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                className="flex items-center gap-1 px-3 py-1 text-sm text-accent-400 hover:text-accent-600 transition-colors hover:cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
                 초기화
@@ -347,13 +341,13 @@ const ReflectionsPage = () => {
                 <button
                   key={preset.value}
                   onClick={() => handlePeriodChange(preset.value)}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors hover:cursor-pointer ${
                     (preset.value === "all" &&
                       !filters.startDate &&
                       !showCustomPeriod) ||
                     preset.startDate === filters.startDate
                       ? "bg-accent-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-accent-100"
                   }`}
                 >
                   {preset.label}
@@ -361,10 +355,10 @@ const ReflectionsPage = () => {
               ))}
               <button
                 onClick={() => handlePeriodChange("custom")}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors hover:cursor-pointer ${
                   showCustomPeriod || isCustomPeriod()
                     ? "bg-accent-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-accent-100"
                 }`}
               >
                 임의기간
@@ -373,7 +367,7 @@ const ReflectionsPage = () => {
 
             {/* 임의 기간 설정 */}
             {showCustomPeriod && (
-              <div className="mt-3 p-3 bg-gray-50 rounded-lg space-y-3">
+              <div className="mt-3 p-3 bg-accent-50 rounded-lg space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -383,7 +377,7 @@ const ReflectionsPage = () => {
                       type="date"
                       value={customStartDate}
                       onChange={(e) => setCustomStartDate(e.target.value)}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full px-2 py-1 text-sm border border-gray-500 rounded focus:outline-none focus:ring-1 focus:ring-accent-500 hover:border-accent-400"
                     />
                   </div>
                   <div>
@@ -394,21 +388,21 @@ const ReflectionsPage = () => {
                       type="date"
                       value={customEndDate}
                       onChange={(e) => setCustomEndDate(e.target.value)}
-                      className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="w-full px-2 py-1 text-sm border border-gray-500 rounded focus:outline-none focus:ring-1 focus:ring-accent-500 hover:border-accent-400"
                     />
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex justify-end gap-2">
                   <button
                     onClick={handleCustomPeriodApply}
                     disabled={!customStartDate || !customEndDate}
-                    className="px-3 py-1 bg-accent-600 text-white text-sm rounded hover:bg-accent-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="px-3 py-1 bg-accent-600 text-white text-sm rounded hover:bg-accent-700 disabled:bg-gray-300 disabled:cursor-not-allowed hover:cursor-pointer"
                   >
                     적용
                   </button>
                   <button
                     onClick={() => setShowCustomPeriod(false)}
-                    className="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300"
+                    className="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 hover:cursor-pointer"
                   >
                     취소
                   </button>
@@ -431,10 +425,10 @@ const ReflectionsPage = () => {
                 <button
                   key={type.value}
                   onClick={() => handleTypeChange(type.value)}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors hover:cursor-pointer ${
                     filters.type === type.value
                       ? "bg-accent-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-accent-100"
                   }`}
                 >
                   {type.label}
@@ -454,7 +448,7 @@ const ReflectionsPage = () => {
                   <button
                     key={keyword.id}
                     onClick={() => handleKeywordToggle(keyword.name)}
-                    className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+                    className={`px-2 py-1 rounded-md text-xs font-medium transition-colors hover:cursor-pointer ${
                       filters.keywords?.includes(keyword.name)
                         ? "text-white"
                         : "hover:opacity-80"
