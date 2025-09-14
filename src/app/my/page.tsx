@@ -1,24 +1,220 @@
 'use client';
 
+import Modal from '@/components/common/Modal';
 import MenuCard from '@/components/my/MenuCard';
 import QuickActionButton from '@/components/my/QuickActionButton';
 import StatsCard from '@/components/my/StatsCard';
-import { useMyPageStats } from '@/hooks/my/useMyPageStats';
+import QuestionForm from '@/components/questions/QuestionForm';
+import { useAuth } from '@/hooks/auth';
+import { useQuestions } from '@/hooks/questions/useQuestions';
+import { supabase } from '@/lib/supabase';
+import { QuestionFormData } from '@/types/questions';
 import {
   Bookmark,
   BookOpen,
+  Check,
   FileText,
   MessageCircleQuestion,
+  Search,
   Settings,
-  TrendingUp,
+  Share2,
   Users,
+  X,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+interface NeighborStats {
+  totalNeighbors: number;
+  pendingRequests: number;
+  newThisWeek: number;
+  total_reflections: number;
+  total_questions: number;
+  total_posts: number;
+  total_scraps: number;
+  this_week_posts: number;
+  this_week_scraps: number;
+  this_week_new_neighbors: number;
+}
 
 const MyPage = () => {
   const router = useRouter();
-  const { stats, loading, error, refresh } = useMyPageStats();
+  const { user } = useAuth();
+  const [stats, setStats] = useState<NeighborStats>({
+    totalNeighbors: 0,
+    pendingRequests: 0,
+    newThisWeek: 0,
+    total_reflections: 0,
+    total_questions: 0,
+    total_posts: 0,
+    total_scraps: 0,
+    this_week_posts: 0,
+    this_week_scraps: 0,
+    this_week_new_neighbors: 0,
+  });
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searching, setSearching] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
+  const { createQuestion, isCreatingQuestion } = useQuestions();
+
+  const fetchAllStats = async () => {
+    if (!user) return;
+
+    try {
+      setLoading(true);
+
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const weekAgoString = oneWeekAgo.toISOString().split('T')[0];
+
+      // 병렬로 통계 데이터 가져오기
+      const [
+        totalNeighborsResult,
+        pendingRequestsResult,
+        newThisWeekResult,
+        reflectionsResult,
+        questionsResult,
+        scrapsResult,
+        weekReflectionsResult,
+        weekQuestionsResult,
+        weekScrapsResult,
+      ] = await Promise.all([
+        // 전체 이웃 수 (수락)
+        supabase
+          .from('neighbor_relationships')
+          .select('id', { count: 'exact', head: true })
+          .or(
+            `and(requester_id.eq.${user.id},status.eq.accepted),and(recipient_id.eq.${user.id},status.eq.accepted)`
+          ),
+
+        // 대기 중인 요청 수
+        supabase
+          .from('neighbor_relationships')
+          .select('id', { count: 'exact', head: true })
+          .eq('recipient_id', user.id)
+          .eq('status', 'pending'),
+
+        // 이번 주 새 이웃 수
+        supabase
+          .from('neighbor_relationships')
+          .select('id', { count: 'exact', head: true })
+          .or(
+            `and(requester_id.eq.${user.id},status.eq.accepted),and(recipient_id.eq.${user.id},status.eq.accepted)`
+          )
+          .gte('updated_at', weekAgoString),
+
+        supabase
+          .from('reflections')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id),
+
+        supabase
+          .from('questions')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id),
+
+        supabase
+          .from('scraps')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id),
+
+        supabase
+          .from('reflections')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .gte('created_at', weekAgoString),
+
+        supabase
+          .from('questions')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .gte('created_at', weekAgoString),
+
+        supabase
+          .from('scraps')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .gte('created_at', weekAgoString),
+      ]);
+
+      setStats({
+        totalNeighbors: totalNeighborsResult.count || 0,
+        pendingRequests: pendingRequestsResult.count || 0,
+        newThisWeek: newThisWeekResult.count || 0,
+        total_reflections: reflectionsResult.count || 0,
+        total_questions: questionsResult.count || 0,
+        total_posts:
+          (reflectionsResult.count || 0) + (questionsResult.count || 0),
+        total_scraps: scrapsResult.count || 0,
+        this_week_posts:
+          (weekReflectionsResult.count || 0) + (weekQuestionsResult.count || 0),
+        this_week_scraps: weekScrapsResult.count || 0,
+        this_week_new_neighbors: newThisWeekResult.count || 0,
+      });
+    } catch (err) {
+      console.error('Failed to fetch neighbor stats:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllStats();
+  }, [user]);
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      (e.target as HTMLInputElement).blur();
+      handleSearch();
+    }
+  };
+
+  // 이웃 찾기 섹션용
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) return;
+
+    setSearching(true);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('nickname')
+        .eq('nickname', searchTerm.trim())
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          alert('존재하지 않는 사용자입니다.');
+        } else {
+          throw error;
+        }
+        return;
+      }
+
+      router.push(`/my/neighbors/public/${data.nickname}`);
+    } catch (err) {
+      console.error('Search failed:', err);
+      alert('검색 중 오류가 발생했습니다.');
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const copyToClipboard = async () => {
+    const profileUrl = `${window.location.origin}/u/${user?.user_metadata?.nickname || ''}`;
+    try {
+      await navigator.clipboard.writeText(profileUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  // 이동 핸들러
   const handleSettings = () => {
     router.push('/my/profile');
   };
@@ -27,8 +223,14 @@ const MyPage = () => {
     router.push('/reflections/new');
   };
 
-  const handleCreateQuestion = () => {
-    router.push('/questions/new');
+  const handleSubmitQuestion = (formData: QuestionFormData) => {
+    if (!user?.id) return;
+
+    createQuestion({
+      ...formData,
+      user_id: user.id,
+    });
+    setShowCreateModal(false);
   };
 
   const handleNavigateToNeighbors = () => {
@@ -53,35 +255,31 @@ const MyPage = () => {
     );
   }
 
-  if (error || !stats) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-12">
-          <p className="text-red-500 mb-4">
-            {error || '데이터를 불러올 수 없습니다.'}
-          </p>
-          <button
-            onClick={refresh}
-            className="px-4 py-2 bg-accent-400 text-white rounded hover:bg-accent-500"
-          >
-            재시도
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-gray-50">
       <div className="flex flex-col gap-8 container mx-auto py-8 px-4 max-w-4xl">
         {/* 헤더 */}
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">마이페이지</h1>
-          <QuickActionButton
-            icon={<Settings className="w-4 h-4" />}
-            label="설정"
-            onClick={handleSettings}
-          />
+          <div className="flex gap-2">
+            {/* 프로필 공유 */}
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center space-x-2 px-4 py-2 bg-accent-200 hover:text-white rounded-lg hover:bg-accent-400 flex-1 justify-center hover:cursor-pointer"
+              title="프로필 공유"
+            >
+              {copied ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Share2 className="w-4 h-4" />
+              )}
+            </button>
+            <QuickActionButton
+              icon={<Settings className="w-4 h-4" />}
+              label="설정"
+              onClick={handleSettings}
+            />
+          </div>
         </div>
 
         {/* 빠른 액션 */}
@@ -94,7 +292,7 @@ const MyPage = () => {
           <QuickActionButton
             icon={<MessageCircleQuestion className="w-4 h-4" />}
             label="질문 작성"
-            onClick={handleCreateQuestion}
+            onClick={() => setShowCreateModal(true)}
           />
         </div>
 
@@ -162,16 +360,29 @@ const MyPage = () => {
               value={stats.this_week_new_neighbors}
               color="green"
             />
-            <StatsCard
-              icon={<TrendingUp className="w-5 h-5" />}
-              label="총 활동"
-              value={
-                stats.this_week_posts +
-                stats.this_week_scraps +
-                stats.this_week_new_neighbors
-              }
-              color="purple"
+          </div>
+        </div>
+
+        {/* 이웃 찾기 섹션 */}
+        <div className="flex flex-col gap-4">
+          <h3 className="text-lg font-semibold text-gray-900">이웃 찾기</h3>
+          {/* 검색 */}
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={searchTerm}
+              placeholder="닉네임 검색..."
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+              className="flex-1 px-3 py-2 rounded-lg border focus:outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-500 hover:border-accent-300 transition-colors"
             />
+            <button
+              onClick={handleSearch}
+              disabled={searching}
+              className="px-4 py-2 bg-accent-200 hover:text-white rounded-lg hover:bg-accent-400 hover:cursor-pointer"
+            >
+              <Search className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -203,6 +414,29 @@ const MyPage = () => {
           />
         </div>
       </div>
+
+      {/* 질문 생성 모달 */}
+      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
+        <Modal.Header className="border-b-2 border-accent-400 pb-4">
+          <div className="flex items-center justify-between">
+            <Modal.Title>
+              <p className="text-accent-400">질문 작성</p>
+            </Modal.Title>
+            <X
+              className="w-5 h-5 hover:cursor-pointer"
+              onClick={() => setShowCreateModal(false)}
+            />
+          </div>
+        </Modal.Header>
+
+        <Modal.Body>
+          <QuestionForm
+            onSubmit={handleSubmitQuestion}
+            onCancel={() => setShowCreateModal(false)}
+            isLoading={isCreatingQuestion}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

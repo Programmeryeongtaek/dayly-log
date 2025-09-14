@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import { useAuth } from "@/hooks/auth";
-import { useGoals } from "@/hooks/goals/useGoals";
-import { useQuestions } from "@/hooks/questions/useQuestions";
-import { QuestionKeyword } from "@/types/questions";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
+import { useState, useMemo } from 'react';
+import { useAuth } from '@/hooks/auth';
+import { useGoals } from '@/hooks/goals/useGoals';
+import { useQuestions } from '@/hooks/questions/useQuestions';
+import { QuestionFormData, QuestionKeyword } from '@/types/questions';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import {
   ArrowRight,
   BarChart3,
@@ -19,15 +19,20 @@ import {
   MessageSquare,
   Hash,
   Clock,
-} from "lucide-react";
-import Link from "next/link";
-import AuthGuard from "@/components/auth/AuthGuard";
-import DashboardReflectionWidget from "@/components/reflections/DashboardReflectionWidget";
-import DashboardBudgetWidget from "@/components/budget/DashboardBudgetWidget";
+  X,
+} from 'lucide-react';
+import Link from 'next/link';
+import AuthGuard from '@/components/auth/AuthGuard';
+import DashboardReflectionWidget from '@/components/reflections/DashboardReflectionWidget';
+import DashboardBudgetWidget from '@/components/budget/DashboardBudgetWidget';
+import Modal from '@/components/common/Modal';
+import QuestionForm from '@/components/questions/QuestionForm';
 
 const DashboardPage = () => {
   const { user, profile, isLoading: isAuthLoading } = useAuth();
+  const { createQuestion, isCreatingQuestion } = useQuestions();
   const [currentDate] = useState(new Date());
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // 사용자 ID가 있을 때만 데이터 쿼리 활성화
   const shouldFetchData = !isAuthLoading && !!user?.id;
@@ -52,6 +57,16 @@ const DashboardPage = () => {
     filters: {}, // 전체 기간
   });
 
+  const handleSubmitQuestion = (formData: QuestionFormData) => {
+    if (!user?.id) return;
+
+    createQuestion({
+      ...formData,
+      user_id: user.id,
+    });
+    setShowCreateModal(false);
+  };
+
   // 목표 통계
   const goalStats = useMemo(() => {
     const totalGoals = goals.length;
@@ -67,7 +82,7 @@ const DashboardPage = () => {
 
     // 달성률이 80% 이상인 목표들
     const nearCompletionGoals = activeGoals.filter(
-      (goal) => goal.progress.overallProgress >= 80,
+      (goal) => goal.progress.overallProgress >= 80
     );
 
     return {
@@ -87,7 +102,7 @@ const DashboardPage = () => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const recentQuestions = questions.filter(
-      (q) => new Date(q.date) >= oneWeekAgo,
+      (q) => new Date(q.date) >= oneWeekAgo
     );
 
     const keywordMap = new Map<
@@ -115,14 +130,14 @@ const DashboardPage = () => {
       .slice(0, 3);
 
     // 카테고리별 최근 통계
-    const daily = recentQuestions.filter((q) => q.category?.name === "daily");
-    const growth = recentQuestions.filter((q) => q.category?.name === "growth");
-    const custom = recentQuestions.filter((q) => q.category?.name === "custom");
+    const daily = recentQuestions.filter((q) => q.category?.name === 'daily');
+    const growth = recentQuestions.filter((q) => q.category?.name === 'growth');
+    const custom = recentQuestions.filter((q) => q.category?.name === 'custom');
 
     const categoryStats = [
-      { name: "일상", count: daily.length, color: "text-green-600" },
-      { name: "성장", count: growth.length, color: "text-purple-600" },
-      { name: "나만의", count: custom.length, color: "text-blue-600" },
+      { name: '일상', count: daily.length, color: 'text-green-600' },
+      { name: '성장', count: growth.length, color: 'text-purple-600' },
+      { name: '나만의', count: custom.length, color: 'text-blue-600' },
     ];
 
     // 미답변 질문 수
@@ -205,9 +220,9 @@ const DashboardPage = () => {
             </span>
           </Link>
 
-          <Link
-            href="/questions/new"
-            className="flex flex-col items-center p-4 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors group"
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex flex-col items-center p-4 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors group hover:cursor-pointer"
           >
             <div className="p-3 bg-blue-500 rounded-full group-hover:bg-blue-600 transition-colors">
               <MessageSquare className="w-6 h-6 text-white" />
@@ -595,6 +610,29 @@ const DashboardPage = () => {
           <DashboardReflectionWidget />
         </div>
       </div>
+
+      {/* 질문 생성 모달 */}
+      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
+        <Modal.Header className="border-b-2 border-accent-400 pb-4">
+          <div className="flex items-center justify-between">
+            <Modal.Title>
+              <p className="text-accent-400">질문 작성</p>
+            </Modal.Title>
+            <X
+              className="w-5 h-5 hover:cursor-pointer"
+              onClick={() => setShowCreateModal(false)}
+            />
+          </div>
+        </Modal.Header>
+
+        <Modal.Body>
+          <QuestionForm
+            onSubmit={handleSubmitQuestion}
+            onCancel={() => setShowCreateModal(false)}
+            isLoading={isCreatingQuestion}
+          />
+        </Modal.Body>
+      </Modal>
     </AuthGuard>
   );
 };
