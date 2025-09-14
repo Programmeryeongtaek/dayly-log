@@ -42,7 +42,7 @@ const NeighborPostCard = ({ post }: NeighborPostCardProps) => {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all duration-200">
+    <div className="bg-white border-2 border-accent-100 rounded-lg p-6 hover:shadow-md transition-all duration-200 hover:border-accent-400 hover:bg-accent-50">
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
