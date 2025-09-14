@@ -267,7 +267,7 @@ export default function Header() {
                     </span>
                     <div className="flex gap-2 mt-1">
                       <Link
-                        href="/profile"
+                        href="/my"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="text-sm text-accent-600 hover:text-accent-800"
                       >
