@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import DomainPrivacyCard from '@/components/my/profile/DomainPrivacyCard';
-import ProfilePreview from '@/components/my/profile/ProfilePreview';
-import { useAuth } from '@/hooks/auth';
+import DomainPrivacyCard from "@/components/my/profile/DomainPrivacyCard";
+import ProfilePreview from "@/components/my/profile/ProfilePreview";
+import { useAuth } from "@/hooks/auth";
 import {
   ArrowLeft,
   BookOpen,
   MessageCircleQuestion,
   Shield,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -19,13 +19,13 @@ const ProfilePage = () => {
 
   // 도메인별 공개 설정 상태
   const [domainSettings, setDomainSettings] = useState({
-    reflections: 'public' as 'public' | 'neighbors' | 'private',
-    questions: 'neighbors' as 'public' | 'neighbors' | 'private',
+    reflections: "public" as "public" | "neighbors" | "private",
+    questions: "neighbors" as "public" | "neighbors" | "private",
   });
 
   const [tempDomainSettings, setTempDomainSettings] = useState({
-    reflections: 'public' as 'public' | 'neighbors' | 'private',
-    questions: 'neighbors' as 'public' | 'neighbors' | 'private',
+    reflections: "public" as "public" | "neighbors" | "private",
+    questions: "neighbors" as "public" | "neighbors" | "private",
   });
 
   const handleSaveNickname = async (nickname: string) => {
@@ -33,15 +33,15 @@ const ProfilePage = () => {
     try {
       await updateProfile({ nickname });
     } catch (error) {
-      console.error('닉네임 업데이트 실패:', error);
+      console.error("닉네임 업데이트 실패:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDomainVisibilityChange = (
-    domain: 'reflections' | 'questions',
-    visibility: 'public' | 'neighbors' | 'private'
+    domain: "reflections" | "questions",
+    visibility: "public" | "neighbors" | "private",
   ) => {
     setTempDomainSettings((prev) => ({
       ...prev,
@@ -54,10 +54,10 @@ const ProfilePage = () => {
       setLoading(true);
       setDomainSettings(tempDomainSettings);
       // TODO: API 호출로 도메인 설정 저장
-      console.log('도메인 설정 저장:', tempDomainSettings);
-      alert('설정이 저장되었습니다.');
+      console.log("도메인 설정 저장:", tempDomainSettings);
+      alert("설정이 저장되었습니다.");
     } catch (error) {
-      console.error('설정 저장 실패:', error);
+      console.error("설정 저장 실패:", error);
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ const ProfilePage = () => {
     <div className="flex flex-col gap-4 max-w-4xl mx-auto py-8 p-4">
       {/* 헤더 */}
       <div className="flex flex-col gap-4 items-start justify-start">
-        <button onClick={() => router.push('/my')}>
+        <button onClick={() => router.push("/my")}>
           <ArrowLeft className="w-6 h-6 text-gray-500 hover:text-accent-400 hover:cursor-pointer" />
         </button>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">프로필 설정</h1>
@@ -106,7 +106,7 @@ const ProfilePage = () => {
               title="회고"
               visibility={tempDomainSettings.reflections}
               onVisibilityChange={(visibility) =>
-                handleDomainVisibilityChange('reflections', visibility)
+                handleDomainVisibilityChange("reflections", visibility)
               }
             />
 
@@ -117,7 +117,7 @@ const ProfilePage = () => {
               title="질문"
               visibility={tempDomainSettings.questions}
               onVisibilityChange={(visibility) =>
-                handleDomainVisibilityChange('questions', visibility)
+                handleDomainVisibilityChange("questions", visibility)
               }
             />
           </div>
@@ -128,7 +128,7 @@ const ProfilePage = () => {
               disabled={loading}
               className="w-full px-4 py-2 bg-accent-400 text-white rounded-lg hover:bg-accent-500 disabled:opacity-50 transition-colors hover:cursor-pointer"
             >
-              {loading ? '저장 중...' : '저장'}
+              {loading ? "저장 중..." : "저장"}
             </button>
           </div>
         </div>

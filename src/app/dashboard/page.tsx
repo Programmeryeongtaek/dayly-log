@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { useAuth } from '@/hooks/auth';
-import { useGoals } from '@/hooks/goals/useGoals';
-import { useQuestions } from '@/hooks/questions/useQuestions';
-import { QuestionFormData, QuestionKeyword } from '@/types/questions';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { useState, useMemo } from "react";
+import { useAuth } from "@/hooks/auth";
+import { useGoals } from "@/hooks/goals/useGoals";
+import { useQuestions } from "@/hooks/questions/useQuestions";
+import { QuestionFormData, QuestionKeyword } from "@/types/questions";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import {
   ArrowRight,
   BarChart3,
@@ -20,13 +20,13 @@ import {
   Hash,
   Clock,
   X,
-} from 'lucide-react';
-import Link from 'next/link';
-import AuthGuard from '@/components/auth/AuthGuard';
-import DashboardReflectionWidget from '@/components/reflections/DashboardReflectionWidget';
-import DashboardBudgetWidget from '@/components/budget/DashboardBudgetWidget';
-import Modal from '@/components/common/Modal';
-import QuestionForm from '@/components/questions/QuestionForm';
+} from "lucide-react";
+import Link from "next/link";
+import AuthGuard from "@/components/auth/AuthGuard";
+import DashboardReflectionWidget from "@/components/reflections/DashboardReflectionWidget";
+import DashboardBudgetWidget from "@/components/budget/DashboardBudgetWidget";
+import Modal from "@/components/common/Modal";
+import QuestionForm from "@/components/questions/QuestionForm";
 
 const DashboardPage = () => {
   const { user, profile, isLoading: isAuthLoading } = useAuth();
@@ -82,7 +82,7 @@ const DashboardPage = () => {
 
     // 달성률이 80% 이상인 목표들
     const nearCompletionGoals = activeGoals.filter(
-      (goal) => goal.progress.overallProgress >= 80
+      (goal) => goal.progress.overallProgress >= 80,
     );
 
     return {
@@ -102,7 +102,7 @@ const DashboardPage = () => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const recentQuestions = questions.filter(
-      (q) => new Date(q.date) >= oneWeekAgo
+      (q) => new Date(q.date) >= oneWeekAgo,
     );
 
     const keywordMap = new Map<
@@ -130,14 +130,14 @@ const DashboardPage = () => {
       .slice(0, 3);
 
     // 카테고리별 최근 통계
-    const daily = recentQuestions.filter((q) => q.category?.name === 'daily');
-    const growth = recentQuestions.filter((q) => q.category?.name === 'growth');
-    const custom = recentQuestions.filter((q) => q.category?.name === 'custom');
+    const daily = recentQuestions.filter((q) => q.category?.name === "daily");
+    const growth = recentQuestions.filter((q) => q.category?.name === "growth");
+    const custom = recentQuestions.filter((q) => q.category?.name === "custom");
 
     const categoryStats = [
-      { name: '일상', count: daily.length, color: 'text-green-600' },
-      { name: '성장', count: growth.length, color: 'text-purple-600' },
-      { name: '나만의', count: custom.length, color: 'text-blue-600' },
+      { name: "일상", count: daily.length, color: "text-green-600" },
+      { name: "성장", count: growth.length, color: "text-purple-600" },
+      { name: "나만의", count: custom.length, color: "text-blue-600" },
     ];
 
     // 미답변 질문 수
@@ -187,10 +187,10 @@ const DashboardPage = () => {
         {/* 환영 메시지 */}
         <div className="bg-gradient-to-r flex flex-col gap-1 from-accent-600 to-accent-500 text-white rounded-xl p-6">
           <h1 className="text-2xl font-bold mb-2">
-            안녕하세요, {profile?.name || profile?.nickname || '사용자'}님!
+            안녕하세요, {profile?.name || profile?.nickname || "사용자"}님!
           </h1>
           <p className="text-accent-100 text-lg">
-            {format(currentDate, 'yyyy년 M월', { locale: ko })} 현황
+            {format(currentDate, "yyyy년 M월", { locale: ko })} 현황
           </p>
         </div>
 
@@ -371,12 +371,12 @@ const DashboardPage = () => {
                         <div className="flex items-center gap-2">
                           <div
                             className={`p-1 rounded ${
-                              goal.type === 'increase_income'
-                                ? 'bg-green-100 text-green-600'
-                                : 'bg-red-100 text-red-600'
+                              goal.type === "increase_income"
+                                ? "bg-green-100 text-green-600"
+                                : "bg-red-100 text-red-600"
                             }`}
                           >
-                            {goal.type === 'increase_income' ? (
+                            {goal.type === "increase_income" ? (
                               <TrendingUp className="w-3 h-3" />
                             ) : (
                               <TrendingDown className="w-3 h-3" />
@@ -397,8 +397,8 @@ const DashboardPage = () => {
                         <div
                           className={`h-2 rounded-full transition-all duration-300 ${
                             goal.progress.isComplete
-                              ? 'bg-green-500'
-                              : 'bg-green-500'
+                              ? "bg-green-500"
+                              : "bg-green-500"
                           }`}
                           style={{
                             width: `${Math.min(100, goal.progress.overallProgress)}%`,

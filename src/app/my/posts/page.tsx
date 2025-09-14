@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import EmptyState from '@/components/my/posts/EmptyState';
-import PostCard from '@/components/my/posts/PostsCard';
-import PostsFilterBar from '@/components/my/posts/PostsFilterBar';
-import PostsTabNavigation from '@/components/my/posts/PostsTabNavigation';
-import { useMyPosts } from '@/hooks/my/useMyPosts';
-import { PostsTabType } from '@/types/my';
-import { ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import EmptyState from "@/components/my/posts/EmptyState";
+import PostCard from "@/components/my/posts/PostsCard";
+import PostsFilterBar from "@/components/my/posts/PostsFilterBar";
+import PostsTabNavigation from "@/components/my/posts/PostsTabNavigation";
+import { useMyPosts } from "@/hooks/my/useMyPosts";
+import { PostsTabType } from "@/types/my";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const MyPostsPage = () => {
   const router = useRouter();
@@ -32,7 +32,7 @@ const MyPostsPage = () => {
   const handleDelete = (item: (typeof posts)[0]) => {
     if (
       confirm(
-        `정말로 이 ${item.type === 'reflection' ? '회고' : '질문'}을 삭제하시겠습니까?`
+        `정말로 이 ${item.type === "reflection" ? "회고" : "질문"}을 삭제하시겠습니까?`,
       )
     ) {
       deletePost(item.type, item.id);
@@ -67,7 +67,7 @@ const MyPostsPage = () => {
       <div className="flex flex-col gap-4 max-w-4xl mx-auto py-8 p-4">
         {/* 헤더 */}
         <div className="flex flex-col gap-4 items-start justify-start">
-          <button onClick={() => router.push('/my')}>
+          <button onClick={() => router.push("/my")}>
             <ArrowLeft className="w-6 h-6 text-gray-500 hover:text-accent-400 hover:cursor-pointer" />
           </button>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">작성한 글</h1>
@@ -93,16 +93,16 @@ const MyPostsPage = () => {
         {/* 콘텐츠 */}
         {!loading && posts.length === 0 ? (
           <EmptyState
-            type={filters.search ? 'search' : 'posts'}
+            type={filters.search ? "search" : "posts"}
             title={
               filters.search
-                ? '검색 결과가 없습니다.'
-                : '아직 작성한 글이 없습니다.'
+                ? "검색 결과가 없습니다."
+                : "아직 작성한 글이 없습니다."
             }
             description={
               filters.search
-                ? '다른 검색어로 시도해보세요.'
-                : '첫 번째 회고나 질문을 작성해보세요.'
+                ? "다른 검색어로 시도해보세요."
+                : "첫 번째 회고나 질문을 작성해보세요."
             }
           />
         ) : (
@@ -124,7 +124,7 @@ const MyPostsPage = () => {
                   disabled={loading}
                   className="px-6 py-3 bg-accent-400 text-white rounded-lg hover:bg-accent-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? '불러오는 중...' : '더 보기'}
+                  {loading ? "불러오는 중..." : "더 보기"}
                 </button>
               </div>
             )}

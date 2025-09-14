@@ -1,5 +1,5 @@
-import { PostsFilters } from '@/types/my';
-import { Search } from 'lucide-react';
+import { PostsFilters } from "@/types/my";
+import { Search } from "lucide-react";
 
 const PostsFilterBar = ({
   filters,
@@ -26,7 +26,7 @@ const PostsFilterBar = ({
     <select
       value={filters.sort}
       onChange={(e) =>
-        onFiltersChange({ sort: e.target.value as 'latest' | 'oldest' })
+        onFiltersChange({ sort: e.target.value as "latest" | "oldest" })
       }
       className="px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 hover:border-accent-400 hover:cursor-pointer"
     >

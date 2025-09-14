@@ -1,5 +1,5 @@
-import { ScrapsFilters } from '@/types/my';
-import { Search } from 'lucide-react';
+import { ScrapsFilters } from "@/types/my";
+import { Search } from "lucide-react";
 
 const ScrapsFilterBar = ({
   filters,
@@ -23,13 +23,13 @@ const ScrapsFilterBar = ({
     <div className="flex justify-end gap-2">
       {/* 콘텐츠 타입 필터 */}
       <select
-        value={filters.content_type || 'all'}
+        value={filters.content_type || "all"}
         onChange={(e) =>
           onFiltersChange({
             content_type:
-              e.target.value === 'all'
+              e.target.value === "all"
                 ? undefined
-                : (e.target.value as 'reflections' | 'questions'),
+                : (e.target.value as "reflections" | "questions"),
           })
         }
         className="px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 hover:border-accent-400 hover:cursor-pointer"
@@ -44,7 +44,7 @@ const ScrapsFilterBar = ({
         value={filters.sort}
         onChange={(e) =>
           onFiltersChange({
-            sort: e.target.value as 'recent' | 'oldest',
+            sort: e.target.value as "recent" | "oldest",
           })
         }
         className="pl-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 hover:border-accent-400 hover:cursor-pointer"

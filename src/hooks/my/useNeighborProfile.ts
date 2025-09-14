@@ -1,6 +1,6 @@
-import { supabase } from '@/lib/supabase';
-import { Profile } from '@/types/my'
-import { useCallback, useEffect, useState } from 'react'
+import { supabase } from "@/lib/supabase";
+import { Profile } from "@/types/my";
+import { useCallback, useEffect, useState } from "react";
 
 interface NeighborProfileStats {
   total_posts: number;
@@ -11,7 +11,7 @@ interface NeighborProfileStats {
 }
 
 interface NeighborActivity {
-  type: 'reflection' | 'question';
+  type: "reflection" | "question";
   title: string;
   date: string;
   content_preview: string;
@@ -27,9 +27,9 @@ interface UseNeighborProfileParams {
   enabled?: boolean;
 }
 
-export const useNeighborProfile = ({ 
-  neighborId, 
-  enabled = true 
+export const useNeighborProfile = ({
+  neighborId,
+  enabled = true,
 }: UseNeighborProfileParams) => {
   const [profile, setProfile] = useState<NeighborProfileData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,33 +42,38 @@ export const useNeighborProfile = ({
       setLoading(true);
       setError(null);
 
-      console.log('Fetching profile for neighborId:', neighborId);
+      console.log("Fetching profile for neighborId:", neighborId);
 
       // 현재 사용자 ID 가져오기
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
       if (userError) throw userError;
-      if (!user) throw new Error('인증이 필요합니다.');
+      if (!user) throw new Error("인증이 필요합니다.");
 
       // 이웃 관계 확인
       const { data: neighborRelation, error: relationError } = await supabase
-        .from('neighbor_relationships')
-        .select('*')
-        .or(`and(requester_id.eq.${user.id},recipient_id.eq.${neighborId},status.eq.accepted),and(requester_id.eq.${neighborId},recipient_id.eq.${user.id},status.eq.accepted)`)
+        .from("neighbor_relationships")
+        .select("*")
+        .or(
+          `and(requester_id.eq.${user.id},recipient_id.eq.${neighborId},status.eq.accepted),and(requester_id.eq.${neighborId},recipient_id.eq.${user.id},status.eq.accepted)`,
+        )
         .single();
 
       if (relationError || !neighborRelation) {
-        throw new Error('이웃 관계를 찾을 수 없습니다.');
+        throw new Error("이웃 관계를 찾을 수 없습니다.");
       }
 
       // 프로필 기본 정보 조회
       const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, name, nickname, created_at, updated_at, email')
-        .eq('id', neighborId)
+        .from("profiles")
+        .select("id, name, nickname, created_at, updated_at, email")
+        .eq("id", neighborId)
         .single();
 
       if (profileError || !profileData) {
-        throw new Error('프로필 정보를 불러올 수 없습니다.');
+        throw new Error("프로필 정보를 불러올 수 없습니다.");
       }
 
       // 통계 데이터를 위한 병렬 쿼리 실행
@@ -76,53 +81,54 @@ export const useNeighborProfile = ({
         reflectionsStatsResult,
         questionsStatsResult,
         answeredQuestionsResult,
-        neighborsCountResult
+        neighborsCountResult,
       ] = await Promise.all([
         // 회고 총 개수 (전체)
         supabase
-          .from('reflections')
-          .select('id', { count: 'exact' })
-          .eq('user_id', neighborId),
-          
+          .from("reflections")
+          .select("id", { count: "exact" })
+          .eq("user_id", neighborId),
+
         // 질문 총 개수 (전체)
         supabase
-          .from('questions')
-          .select('id', { count: 'exact' })
-          .eq('user_id', neighborId),
-          
+          .from("questions")
+          .select("id", { count: "exact" })
+          .eq("user_id", neighborId),
+
         // 답변완료 질문 개수 (전체)
         supabase
-          .from('questions')
-          .select('id', { count: 'exact' })
-          .eq('user_id', neighborId)
-          .eq('is_answered', true),
-          
+          .from("questions")
+          .select("id", { count: "exact" })
+          .eq("user_id", neighborId)
+          .eq("is_answered", true),
+
         // 이웃 수
         supabase
-          .from('neighbor_relationships')
-          .select('id', { count: 'exact' })
+          .from("neighbor_relationships")
+          .select("id", { count: "exact" })
           .or(`requester_id.eq.${neighborId},recipient_id.eq.${neighborId}`)
-          .eq('status', 'accepted')
+          .eq("status", "accepted"),
       ]);
 
       // 최근 활동을 위한 공개된 데이터만 조회 (미리보기용)
-      const [recentReflectionsResult, recentQuestionsResult] = await Promise.all([
-        supabase
-          .from('reflections')
-          .select('id, title, content, date, created_at')
-          .eq('user_id', neighborId)
-          .or('is_public.eq.true,is_neighbor_visible.eq.true')
-          .order('date', { ascending: false })
-          .limit(3),
-          
-        supabase
-          .from('questions')
-          .select('id, title, content, date, is_answered, created_at')
-          .eq('user_id', neighborId)
-          .or('is_public.eq.true,is_neighbor_visible.eq.true')
-          .order('date', { ascending: false })
-          .limit(3)
-      ]);
+      const [recentReflectionsResult, recentQuestionsResult] =
+        await Promise.all([
+          supabase
+            .from("reflections")
+            .select("id, title, content, date, created_at")
+            .eq("user_id", neighborId)
+            .or("is_public.eq.true,is_neighbor_visible.eq.true")
+            .order("date", { ascending: false })
+            .limit(3),
+
+          supabase
+            .from("questions")
+            .select("id, title, content, date, is_answered, created_at")
+            .eq("user_id", neighborId)
+            .or("is_public.eq.true,is_neighbor_visible.eq.true")
+            .order("date", { ascending: false })
+            .limit(3),
+        ]);
 
       // 통계 계산
       const totalReflections = reflectionsStatsResult.count || 0;
@@ -136,17 +142,21 @@ export const useNeighborProfile = ({
 
       // 최근 활동 데이터 합치기 및 정렬
       const recentActivity: NeighborActivity[] = [
-        ...reflectionsData.map(item => ({
-          type: 'reflection' as const,
-          title: item.title || '제목 없음',
+        ...reflectionsData.map((item) => ({
+          type: "reflection" as const,
+          title: item.title || "제목 없음",
           date: item.date,
-          content_preview: item.content.substring(0, 100) + (item.content.length > 100 ? '...' : ''),
+          content_preview:
+            item.content.substring(0, 100) +
+            (item.content.length > 100 ? "..." : ""),
         })),
-        ...questionsData.map(item => ({
-          type: 'question' as const,
+        ...questionsData.map((item) => ({
+          type: "question" as const,
           title: item.title,
           date: item.date,
-          content_preview: item.content?.substring(0, 100) + (item.content && item.content.length > 100 ? '...' : '') || '',
+          content_preview:
+            item.content?.substring(0, 100) +
+              (item.content && item.content.length > 100 ? "..." : "") || "",
         })),
       ]
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -171,9 +181,12 @@ export const useNeighborProfile = ({
 
       setProfile(profileWithStats);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '프로필을 불러오는데 실패했습니다.';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "프로필을 불러오는데 실패했습니다.";
       setError(errorMessage);
-      console.error('Failed to fetch neighbor profile:', err);
+      console.error("Failed to fetch neighbor profile:", err);
     } finally {
       setLoading(false);
     }

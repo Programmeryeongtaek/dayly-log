@@ -1,11 +1,11 @@
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight } from "lucide-react";
 
 const MenuCard = ({
   icon,
   title,
   count,
   badge,
-  unit = '개',
+  unit = "개",
   onClick,
 }: {
   icon: React.ReactNode;

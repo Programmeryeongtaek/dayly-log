@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import EmptyState from '@/components/my/scraps/EmptyState';
-import ScrapCard from '@/components/my/scraps/ScrapCard';
-import ScrapsFilterBar from '@/components/my/scraps/ScrapsFilterBar';
-import { useMyScraps } from '@/hooks/my/useMyScraps';
+import EmptyState from "@/components/my/scraps/EmptyState";
+import ScrapCard from "@/components/my/scraps/ScrapCard";
+import ScrapsFilterBar from "@/components/my/scraps/ScrapsFilterBar";
+import { useMyScraps } from "@/hooks/my/useMyScraps";
 import {
   ArrowLeft,
   Bookmark,
   BookOpen,
   MessageCircleQuestion,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const ScrapsPage = () => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const ScrapsPage = () => {
   } = useMyScraps();
 
   const handleRemove = (scrapId: string) => {
-    if (confirm('정말로 이 스크랩을 삭제하시겠습니까?')) {
+    if (confirm("정말로 이 스크랩을 삭제하시겠습니까?")) {
       removeScrap(scrapId);
     }
   };
@@ -47,10 +47,10 @@ const ScrapsPage = () => {
 
     const matchesContentType =
       !filters.content_type ||
-      (filters.content_type === 'reflections' &&
-        scrap.content_type === 'reflection') ||
-      (filters.content_type === 'questions' &&
-        scrap.content_type === 'question');
+      (filters.content_type === "reflections" &&
+        scrap.content_type === "reflection") ||
+      (filters.content_type === "questions" &&
+        scrap.content_type === "question");
 
     return matchesSearch && matchesContentType;
   });
@@ -58,15 +58,15 @@ const ScrapsPage = () => {
   // 정렬 적용
   const sortedScraps = [...filteredScraps].sort((a, b) => {
     switch (filters.sort) {
-      case 'recent':
+      case "recent":
         return (
           new Date(b.scraped_at).getTime() - new Date(a.scraped_at).getTime()
         );
-      case 'oldest':
+      case "oldest":
         return (
           new Date(a.scraped_at).getTime() - new Date(b.scraped_at).getTime()
         );
-      case 'content_date':
+      case "content_date":
         return (
           new Date(b.content.date).getTime() -
           new Date(a.content.date).getTime()
@@ -96,7 +96,7 @@ const ScrapsPage = () => {
     <div className="flex flex-col gap-4 max-w-4xl mx-auto py-8 p-4">
       {/* 헤더 */}
       <div className="flex flex-col gap-4 items-start justify-start">
-        <button onClick={() => router.push('/my')}>
+        <button onClick={() => router.push("/my")}>
           <ArrowLeft className="w-6 h-6 text-gray-500 hover:text-accent-400 hover:cursor-pointer" />
         </button>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">내 스크랩</h1>
@@ -120,7 +120,7 @@ const ScrapsPage = () => {
             <div>
               <p className="text-sm text-green-600">회고</p>
               <p className="text-2xl font-bold text-green-900">
-                {scraps.filter((s) => s.content_type === 'reflection').length}
+                {scraps.filter((s) => s.content_type === "reflection").length}
               </p>
             </div>
             <BookOpen className="w-8 h-8 text-green-600" />
@@ -131,7 +131,7 @@ const ScrapsPage = () => {
             <div>
               <p className="text-sm text-orange-600">질문</p>
               <p className="text-2xl font-bold text-orange-900">
-                {scraps.filter((s) => s.content_type === 'question').length}
+                {scraps.filter((s) => s.content_type === "question").length}
               </p>
             </div>
             <MessageCircleQuestion className="w-8 h-8 text-orange-600" />
@@ -152,16 +152,16 @@ const ScrapsPage = () => {
       {/* 콘텐츠 */}
       {!loading && sortedScraps.length === 0 ? (
         <EmptyState
-          type={filters.search || filters.content_type ? 'search' : 'scraps'}
+          type={filters.search || filters.content_type ? "search" : "scraps"}
           title={
             filters.search || filters.content_type
-              ? '검색 결과가 없습니다'
-              : '아직 스크랩한 글이 없습니다'
+              ? "검색 결과가 없습니다"
+              : "아직 스크랩한 글이 없습니다"
           }
           description={
             filters.search || filters.content_type
-              ? '필터를 조정해서 다시 시도해보세요'
-              : '마음에 드는 글을 스크랩해보세요'
+              ? "필터를 조정해서 다시 시도해보세요"
+              : "마음에 드는 글을 스크랩해보세요"
           }
         />
       ) : (
@@ -186,7 +186,7 @@ const ScrapsPage = () => {
                 disabled={loading}
                 className="px-6 py-3 bg-accent-400 text-white rounded-lg hover:bg-accent-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? '불러오는 중...' : '더 보기'}
+                {loading ? "불러오는 중..." : "더 보기"}
               </button>
             </div>
           )}

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Modal from '@/components/common/Modal';
-import MenuCard from '@/components/my/MenuCard';
-import QuickActionButton from '@/components/my/QuickActionButton';
-import StatsCard from '@/components/my/StatsCard';
-import QuestionForm from '@/components/questions/QuestionForm';
-import { useAuth } from '@/hooks/auth';
-import { useQuestions } from '@/hooks/questions/useQuestions';
-import { supabase } from '@/lib/supabase';
-import { QuestionFormData } from '@/types/questions';
+import Modal from "@/components/common/Modal";
+import MenuCard from "@/components/my/MenuCard";
+import QuickActionButton from "@/components/my/QuickActionButton";
+import StatsCard from "@/components/my/StatsCard";
+import QuestionForm from "@/components/questions/QuestionForm";
+import { useAuth } from "@/hooks/auth";
+import { useQuestions } from "@/hooks/questions/useQuestions";
+import { supabase } from "@/lib/supabase";
+import { QuestionFormData } from "@/types/questions";
 import {
   Bookmark,
   BookOpen,
@@ -20,9 +20,9 @@ import {
   Share2,
   Users,
   X,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface NeighborStats {
   totalNeighbors: number;
@@ -53,7 +53,7 @@ const MyPage = () => {
     this_week_new_neighbors: 0,
   });
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [searching, setSearching] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -68,7 +68,7 @@ const MyPage = () => {
 
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      const weekAgoString = oneWeekAgo.toISOString().split('T')[0];
+      const weekAgoString = oneWeekAgo.toISOString().split("T")[0];
 
       // 병렬로 통계 데이터 가져오기
       const [
@@ -84,60 +84,60 @@ const MyPage = () => {
       ] = await Promise.all([
         // 전체 이웃 수 (수락)
         supabase
-          .from('neighbor_relationships')
-          .select('id', { count: 'exact', head: true })
+          .from("neighbor_relationships")
+          .select("id", { count: "exact", head: true })
           .or(
-            `and(requester_id.eq.${user.id},status.eq.accepted),and(recipient_id.eq.${user.id},status.eq.accepted)`
+            `and(requester_id.eq.${user.id},status.eq.accepted),and(recipient_id.eq.${user.id},status.eq.accepted)`,
           ),
 
         // 대기 중인 요청 수
         supabase
-          .from('neighbor_relationships')
-          .select('id', { count: 'exact', head: true })
-          .eq('recipient_id', user.id)
-          .eq('status', 'pending'),
+          .from("neighbor_relationships")
+          .select("id", { count: "exact", head: true })
+          .eq("recipient_id", user.id)
+          .eq("status", "pending"),
 
         // 이번 주 새 이웃 수
         supabase
-          .from('neighbor_relationships')
-          .select('id', { count: 'exact', head: true })
+          .from("neighbor_relationships")
+          .select("id", { count: "exact", head: true })
           .or(
-            `and(requester_id.eq.${user.id},status.eq.accepted),and(recipient_id.eq.${user.id},status.eq.accepted)`
+            `and(requester_id.eq.${user.id},status.eq.accepted),and(recipient_id.eq.${user.id},status.eq.accepted)`,
           )
-          .gte('updated_at', weekAgoString),
+          .gte("updated_at", weekAgoString),
 
         supabase
-          .from('reflections')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id),
+          .from("reflections")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id),
 
         supabase
-          .from('questions')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id),
+          .from("questions")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id),
 
         supabase
-          .from('scraps')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id),
+          .from("scraps")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id),
 
         supabase
-          .from('reflections')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .gte('created_at', weekAgoString),
+          .from("reflections")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .gte("created_at", weekAgoString),
 
         supabase
-          .from('questions')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .gte('created_at', weekAgoString),
+          .from("questions")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .gte("created_at", weekAgoString),
 
         supabase
-          .from('scraps')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .gte('created_at', weekAgoString),
+          .from("scraps")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .gte("created_at", weekAgoString),
       ]);
 
       setStats({
@@ -155,7 +155,7 @@ const MyPage = () => {
         this_week_new_neighbors: newThisWeekResult.count || 0,
       });
     } catch (err) {
-      console.error('Failed to fetch neighbor stats:', err);
+      console.error("Failed to fetch neighbor stats:", err);
     } finally {
       setLoading(false);
     }
@@ -166,7 +166,7 @@ const MyPage = () => {
   }, [user]);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       (e.target as HTMLInputElement).blur();
       handleSearch();
@@ -180,14 +180,14 @@ const MyPage = () => {
     setSearching(true);
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('nickname')
-        .eq('nickname', searchTerm.trim())
+        .from("profiles")
+        .select("nickname")
+        .eq("nickname", searchTerm.trim())
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') {
-          alert('존재하지 않는 사용자입니다.');
+        if (error.code === "PGRST116") {
+          alert("존재하지 않는 사용자입니다.");
         } else {
           throw error;
         }
@@ -196,31 +196,31 @@ const MyPage = () => {
 
       router.push(`/my/neighbors/public/${data.nickname}`);
     } catch (err) {
-      console.error('Search failed:', err);
-      alert('검색 중 오류가 발생했습니다.');
+      console.error("Search failed:", err);
+      alert("검색 중 오류가 발생했습니다.");
     } finally {
       setSearching(false);
     }
   };
 
   const copyToClipboard = async () => {
-    const profileUrl = `${window.location.origin}/u/${user?.user_metadata?.nickname || ''}`;
+    const profileUrl = `${window.location.origin}/u/${user?.user_metadata?.nickname || ""}`;
     try {
       await navigator.clipboard.writeText(profileUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
   // 이동 핸들러
   const handleSettings = () => {
-    router.push('/my/profile');
+    router.push("/my/profile");
   };
 
   const handleCreateReflection = () => {
-    router.push('/reflections/new');
+    router.push("/reflections/new");
   };
 
   const handleSubmitQuestion = (formData: QuestionFormData) => {
@@ -234,15 +234,15 @@ const MyPage = () => {
   };
 
   const handleNavigateToNeighbors = () => {
-    router.push('/my/neighbors');
+    router.push("/my/neighbors");
   };
 
   const handleNavigateToPosts = () => {
-    router.push('/my/posts');
+    router.push("/my/posts");
   };
 
   const handleNavigateToScraps = () => {
-    router.push('/my/scraps');
+    router.push("/my/scraps");
   };
 
   if (loading) {

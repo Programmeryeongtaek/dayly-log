@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabase';
-import { useCallback, useEffect, useState } from 'react';
+import { supabase } from "@/lib/supabase";
+import { useCallback, useEffect, useState } from "react";
 
 interface PublicProfile {
   id: string;
@@ -16,7 +16,7 @@ interface PublicProfile {
     neighbor_count?: number;
   };
   recent_activity: Array<{
-    type: 'reflection' | 'question';
+    type: "reflection" | "question";
     title: string;
     date: string;
     content_preview: string;
@@ -37,13 +37,13 @@ export const usePublicProfile = (userId: string, enabled: boolean) => {
 
       // 프로필 기본 정보 조회
       const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, name, nickname, created_at')
-        .eq('id', userId)
+        .from("profiles")
+        .select("id, name, nickname, created_at")
+        .eq("id", userId)
         .single();
 
       if (profileError) throw profileError;
-      if (!profileData) throw new Error('프로필을 찾을 수 없습니다.');
+      if (!profileData) throw new Error("프로필을 찾을 수 없습니다.");
 
       // 병렬로 통계 데이터 조회 (공개된 게시물)
       const [
@@ -55,42 +55,42 @@ export const usePublicProfile = (userId: string, enabled: boolean) => {
       ] = await Promise.all([
         // 공개된 회고 수
         supabase
-          .from('reflections')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .eq('is_public', true),
+          .from("reflections")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .eq("is_public", true),
 
         // 공개된 질문 수
         supabase
-          .from('questions')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .eq('is_public', true),
+          .from("questions")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .eq("is_public", true),
 
         // 공개된 답변 완료 질문 수
         supabase
-          .from('questions')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', userId)
-          .eq('is_public', true)
-          .eq('is_answered', true),
+          .from("questions")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .eq("is_public", true)
+          .eq("is_answered", true),
 
         // 최근 공개 회고 (최대 3개)
         supabase
-          .from('reflections')
-          .select('title, content, date')
-          .eq('user_id', userId)
-          .eq('is_public', true)
-          .order('date', { ascending: false })
+          .from("reflections")
+          .select("title, content, date")
+          .eq("user_id", userId)
+          .eq("is_public", true)
+          .order("date", { ascending: false })
           .limit(3),
 
         // 최근 공개 질문 (최대 3개)
         supabase
-          .from('questions')
-          .select('title, content, date')
-          .eq('user_id', userId)
-          .eq('is_public', true)
-          .order('date', { ascending: false })
+          .from("questions")
+          .select("title, content, date")
+          .eq("user_id", userId)
+          .eq("is_public", true)
+          .order("date", { ascending: false })
           .limit(3),
       ]);
 
@@ -105,17 +105,21 @@ export const usePublicProfile = (userId: string, enabled: boolean) => {
 
       // 최근 활동 통합 (회고 + 질문)
       const recentActivity = [
-        ...(recentReflectionsResult.data || []).map(item => ({
-          type: 'reflection' as const,
-          title: item.title || '제목 없음',
+        ...(recentReflectionsResult.data || []).map((item) => ({
+          type: "reflection" as const,
+          title: item.title || "제목 없음",
           date: item.date,
-          content_preview: item.content?.substring(0, 100) + (item.content && item.content.length > 100 ? '...' : '') || '',
+          content_preview:
+            item.content?.substring(0, 100) +
+              (item.content && item.content.length > 100 ? "..." : "") || "",
         })),
-        ...(recentQuestionsResult.data || []).map(item => ({
-          type: 'question' as const,
+        ...(recentQuestionsResult.data || []).map((item) => ({
+          type: "question" as const,
           title: item.title,
           date: item.date,
-          content_preview: item.content?.substring(0, 100) + (item.content && item.content.length > 100 ? '...' : '') || '',
+          content_preview:
+            item.content?.substring(0, 100) +
+              (item.content && item.content.length > 100 ? "..." : "") || "",
         })),
       ]
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -137,9 +141,12 @@ export const usePublicProfile = (userId: string, enabled: boolean) => {
 
       setProfile(publicProfile);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '프로필을 불러오는데 실패했습니다.';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "프로필을 불러오는데 실패했습니다.";
       setError(errorMessage);
-      console.error('Failed to fetch public profile:', err);
+      console.error("Failed to fetch public profile:", err);
     } finally {
       setLoading(false);
     }

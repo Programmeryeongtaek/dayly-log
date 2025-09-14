@@ -1,16 +1,25 @@
-import { DomainType } from './index';
+import { DomainType } from "./index";
 // 마이페이지 UI 관련 타입
-import { DomainStats, NeighborInfo, NeighborPost, NeighborProfile, NeighborRequest, QuestionWithKeywords, ReflectionWithKeywords, ScrapWithContent } from './database';
+import {
+  DomainStats,
+  NeighborInfo,
+  NeighborPost,
+  NeighborProfile,
+  NeighborRequest,
+  QuestionWithKeywords,
+  ReflectionWithKeywords,
+  ScrapWithContent,
+} from "./database";
 
 // 타입
-export type MyPageType = 'main' | 'posts' | 'neighbor' | 'scraps';
+export type MyPageType = "main" | "posts" | "neighbor" | "scraps";
 
 // 내 작성글 페이지의 탭 타입들
-export type PostsTabType = 'all' | 'reflections' | 'questions';
+export type PostsTabType = "all" | "reflections" | "questions";
 
 // 정렬 타입들
-export type PostsSortType = 'latest' | 'oldest';
-export type ScrapsSortType = 'recent' | 'oldest' | 'content_date';
+export type PostsSortType = "latest" | "oldest";
+export type ScrapsSortType = "recent" | "oldest" | "content_date";
 
 // 필터 타입
 export interface PostsFilters {
@@ -26,7 +35,7 @@ export interface PostsFilters {
 export interface ScrapsFilters {
   search: string;
   sort: ScrapsSortType;
-  content_type?: 'all' | 'reflections' | 'questions';
+  content_type?: "all" | "reflections" | "questions";
   date_range?: {
     start: string;
     end: string;
@@ -40,7 +49,7 @@ export interface NeighborFilters {
 // 카드
 export interface PostCardProps {
   item: (ReflectionWithKeywords | QuestionWithKeywords) & {
-    type: 'reflection' | 'question';
+    type: "reflection" | "question";
   };
   onEdit?: () => void;
   onDelete?: () => void;
@@ -112,7 +121,7 @@ export interface StatsCardProps {
 }
 
 export interface EmptyStateProps {
-  type: 'posts' | 'neighbor' | 'scraps' | 'search';
+  type: "posts" | "neighbor" | "scraps" | "search";
   icon: React.ReactNode;
   title: string;
   description: string;
@@ -166,19 +175,19 @@ export interface KeywordChipProps {
     name: string;
     color: string;
   };
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   onClick?: () => void;
 }
 
 export interface VisibilityIndicatorProps {
   is_public: boolean;
   is_neighbor_visible: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
 export interface DateDisplayProps {
   date: string;
-  format?: 'full' | 'short' | 'relative';
+  format?: "full" | "short" | "relative";
   showIcon?: boolean;
 }
 
@@ -187,7 +196,7 @@ export interface UserAvatarProps {
     name: string;
     nickname?: string;
   };
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: "sm" | "md" | "lg" | "xl";
   showName?: boolean;
   showNickname?: boolean;
   onClick?: () => void;
@@ -203,7 +212,7 @@ export interface BreadcrumbProps {
 
 export interface ActivitySummaryProps {
   recentActivity: Array<{
-    type: 'reflection' | 'question' | 'neighbor' | 'scrap';
+    type: "reflection" | "question" | "neighbor" | "scrap";
     title: string;
     date: string;
     onClick?: () => void;

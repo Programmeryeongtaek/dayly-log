@@ -4,9 +4,9 @@ import {
   Edit,
   MessageCircleQuestion,
   Trash2,
-} from 'lucide-react';
-import VisibilityIcon from './VisibilityIcon';
-import KeywordChip from './KeywordChip';
+} from "lucide-react";
+import VisibilityIcon from "./VisibilityIcon";
+import KeywordChip from "./KeywordChip";
 
 const PostCard = ({
   item,
@@ -15,7 +15,7 @@ const PostCard = ({
 }: {
   item: {
     id: string;
-    type: 'reflection' | 'question';
+    type: "reflection" | "question";
     title?: string;
     content?: string;
     date: string;
@@ -42,7 +42,7 @@ const PostCard = ({
       {/* 헤더 */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          {item.type === 'reflection' ? (
+          {item.type === "reflection" ? (
             <div className="p-2 bg-blue-50 rounded-lg">
               <BookOpen className="w-5 h-5 text-blue-600" />
             </div>
@@ -91,11 +91,11 @@ const PostCard = ({
 
       {/* 내용 */}
       <p className="text-gray-700 mb-4 line-clamp-3">
-        {item.content || '내용이 없습니다.'}
+        {item.content || "내용이 없습니다."}
       </p>
 
       {/* 답변 (질문인 경우) */}
-      {item.type === 'question' && item.answer && (
+      {item.type === "question" && item.answer && (
         <div className="bg-accent-50 p-3 rounded-lg mb-4">
           <p className="text-sm font-medium text-gray-700 mb-1">답변:</p>
           <p className="text-gray-600 text-sm line-clamp-2">{item.answer}</p>

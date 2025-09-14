@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import NeighborPostCard from '@/components/my/neighbor/NeighborPostCard';
-import NeighborProfileStats from '@/components/my/neighbor/NeighborProfileStats';
-import { useNeighborDetailProfile } from '@/hooks/my/useNeighborDetailProfile';
-import { AlertCircle, ArrowLeft, User } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import NeighborPostCard from "@/components/my/neighbor/NeighborPostCard";
+import NeighborProfileStats from "@/components/my/neighbor/NeighborProfileStats";
+import { useNeighborDetailProfile } from "@/hooks/my/useNeighborDetailProfile";
+import { AlertCircle, ArrowLeft, User } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 
 const NeighborDetailPage = () => {
   const params = useParams();
@@ -24,10 +24,10 @@ const NeighborDetailPage = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return date.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 

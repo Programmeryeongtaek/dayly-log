@@ -1,11 +1,11 @@
-import { Bookmark } from 'lucide-react';
+import { Bookmark } from "lucide-react";
 
 const EmptyState = ({
   type,
   title,
   description,
 }: {
-  type: 'scraps' | 'search';
+  type: "scraps" | "search";
   title: string;
   description: string;
 }) => (

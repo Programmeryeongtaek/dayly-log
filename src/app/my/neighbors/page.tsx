@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import EnhancedNeighborCard from '@/components/my/neighbor/EnhancedNeighborCard';
-import EnhancedNeighborRequestCard from '@/components/my/neighbor/EnhancedNeighborRequestCard';
-import { useMyNeighbors } from '@/hooks/my/useMyNeighbors';
-import { ArrowLeft, Clock, Search, UserPlus, Users } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import EnhancedNeighborCard from "@/components/my/neighbor/EnhancedNeighborCard";
+import EnhancedNeighborRequestCard from "@/components/my/neighbor/EnhancedNeighborRequestCard";
+import { useMyNeighbors } from "@/hooks/my/useMyNeighbors";
+import { ArrowLeft, Clock, Search, UserPlus, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const MyNeighborsPage = () => {
   const router = useRouter();
@@ -24,8 +24,8 @@ const MyNeighborsPage = () => {
     },
   } = useMyNeighbors();
 
-  const [activeTab, setActiveTab] = useState<'requests' | 'neighbors'>(
-    'requests'
+  const [activeTab, setActiveTab] = useState<"requests" | "neighbors">(
+    "requests",
   );
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -52,7 +52,7 @@ const MyNeighborsPage = () => {
   };
 
   const handleRemoveNeighbor = async (neighborId: string) => {
-    if (confirm('정말로 이 이웃을 삭제하시겠습니까?')) {
+    if (confirm("정말로 이 이웃을 삭제하시겠습니까?")) {
       setActionLoading(neighborId);
       try {
         await removeNeighbor(neighborId);
@@ -70,7 +70,7 @@ const MyNeighborsPage = () => {
   const filteredNeighbors = neighborsList.filter(
     (neighbor) =>
       neighbor.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-      neighbor.nickname.toLowerCase().includes(filters.search.toLowerCase())
+      neighbor.nickname.toLowerCase().includes(filters.search.toLowerCase()),
   );
 
   if (error) {
@@ -97,7 +97,7 @@ const MyNeighborsPage = () => {
         {/* 헤더 */}
         <div className="flex flex-col gap-4">
           <button
-            onClick={() => router.push('/my')}
+            onClick={() => router.push("/my")}
             className="flex items-center text-gray-600 hover:text-accent-500 transition-colors w-fit hover:cursor-pointer"
           >
             <ArrowLeft className="w-6 h-6" />
@@ -110,11 +110,11 @@ const MyNeighborsPage = () => {
           <div className="border-b border-gray-200">
             <nav className="flex bg-white">
               <button
-                onClick={() => setActiveTab('requests')}
+                onClick={() => setActiveTab("requests")}
                 className={`flex-1 py-4 px-6 text-center font-medium transition-colors hover:cursor-pointer ${
-                  activeTab === 'requests'
-                    ? 'text-accent-600 border-b-2 border-accent-600 bg-accent-50'
-                    : 'text-gray-500 hover:text-gray-700'
+                  activeTab === "requests"
+                    ? "text-accent-600 border-b-2 border-accent-600 bg-accent-50"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
               >
                 <div className="flex items-center justify-center space-x-2">
@@ -129,11 +129,11 @@ const MyNeighborsPage = () => {
               </button>
 
               <button
-                onClick={() => setActiveTab('neighbors')}
+                onClick={() => setActiveTab("neighbors")}
                 className={`flex-1 py-4 px-6 text-center font-medium transition-colors hover:cursor-pointer ${
-                  activeTab === 'neighbors'
-                    ? 'text-accent-600 border-b-2 border-accent-600 bg-accent-50'
-                    : 'text-gray-500 hover:text-gray-700'
+                  activeTab === "neighbors"
+                    ? "text-accent-600 border-b-2 border-accent-600 bg-accent-50"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
               >
                 <div className="flex items-center justify-center space-x-2">
@@ -150,7 +150,7 @@ const MyNeighborsPage = () => {
           </div>
 
           {/* 검색바 (이웃 탭일 때만) */}
-          {activeTab === 'neighbors' && (
+          {activeTab === "neighbors" && (
             <div className="p-4 bg-gray-50 border-b border-gray-200">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -176,7 +176,7 @@ const MyNeighborsPage = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {activeTab === 'requests' ? (
+                {activeTab === "requests" ? (
                   // 이웃 요청 목록
                   requests.length === 0 ? (
                     <div className="text-center py-12">
@@ -205,13 +205,13 @@ const MyNeighborsPage = () => {
                     <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-xl font-medium text-gray-900 mb-2">
                       {filters.search
-                        ? '검색 결과가 없습니다.'
-                        : '아직 이웃이 없습니다.'}
+                        ? "검색 결과가 없습니다."
+                        : "아직 이웃이 없습니다."}
                     </h3>
                     <p className="text-gray-500">
                       {filters.search
-                        ? '다른 검색어를 시도해보세요.'
-                        : '다른 사용자들과 이웃이 되어 소중한 순간들을 공유해보세요.'}
+                        ? "다른 검색어를 시도해보세요."
+                        : "다른 사용자들과 이웃이 되어 소중한 순간들을 공유해보세요."}
                     </p>
                   </div>
                 ) : (

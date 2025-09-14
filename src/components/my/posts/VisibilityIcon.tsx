@@ -1,4 +1,4 @@
-import { Eye, Lock, Users } from 'lucide-react';
+import { Eye, Lock, Users } from "lucide-react";
 
 const VisibilityIcon = ({
   isPublic,

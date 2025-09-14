@@ -1,10 +1,10 @@
-import { FileText } from 'lucide-react';
+import { FileText } from "lucide-react";
 
 const EmptyState = ({
   title,
   description,
 }: {
-  type: 'posts' | 'search';
+  type: "posts" | "search";
   title: string;
   description: string;
 }) => (

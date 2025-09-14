@@ -1,7 +1,7 @@
-import { NeighborRequest } from '@/types/my';
-import { Check, Eye, Users, X } from 'lucide-react';
-import { useState } from 'react';
-import NeighborProfileModal from './NeighborProfileModal';
+import { NeighborRequest } from "@/types/my";
+import { Check, Eye, Users, X } from "lucide-react";
+import { useState } from "react";
+import NeighborProfileModal from "./NeighborProfileModal";
 
 interface EnhancedNeighborRequestCardProps {
   request: NeighborRequest;
@@ -71,7 +71,7 @@ const EnhancedNeighborRequestCard = ({
 
           {/* 액션 버튼들 */}
           <div className="flex items-center space-x-2">
-            {request.status === 'pending' && (
+            {request.status === "pending" && (
               <>
                 <button
                   onClick={handleAcceptClick}

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { UserProfile } from '@/types/auth';
+import { UserProfile } from "@/types/auth";
 import {
   BookOpen,
   Edit3,
@@ -11,14 +11,14 @@ import {
   User,
   Users,
   X,
-} from 'lucide-react';
-import { useState } from 'react';
+} from "lucide-react";
+import { useState } from "react";
 
 interface ProfilePreviewProps {
   user: UserProfile;
   domainSettings: {
-    reflections: 'public' | 'neighbors' | 'private';
-    questions: 'public' | 'neighbors' | 'private';
+    reflections: "public" | "neighbors" | "private";
+    questions: "public" | "neighbors" | "private";
   };
   onNicknameChange: (nickname: string) => void;
   isUpdatingNickname: boolean;
@@ -31,26 +31,26 @@ const ProfilePreview = ({
   isUpdatingNickname,
 }: ProfilePreviewProps) => {
   const [isEditingNickname, setIsEditingNickname] = useState(false);
-  const [nickname, setNickname] = useState(user.nickname || '');
+  const [nickname, setNickname] = useState(user.nickname || "");
 
-  const getVisibilityLabel = (level: 'public' | 'neighbors' | 'private') => {
+  const getVisibilityLabel = (level: "public" | "neighbors" | "private") => {
     switch (level) {
-      case 'public':
-        return '전체';
-      case 'neighbors':
-        return '이웃';
-      case 'private':
-        return '비공개';
+      case "public":
+        return "전체";
+      case "neighbors":
+        return "이웃";
+      case "private":
+        return "비공개";
     }
   };
 
-  const getVisibilityIcon = (level: 'public' | 'neighbors' | 'private') => {
+  const getVisibilityIcon = (level: "public" | "neighbors" | "private") => {
     switch (level) {
-      case 'public':
+      case "public":
         return <Globe className="w-4 h-4 text-green-600" />;
-      case 'neighbors':
+      case "neighbors":
         return <Users className="w-4 h-4 text-blue-600" />;
-      case 'private':
+      case "private":
         return <Lock className="w-4 h-4 text-gray-600" />;
     }
   };
@@ -63,7 +63,7 @@ const ProfilePreview = ({
   };
 
   const handleCancelEdit = () => {
-    setNickname(user.nickname || '');
+    setNickname(user.nickname || "");
     setIsEditingNickname(false);
   };
 
@@ -110,7 +110,7 @@ const ProfilePreview = ({
             ) : (
               <div className="flex items-center space-x-2">
                 <p className="text-accent-600">
-                  @{user.nickname || '닉네임 없음'}
+                  @{user.nickname || "닉네임 없음"}
                 </p>
                 <button
                   onClick={() => setIsEditingNickname(true)}

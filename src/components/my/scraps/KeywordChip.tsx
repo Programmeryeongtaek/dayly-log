@@ -9,7 +9,7 @@ const KeywordChip = ({
       backgroundColor: `${keyword.color}20`,
       color: keyword.color,
       borderColor: keyword.color,
-      border: '1px solid',
+      border: "1px solid",
     }}
   >
     #{keyword.name}

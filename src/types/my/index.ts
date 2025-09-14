@@ -27,7 +27,7 @@ export type {
   NeighborProfile,
   DomainStats,
   NeighborPost,
-} from './database';
+} from "./database";
 
 // UI types
 export type {
@@ -64,28 +64,39 @@ export type {
   DomainTabProps,
   NeighborPostCardProps,
   NeighborProfileStatsProps,
-} from './ui';
+} from "./ui";
 
 // 유틸리티 타입들
-export type MyPageContentType = 'reflection' | 'question';
-export type MyPageVisibilityType = 'public' | 'neighbors' | 'private';
-export type MyPageNeighborStatus = 'pending' | 'accepted' | 'declined' | 'blocked';
-export type MyPageActionType = 'edit' | 'delete' | 'scrap' | 'share' | 'view';
-export type DomainType = 'gratitude' | 'reflection' | 'daily' | 'growth' | 'custom';
+export type MyPageContentType = "reflection" | "question";
+export type MyPageVisibilityType = "public" | "neighbors" | "private";
+export type MyPageNeighborStatus =
+  | "pending"
+  | "accepted"
+  | "declined"
+  | "blocked";
+export type MyPageActionType = "edit" | "delete" | "scrap" | "share" | "view";
+export type DomainType =
+  | "gratitude"
+  | "reflection"
+  | "daily"
+  | "growth"
+  | "custom";
 
 // 타입 가드 함수들
 export const isMyPageContentType = (type: string): type is MyPageContentType =>
-  ['reflection', 'question'].includes(type);
+  ["reflection", "question"].includes(type);
 
 export const isMyPageVisibilityType = (
   visibility: string,
 ): visibility is MyPageVisibilityType =>
-  ['public', 'neighbors', 'private'].includes(visibility);
+  ["public", "neighbors", "private"].includes(visibility);
 
 export const isMyPageNeighborStatus = (
   status: string,
 ): status is MyPageNeighborStatus =>
-  ['pending', 'accepted', 'declined', 'blocked'].includes(status);
+  ["pending", "accepted", "declined", "blocked"].includes(status);
 
-export const isMyPageActionType = (action: string): action is MyPageActionType =>
-  ['edit', 'delete', 'scrap', 'share', 'view'].includes(action);
+export const isMyPageActionType = (
+  action: string,
+): action is MyPageActionType =>
+  ["edit", "delete", "scrap", "share", "view"].includes(action);

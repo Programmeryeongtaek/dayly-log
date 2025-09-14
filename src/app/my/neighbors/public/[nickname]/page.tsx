@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/auth';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from "@/hooks/auth";
+import { supabase } from "@/lib/supabase";
 import {
   AlertCircle,
   ArrowLeft,
@@ -12,9 +12,9 @@ import {
   UserPlus,
   Users,
   X,
-} from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+} from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface PublicProfile {
   id: string;
@@ -24,7 +24,7 @@ interface PublicProfile {
 }
 
 interface NeighborStatus {
-  status: 'none' | 'pending_sent' | 'pending_received' | 'accepted';
+  status: "none" | "pending_sent" | "pending_received" | "accepted";
   relationshipId?: string;
 }
 
@@ -36,7 +36,7 @@ const PublicNeighborProfilePage = () => {
 
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [neighborStatus, setNeighborStatus] = useState<NeighborStatus>({
-    status: 'none',
+    status: "none",
   });
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -48,14 +48,14 @@ const PublicNeighborProfilePage = () => {
       setError(null);
 
       const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, name, nickname, created_at')
-        .eq('nickname', nickname)
+        .from("profiles")
+        .select("id, name, nickname, created_at")
+        .eq("nickname", nickname)
         .single();
 
       if (profileError) {
-        if (profileError.code === 'PGRST116') {
-          setError('존재하지 않는 사용자입니다.');
+        if (profileError.code === "PGRST116") {
+          setError("존재하지 않는 사용자입니다.");
         } else {
           throw profileError;
         }
@@ -67,13 +67,15 @@ const PublicNeighborProfilePage = () => {
       if (user && user.id !== profileData.id) {
         await checkNeighborStatus(profileData.id);
       } else if (user && user.id === profileData.id) {
-        setNeighborStatus({ status: 'none' });
+        setNeighborStatus({ status: "none" });
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : '프로필을 불러오는데 실패했습니다.'
+        err instanceof Error
+          ? err.message
+          : "프로필을 불러오는데 실패했습니다.",
       );
-      console.error('Failed to fetch profile:', err);
+      console.error("Failed to fetch profile:", err);
     } finally {
       setLoading(false);
     }
@@ -84,38 +86,38 @@ const PublicNeighborProfilePage = () => {
 
     try {
       const { data, error } = await supabase
-        .from('neighbor_relationships')
-        .select('id, status, requester_id, recipient_id')
+        .from("neighbor_relationships")
+        .select("id, status, requester_id, recipient_id")
         .or(
-          `and(requester_id.eq.${user.id},recipient_id.eq.${profileId}),and(requester_id.eq.${profileId},recipient_id.eq.${user.id})`
+          `and(requester_id.eq.${user.id},recipient_id.eq.${profileId}),and(requester_id.eq.${profileId},recipient_id.eq.${user.id})`,
         )
         .maybeSingle();
 
       if (error) throw error;
 
       if (!data) {
-        setNeighborStatus({ status: 'none' });
+        setNeighborStatus({ status: "none" });
       } else {
-        if (data.status === 'accepted') {
-          setNeighborStatus({ status: 'accepted', relationshipId: data.id });
-        } else if (data.status === 'pending') {
+        if (data.status === "accepted") {
+          setNeighborStatus({ status: "accepted", relationshipId: data.id });
+        } else if (data.status === "pending") {
           if (data.requester_id === user.id) {
             setNeighborStatus({
-              status: 'pending_sent',
+              status: "pending_sent",
               relationshipId: data.id,
             });
           } else {
             setNeighborStatus({
-              status: 'pending_received',
+              status: "pending_received",
               relationshipId: data.id,
             });
           }
         } else {
-          setNeighborStatus({ status: 'none' });
+          setNeighborStatus({ status: "none" });
         }
       }
     } catch (err) {
-      console.error('Failed to check neighbor status:', err);
+      console.error("Failed to check neighbor status:", err);
     }
   };
 
@@ -125,27 +127,27 @@ const PublicNeighborProfilePage = () => {
     try {
       setActionLoading(true);
 
-      const { error } = await supabase.from('neighbor_relationships').insert({
+      const { error } = await supabase.from("neighbor_relationships").insert({
         requester_id: user.id,
         recipient_id: profile.id,
-        status: 'pending',
+        status: "pending",
       });
 
       if (error) {
-        if (error.code === '23505') {
-          setError('이미 이웃 요청을 보냈거나 이웃 관계입니다.');
+        if (error.code === "23505") {
+          setError("이미 이웃 요청을 보냈거나 이웃 관계입니다.");
         } else {
           throw error;
         }
         return;
       }
 
-      setNeighborStatus({ status: 'pending_sent' });
+      setNeighborStatus({ status: "pending_sent" });
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : '이웃 신청에 실패했습니다.'
+        err instanceof Error ? err.message : "이웃 신청에 실패했습니다.",
       );
-      console.error('Failed to send neighbor request:', err);
+      console.error("Failed to send neighbor request:", err);
     } finally {
       setActionLoading(false);
     }
@@ -158,21 +160,21 @@ const PublicNeighborProfilePage = () => {
       setActionLoading(true);
 
       const { error } = await supabase
-        .from('neighbor_relationships')
-        .update({ status: 'accepted' })
-        .eq('id', neighborStatus.relationshipId);
+        .from("neighbor_relationships")
+        .update({ status: "accepted" })
+        .eq("id", neighborStatus.relationshipId);
 
       if (error) throw error;
 
       setNeighborStatus({
-        status: 'accepted',
+        status: "accepted",
         relationshipId: neighborStatus.relationshipId,
       });
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : '이웃 요청 수락에 실패했습니다.'
+        err instanceof Error ? err.message : "이웃 요청 수락에 실패했습니다.",
       );
-      console.error('Failed to accept neighbor request:', err);
+      console.error("Failed to accept neighbor request:", err);
     } finally {
       setActionLoading(false);
     }
@@ -185,18 +187,18 @@ const PublicNeighborProfilePage = () => {
       setActionLoading(true);
 
       const { error } = await supabase
-        .from('neighbor_relationships')
-        .update({ status: 'declined' })
-        .eq('id', neighborStatus.relationshipId);
+        .from("neighbor_relationships")
+        .update({ status: "declined" })
+        .eq("id", neighborStatus.relationshipId);
 
       if (error) throw error;
 
-      setNeighborStatus({ status: 'none' });
+      setNeighborStatus({ status: "none" });
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : '이웃 요청 거절에 실패했습니다.'
+        err instanceof Error ? err.message : "이웃 요청 거절에 실패했습니다.",
       );
-      console.error('Failed to decline neighbor request:', err);
+      console.error("Failed to decline neighbor request:", err);
     } finally {
       setActionLoading(false);
     }
@@ -218,18 +220,18 @@ const PublicNeighborProfilePage = () => {
     } else {
       try {
         await navigator.clipboard.writeText(url);
-        alert('링크가 복사되었습니다.');
+        alert("링크가 복사되었습니다.");
       } catch (err) {
-        console.error('Failed to copy:', err);
+        console.error("Failed to copy:", err);
       }
     }
   };
 
   const formatJoinDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
+    return date.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
     });
   };
 
@@ -241,7 +243,7 @@ const PublicNeighborProfilePage = () => {
             이웃 신청을 하려면 로그인이 필요합니다.
           </p>
           <button
-            onClick={() => router.push('/auth/login')}
+            onClick={() => router.push("/auth/login")}
             className="px-6 py-2 bg-accent-400 text-white rounded-lg hover:bg-accent-500 transition-colors"
           >
             로그인
@@ -265,7 +267,7 @@ const PublicNeighborProfilePage = () => {
     }
 
     switch (neighborStatus.status) {
-      case 'none':
+      case "none":
         return (
           <button
             onClick={sendNeighborRequest}
@@ -273,11 +275,11 @@ const PublicNeighborProfilePage = () => {
             className="flex items-center space-x-2 px-6 py-3 bg-accent-400 text-white rounded-lg hover:bg-accent-500 disabled:opacity-50 transition-colors w-full justify-center hover:cursor-pointer"
           >
             <UserPlus className="w-5 h-5" />
-            <span>{actionLoading ? '신청 중...' : '이웃 신청'}</span>
+            <span>{actionLoading ? "신청 중..." : "이웃 신청"}</span>
           </button>
         );
 
-      case 'pending_sent':
+      case "pending_sent":
         return (
           <div className="text-center py-4">
             <div className="inline-flex items-center space-x-2 px-6 py-3 bg-accent-100 text-accent-800 rounded-lg hover:cursor-not-allowed">
@@ -287,7 +289,7 @@ const PublicNeighborProfilePage = () => {
           </div>
         );
 
-      case 'pending_received':
+      case "pending_received":
         return (
           <div className="space-y-3">
             <p className="text-center text-gray-700">
@@ -314,7 +316,7 @@ const PublicNeighborProfilePage = () => {
           </div>
         );
 
-      case 'accepted':
+      case "accepted":
         return (
           <div className="space-y-3">
             <div className="text-center py-4">
@@ -324,7 +326,7 @@ const PublicNeighborProfilePage = () => {
               </div>
             </div>
             <button
-              onClick={() => router.push('/my/neighbors')}
+              onClick={() => router.push("/my/neighbors")}
               className="w-full px-4 py-2 bg-accent-400 text-white rounded-lg hover:bg-accent-500 transition-colors hover:cursor-pointer"
             >
               이웃 목록 보기
@@ -360,7 +362,7 @@ const PublicNeighborProfilePage = () => {
             프로필을 찾을 수 없습니다.
           </h2>
           <p className="text-red-600 mb-6">
-            {error || '존재하지 않는 사용자입니다.'}
+            {error || "존재하지 않는 사용자입니다."}
           </p>
           <button
             onClick={() => router.back()}

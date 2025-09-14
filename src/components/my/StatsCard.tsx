@@ -3,19 +3,19 @@ const StatsCard = ({
   label,
   value,
   subtext,
-  color = 'blue',
+  color = "blue",
 }: {
   icon: React.ReactNode;
   label: string;
   value: number;
   subtext?: string;
-  color?: 'blue' | 'green' | 'orange' | 'purple';
+  color?: "blue" | "green" | "orange" | "purple";
 }) => {
   const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    orange: 'bg-orange-50 text-orange-600',
-    purple: 'bg-purple-50 text-purple-600',
+    blue: "bg-blue-50 text-blue-600",
+    green: "bg-green-50 text-green-600",
+    orange: "bg-orange-50 text-orange-600",
+    purple: "bg-purple-50 text-purple-600",
   };
 
   return (

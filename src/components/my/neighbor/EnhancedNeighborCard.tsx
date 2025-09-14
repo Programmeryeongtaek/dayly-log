@@ -1,8 +1,8 @@
-import { NeighborInfo } from '@/types/my';
-import { Eye, Trash2, Users } from 'lucide-react';
-import { useState } from 'react';
-import NeighborProfileModal from './NeighborProfileModal';
-import { useRouter } from 'next/navigation';
+import { NeighborInfo } from "@/types/my";
+import { Eye, Trash2, Users } from "lucide-react";
+import { useState } from "react";
+import NeighborProfileModal from "./NeighborProfileModal";
+import { useRouter } from "next/navigation";
 
 interface EnhancedNeighborCardProps {
   neighbor: NeighborInfo;

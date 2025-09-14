@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Save, X } from 'lucide-react';
-import { useState } from 'react';
+import { Save, X } from "lucide-react";
+import { useState } from "react";
 
 const NicknameEditForm = ({
   currentNickname,
@@ -14,7 +14,7 @@ const NicknameEditForm = ({
   onCancel: () => void;
   loading: boolean;
 }) => {
-  const [nickname, setNickname] = useState(currentNickname || '');
+  const [nickname, setNickname] = useState(currentNickname || "");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +46,7 @@ const NicknameEditForm = ({
           className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
-          <span>{loading ? '저장 중...' : '저장'}</span>
+          <span>{loading ? "저장 중..." : "저장"}</span>
         </button>
         <button
           type="button"

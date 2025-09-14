@@ -13,7 +13,7 @@ export interface NeighborRelationship {
   id: string;
   requester_id: string;
   recipient_id: string;
-  status: 'pending' | 'accepted' | 'declined' | 'blocked';
+  status: "pending" | "accepted" | "declined" | "blocked";
   created_at: string;
   updated_at: string;
 }
@@ -25,7 +25,7 @@ export interface NeighborRequest {
   requester_name: string;
   requester_nickname: string;
   created_at: string;
-  status: 'pending' | 'accepted' | 'declined' | 'blocked';
+  status: "pending" | "accepted" | "declined" | "blocked";
 }
 
 // 이웃 정보 (상세 정보 포함)
@@ -48,7 +48,7 @@ export interface NeighborProfile {
   last_active: string;
 }
 
-export interface DomainStats  {
+export interface DomainStats {
   gratitude: number;
   reflection: number;
   daily: number;
@@ -59,7 +59,7 @@ export interface DomainStats  {
 // NeighborPost 타입 정의
 export interface NeighborPost {
   id: string;
-  type: 'reflection' | 'question';
+  type: "reflection" | "question";
   title: string;
   content: string;
   date: string;
@@ -93,7 +93,7 @@ export interface ReflectionItem {
 
 export interface ReflectionCategory {
   id: string;
-  name: 'gratitude' | 'reflection';
+  name: "gratitude" | "reflection";
   display_name: string;
   description?: string;
   created_at: string;
@@ -134,7 +134,7 @@ export interface QuestionItem {
 
 export interface QuestionCategory {
   id: string;
-  name: 'daily' | 'growth' | 'custom';
+  name: "daily" | "growth" | "custom";
   display_name: string;
   description?: string;
   created_at: string;
@@ -161,7 +161,7 @@ export interface QuestionKeywordRelation {
 export interface ScrapItem {
   id: string;
   user_id: string;
-  content_type: 'reflection' | 'question';
+  content_type: "reflection" | "question";
   content_id: string;
   scraped_at: string;
   created_at: string;
@@ -171,7 +171,7 @@ export interface ScrapItem {
 export interface ScrapWithContent {
   id: string;
   user_id: string;
-  content_type: 'reflection' | 'question';
+  content_type: "reflection" | "question";
   scraped_at: string;
   author: {
     id: string;
@@ -251,21 +251,21 @@ export interface NeighborRequestData {
 
 export interface NeighborActionData {
   request_id: string;
-  action: 'accept' | 'decline' | 'block';
+  action: "accept" | "decline" | "block";
 }
 
 export interface ScrapCreateData {
-  content_type: 'reflection' | 'question';
+  content_type: "reflection" | "question";
   content_id: string;
 }
 
 export interface SearchParams {
   query?: string;
-  content_type?: 'all' | 'reflections' | 'questions';
+  content_type?: "all" | "reflections" | "questions";
   date_from?: string;
   date_to?: string;
   category?: string;
-  sort_by?: 'latest' | 'oldest' | 'content_date';
+  sort_by?: "latest" | "oldest" | "content_date";
   limit?: number;
   offset?: number;
 }

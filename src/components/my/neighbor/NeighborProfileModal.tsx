@@ -1,5 +1,5 @@
-import { useNeighborProfile } from '@/hooks/my/useNeighborProfile';
-import { usePublicProfile } from '@/hooks/my/usePublicProfile';
+import { useNeighborProfile } from "@/hooks/my/useNeighborProfile";
+import { usePublicProfile } from "@/hooks/my/usePublicProfile";
 import {
   BookOpen,
   Calendar,
@@ -9,8 +9,8 @@ import {
   User,
   Users,
   X,
-} from 'lucide-react';
-import { useEffect } from 'react';
+} from "lucide-react";
+import { useEffect } from "react";
 
 interface NeighborProfileModalProps {
   isOpen: boolean;
@@ -34,7 +34,7 @@ const NeighborProfileModal = ({
 
   const publicProfileResult = usePublicProfile(
     neighborId,
-    isOpen && !isNeighbor
+    isOpen && !isNeighbor,
   );
 
   // 현재 상태에 맞는 결과 선택
@@ -51,19 +51,19 @@ const NeighborProfileModal = ({
   // ESC 키로 모달 닫기
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscapeKey);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
@@ -85,7 +85,7 @@ const NeighborProfileModal = ({
         {/* 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-accent-500">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isNeighbor ? '이웃 프로필' : '프로필 미리보기'}
+            {isNeighbor ? "이웃 프로필" : "프로필 미리보기"}
           </h2>
           <button
             onClick={onClose}
@@ -148,7 +148,7 @@ const NeighborProfileModal = ({
                   <div className="flex items-center space-x-1 text-sm text-gray-500 mt-1">
                     <Calendar className="w-4 h-4" />
                     <span>
-                      {new Date(profile.created_at).toLocaleDateString('ko-KR')}{' '}
+                      {new Date(profile.created_at).toLocaleDateString("ko-KR")}{" "}
                       가입
                     </span>
                   </div>
@@ -214,7 +214,7 @@ const NeighborProfileModal = ({
                       >
                         <div className="flex items-start space-x-3">
                           <div className="flex-shrink-0">
-                            {activity.type === 'reflection' ? (
+                            {activity.type === "reflection" ? (
                               <BookOpen className="w-4 h-4 text-accent-600 mt-1" />
                             ) : (
                               <MessageCircleQuestion className="w-4 h-4 text-blue-600 mt-1" />
@@ -231,7 +231,7 @@ const NeighborProfileModal = ({
                               <Calendar className="w-3 h-3" />
                               <span>
                                 {new Date(activity.date).toLocaleDateString(
-                                  'ko-KR'
+                                  "ko-KR",
                                 )}
                               </span>
                             </div>
@@ -250,8 +250,8 @@ const NeighborProfileModal = ({
                   </div>
                   <p className="text-gray-600">
                     {isNeighbor
-                      ? '아직 활동이 없습니다.'
-                      : '아직 공개된 활동이 없습니다.'}
+                      ? "아직 활동이 없습니다."
+                      : "아직 공개된 활동이 없습니다."}
                   </p>
                 </div>
               )}

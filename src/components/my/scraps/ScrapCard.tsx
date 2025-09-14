@@ -4,8 +4,8 @@ import {
   ExternalLink,
   MessageCircleQuestion,
   Trash2,
-} from 'lucide-react';
-import KeywordChip from './KeywordChip';
+} from "lucide-react";
+import KeywordChip from "./KeywordChip";
 
 const ScrapCard = ({
   scrap,
@@ -15,7 +15,7 @@ const ScrapCard = ({
 }: {
   scrap: {
     id: string;
-    content_type: 'reflection' | 'question';
+    content_type: "reflection" | "question";
     scraped_at: string;
     author: {
       id: string;
@@ -44,7 +44,7 @@ const ScrapCard = ({
   <div className="p-4 bg-white border rounded-lg hover:shadow-md transition-shadow hover:border-accent-500">
     <div className="flex items-center justify-between mb-4">
       <div className="flex gap-2 items-center">
-        {scrap.content_type === 'reflection' ? (
+        {scrap.content_type === "reflection" ? (
           <div className="p-2 bg-blue-50 rounded-lg">
             <BookOpen className="w-5 h-5 text-blue-600" />
           </div>
@@ -92,7 +92,7 @@ const ScrapCard = ({
 
     <p className="text-gray-700 mb-4 line-clamp-3">{scrap.content.content}</p>
 
-    {scrap.content_type === 'question' && scrap.content.answer && (
+    {scrap.content_type === "question" && scrap.content.answer && (
       <div className="bg-accent-50 p-3 rounded mb-4">
         <p className="text-sm font-medium text-gray-700 mb-1">답변:</p>
         <p className="text-gray-600 line-clamp-2">{scrap.content.answer}</p>

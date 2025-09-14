@@ -1,28 +1,28 @@
-import { NeighborPostCardProps } from '@/types/my';
-import { Calendar, CheckCircle, HelpCircle, Tag } from 'lucide-react';
+import { NeighborPostCardProps } from "@/types/my";
+import { Calendar, CheckCircle, HelpCircle, Tag } from "lucide-react";
 
 const NeighborPostCard = ({ post }: NeighborPostCardProps) => {
   const isQuestion =
-    post.category_name === 'daily' ||
-    post.category_name === 'growth' ||
-    post.category_name === 'custom';
+    post.category_name === "daily" ||
+    post.category_name === "growth" ||
+    post.category_name === "custom";
 
   const getDomainColor = (category: string) => {
     const colors = {
-      gratitude: 'text-orange-600 bg-orange-50 border-orange-200',
-      reflection: 'text-blue-600 bg-blue-50 border-blue-200',
-      daily: 'text-green-600 bg-green-50 border-green-200',
-      growth: 'text-purple-600 bg-purple-50 border-purple-200',
-      custom: 'text-indigo-600 bg-indigo-50 border-indigo-200',
+      gratitude: "text-orange-600 bg-orange-50 border-orange-200",
+      reflection: "text-blue-600 bg-blue-50 border-blue-200",
+      daily: "text-green-600 bg-green-50 border-green-200",
+      growth: "text-purple-600 bg-purple-50 border-purple-200",
+      custom: "text-indigo-600 bg-indigo-50 border-indigo-200",
     };
     return (
       colors[category as keyof typeof colors] ||
-      'text-gray-600 bg-gray-50 border-gray-200'
+      "text-gray-600 bg-gray-50 border-gray-200"
     );
   };
 
   const getDomainIcon = (category: string) => {
-    if (category === 'gratitude' || category === 'reflection') {
+    if (category === "gratitude" || category === "reflection") {
       return null; // 회고는 아이콘 없음
     }
     return post.is_answered ? (
@@ -34,10 +34,10 @@ const NeighborPostCard = ({ post }: NeighborPostCardProps) => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return date.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 

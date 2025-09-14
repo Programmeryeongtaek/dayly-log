@@ -1,10 +1,14 @@
-import { supabase } from '@/lib/supabase';
-import { PostsFilters, QuestionWithKeywords, ReflectionWithKeywords } from '@/types/my';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { supabase } from "@/lib/supabase";
+import {
+  PostsFilters,
+  QuestionWithKeywords,
+  ReflectionWithKeywords,
+} from "@/types/my";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 type PostItem = (ReflectionWithKeywords | QuestionWithKeywords) & {
-  type: 'reflection' | 'question';
+  type: "reflection" | "question";
 };
 
 export const useMyPosts = () => {
@@ -16,104 +20,122 @@ export const useMyPosts = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [filters, setFilters] = useState<PostsFilters>({
-    tab: 'all',
-    search: '',
-    sort: 'latest',
+    tab: "all",
+    search: "",
+    sort: "latest",
   });
 
   const ITEMS_PER_PAGE = 20;
 
-  const fetchPosts = useCallback(async (loadMore = false) => {
-    try {
-      setLoading(true);
-      
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
-      if (!user) throw new Error('인증이 필요합니다.');
+  const fetchPosts = useCallback(
+    async (loadMore = false) => {
+      try {
+        setLoading(true);
 
-      const offset = loadMore ? (currentPage + 1) * ITEMS_PER_PAGE : 0;
-      const limit = ITEMS_PER_PAGE;
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        if (userError) throw userError;
+        if (!user) throw new Error("인증이 필요합니다.");
 
-      // 회고 데이터 가져오기
-      const { data: reflectionsData, error: reflectionsError } = await supabase
-        .from('reflections_with_keywords')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('date', { ascending: filters.sort === 'oldest' })
-        .range(offset, offset + limit - 1);
+        const offset = loadMore ? (currentPage + 1) * ITEMS_PER_PAGE : 0;
+        const limit = ITEMS_PER_PAGE;
 
-      if (reflectionsError) throw reflectionsError;
+        // 회고 데이터 가져오기
+        const { data: reflectionsData, error: reflectionsError } =
+          await supabase
+            .from("reflections_with_keywords")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("date", { ascending: filters.sort === "oldest" })
+            .range(offset, offset + limit - 1);
 
-      // 질문 데이터 가져오기
-      const { data: questionsData, error: questionsError } = await supabase
-        .from('questions_with_keywords')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('date', { ascending: filters.sort === 'oldest' })
-        .range(offset, offset + limit - 1);
+        if (reflectionsError) throw reflectionsError;
 
-      if (questionsError) throw questionsError;
+        // 질문 데이터 가져오기
+        const { data: questionsData, error: questionsError } = await supabase
+          .from("questions_with_keywords")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("date", { ascending: filters.sort === "oldest" })
+          .range(offset, offset + limit - 1);
 
-      // 데이터 변환
-      const reflections = (reflectionsData || []).map(r => ({...r, type: 'reflection' as const }));
-      const questions = (questionsData || []).map(q => ({...q, type: 'question' as const }));
-      await new Promise(resolve => setTimeout(resolve, 500));
+        if (questionsError) throw questionsError;
 
-      // 전체 데이터 결합 및 정렬
-      const combinedPosts = [...reflections, ...questions];
-      combinedPosts.sort((a, b) => {
-        if (filters.sort === 'latest') {
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        // 데이터 변환
+        const reflections = (reflectionsData || []).map((r) => ({
+          ...r,
+          type: "reflection" as const,
+        }));
+        const questions = (questionsData || []).map((q) => ({
+          ...q,
+          type: "question" as const,
+        }));
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // 전체 데이터 결합 및 정렬
+        const combinedPosts = [...reflections, ...questions];
+        combinedPosts.sort((a, b) => {
+          if (filters.sort === "latest") {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          } else {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          }
+        });
+
+        if (loadMore) {
+          setAllPosts((prev) => [...prev, ...combinedPosts]);
+          setCurrentPage((prev) => prev + 1);
         } else {
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
+          setAllPosts(combinedPosts);
+          setCurrentPage(0);
         }
-      });
 
-      if (loadMore) {
-        setAllPosts(prev => [...prev, ...combinedPosts]);
-        setCurrentPage(prev => prev + 1);
-      } else {
-        setAllPosts(combinedPosts);
-        setCurrentPage(0);
+        // 더 보기 가능 여부 확인
+        setHasMore(combinedPosts.length === ITEMS_PER_PAGE);
+        setError(null);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "게시글을 불러오는데 실패했습니다.",
+        );
+        console.error("Failed to fetch posts:", err);
+      } finally {
+        setLoading(false);
       }
-
-      // 더 보기 가능 여부 확인
-      setHasMore(combinedPosts.length === ITEMS_PER_PAGE);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '게시글을 불러오는데 실패했습니다.');
-      console.error('Failed to fetch posts:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters.sort, currentPage]);
+    },
+    [filters.sort, currentPage],
+  );
 
   // 필터링된 게시글 계산
   const filteredPosts = useCallback(() => {
     let filtered = allPosts;
 
     // 탭 필터링
-    if (filters.tab === 'reflections') {
-      filtered = allPosts.filter(post => post.type === 'reflection');
-    } else if (filters.tab === 'questions') {
-      filtered = allPosts.filter(post => post.type === 'question');
+    if (filters.tab === "reflections") {
+      filtered = allPosts.filter((post) => post.type === "reflection");
+    } else if (filters.tab === "questions") {
+      filtered = allPosts.filter((post) => post.type === "question");
     }
 
     // 검색 필터링
-if (filters.search.trim()) {
+    if (filters.search.trim()) {
       const searchTerm = filters.search.toLowerCase();
-      filtered = filtered.filter(post => 
-        post.title?.toLowerCase().includes(searchTerm) ||
-        post.content?.toLowerCase().includes(searchTerm) ||
-        post.keywords?.some(keyword => 
-          keyword.name.toLowerCase().includes(searchTerm)
-        )
+      filtered = filtered.filter(
+        (post) =>
+          post.title?.toLowerCase().includes(searchTerm) ||
+          post.content?.toLowerCase().includes(searchTerm) ||
+          post.keywords?.some((keyword) =>
+            keyword.name.toLowerCase().includes(searchTerm),
+          ),
       );
     }
 
     return filtered;
   }, [allPosts, filters.tab, filters.search]);
-  
+
   // 필터 변경 시 게시글 업데이트
   useEffect(() => {
     setPosts(filteredPosts());
@@ -121,12 +143,12 @@ if (filters.search.trim()) {
 
   const totalCounts = {
     all: allPosts.length,
-    reflections: allPosts.filter(post => post.type === 'reflection').length,
-    questions: allPosts.filter(post => post.type === 'question').length,
+    reflections: allPosts.filter((post) => post.type === "reflection").length,
+    questions: allPosts.filter((post) => post.type === "question").length,
   };
 
   const updateFilters = useCallback((newFilters: Partial<PostsFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
 
     // 검색어나 탭이 변경되면 다시 로드
     if (newFilters.search !== undefined || newFilters.tab !== undefined) {
@@ -142,33 +164,43 @@ if (filters.search.trim()) {
     }
   }, [loading, hasMore, fetchPosts]);
 
-  const editPost = useCallback((type: 'reflection' | 'question', id: string) => {
-    router.push(`/${type === 'reflection' ? 'reflections' : 'questions'}/${id}/edit`);
-  }, [router]);
+  const editPost = useCallback(
+    (type: "reflection" | "question", id: string) => {
+      router.push(
+        `/${type === "reflection" ? "reflections" : "questions"}/${id}/edit`,
+      );
+    },
+    [router],
+  );
 
-  const deletePost = useCallback(async (type: 'reflection' | 'question', id: string) => {
-    try {
-      setLoading(true);
+  const deletePost = useCallback(
+    async (type: "reflection" | "question", id: string) => {
+      try {
+        setLoading(true);
 
-      const tableName = type === 'reflection' ? 'reflections' : 'questions';
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', id);
+        const tableName = type === "reflection" ? "reflections" : "questions";
+        const { error } = await supabase.from(tableName).delete().eq("id", id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // 로컬 상태에서도 제거
-      setAllPosts(prev => prev.filter(post => !(post.type === type && post.id === id)));
-      setPosts(prev => prev.filter(post => !(post.type === type && post.id === id)));
-
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '게시글 삭제에 실패했습니다.');
-      console.error('Failed to delete post:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        // 로컬 상태에서도 제거
+        setAllPosts((prev) =>
+          prev.filter((post) => !(post.type === type && post.id === id)),
+        );
+        setPosts((prev) =>
+          prev.filter((post) => !(post.type === type && post.id === id)),
+        );
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "게시글 삭제에 실패했습니다.",
+        );
+        console.error("Failed to delete post:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   const refresh = useCallback(() => {
     setCurrentPage(0);
@@ -179,7 +211,7 @@ if (filters.search.trim()) {
 
   // 초기 로드 및 필터 변경시 데이터 가져오기
   useEffect(() => {
-    if (filters.search === '' || filters.search.length >= 2) {
+    if (filters.search === "" || filters.search.length >= 2) {
       // 검색어가 없어가 2글자 이상일 때만 검색
       refresh();
     }
@@ -188,7 +220,7 @@ if (filters.search.trim()) {
   // 검색어 변경시 디바운스 적용
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (filters.search === '' || filters.search.length >= 2) {
+      if (filters.search === "" || filters.search.length >= 2) {
         refresh();
       }
     }, 300);
