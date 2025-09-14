@@ -5,12 +5,14 @@ const MenuCard = ({
   title,
   count,
   badge,
+  unit = '개',
   onClick,
 }: {
   icon: React.ReactNode;
   title: string;
   count?: number;
   badge?: number;
+  unit?: string;
   onClick: () => void;
 }) => (
   <div
@@ -32,7 +34,10 @@ const MenuCard = ({
       </div>
     </div>
     {count !== undefined && (
-      <div className="text-2xl font-bold text-gray-900">{count}개</div>
+      <div className="text-2xl font-bold text-gray-900">
+        {count}
+        {unit}
+      </div>
     )}
   </div>
 );

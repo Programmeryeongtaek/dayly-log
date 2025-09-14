@@ -111,7 +111,7 @@ const MyPage = () => {
                 </div>
                 <div className="flex flex-col items-center font-bold text-2xl text-gray-900">
                   {stats.total_reflections}
-                  <p className="text-sm text-gray-600">전체 회고</p>
+                  <p className="text-sm text-gray-600">회고</p>
                 </div>
               </div>
 
@@ -121,7 +121,17 @@ const MyPage = () => {
                 </div>
                 <div className="flex flex-col items-center text-2xl font-bold text-gray-900">
                   {stats.total_questions}
-                  <p className="text-sm text-gray-600">전체 질문</p>
+                  <p className="text-sm text-gray-600">질문</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-12 h-12 bg-accent-100 rounded-full">
+                  <Users className="w-6 h-6 text-accent-600" />
+                </div>
+                <div className="flex flex-col items-center text-2xl font-bold text-gray-900">
+                  {stats.total_questions}
+                  <p className="text-sm text-gray-600">이웃</p>
                 </div>
               </div>
             </div>
@@ -129,11 +139,11 @@ const MyPage = () => {
         </div>
 
         {/* 이번 주 통계 */}
-        <div className="">
+        <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             이번 주 활동
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <StatsCard
               icon={<FileText className="w-5 h-5" />}
               label="새 글"
@@ -172,8 +182,9 @@ const MyPage = () => {
           <MenuCard
             icon={<Users className="w-6 h-6 text-blue-600" />}
             title="이웃 관리"
-            count={stats.total_neighbors}
-            badge={stats.pending_requests}
+            count={stats.totalNeighbors}
+            badge={stats.pendingRequests}
+            unit="명"
             onClick={handleNavigateToNeighbors}
           />
 

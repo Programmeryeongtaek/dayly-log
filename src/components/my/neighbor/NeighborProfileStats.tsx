@@ -47,20 +47,20 @@ const NeighborProfileStats = ({
   const getColorClasses = (color: string, isActive: boolean) => {
     const colorMap = {
       orange: isActive
-        ? 'bg-orange-100 border-orange-500 text-orange-700'
-        : 'bg-white border-orange-200 text-orange-600 hover:bg-orange-50',
+        ? 'bg-orange-100 border-orange-500 text-orange-700 hover:cursor-pointer '
+        : 'bg-white border-orange-200 text-orange-600 hover:bg-orange-50 hover:cursor-pointer',
       blue: isActive
-        ? 'bg-blue-100 border-blue-500 text-blue-700'
-        : 'bg-white border-blue-200 text-blue-600 hover:bg-blue-50',
+        ? 'bg-blue-100 border-blue-500 text-blue-700 hover:cursor-pointer'
+        : 'bg-white border-blue-200 text-blue-600 hover:bg-blue-50 hover:cursor-pointer',
       green: isActive
-        ? 'bg-green-100 border-green-500 text-green-700'
-        : 'bg-white border-green-200 text-green-600 hover:bg-green-50',
+        ? 'bg-green-100 border-green-500 text-green-700 hover:cursor-pointer'
+        : 'bg-white border-green-200 text-green-600 hover:bg-green-50 hover:cursor-pointer',
       purple: isActive
-        ? 'bg-purple-100 border-purple-500 text-purple-700'
-        : 'bg-white border-purple-200 text-purple-600 hover:bg-purple-50',
+        ? 'bg-purple-100 border-purple-500 text-purple-700 hover:cursor-pointer'
+        : 'bg-white border-purple-200 text-purple-600 hover:bg-purple-50 hover:cursor-pointer',
       indigo: isActive
-        ? 'bg-indigo-100 border-indigo-500 text-indigo-700'
-        : 'bg-white border-indigo-200 text-indigo-600 hover:bg-indigo-50',
+        ? 'bg-indigo-100 border-indigo-500 text-indigo-700 hover:cursor-pointer'
+        : 'bg-white border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:cursor-pointer',
     };
     return colorMap[color as keyof typeof colorMap] || colorMap.blue;
   };
@@ -75,8 +75,8 @@ const NeighborProfileStats = ({
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
         <div className="text-gray-500">
           <Coffee className="w-12 h-12 mx-auto mb-3 opacity-50" />
-          <p className="text-lg font-medium mb-1">공개된 게시글이 없습니다</p>
-          <p className="text-sm">이웃이 아직 공개 설정한 게시글이 없어요</p>
+          <p className="text-lg font-medium mb-1">공개된 게시글이 없습니다.</p>
+          <p className="text-sm">아직 공개 설정한 게시글이 없어요.</p>
         </div>
       </div>
     );
@@ -86,7 +86,7 @@ const NeighborProfileStats = ({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">공개된 게시글</h3>
-        <span className="text-sm text-gray-500">총 {totalCount}개</span>
+        <span className="text-sm text-accent-500">총 {totalCount}개</span>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -130,22 +130,6 @@ const NeighborProfileStats = ({
             </button>
           );
         })}
-      </div>
-
-      {/* 도메인별 상세 정보 */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <div className="flex items-center space-x-2 mb-2">
-          {domainConfigs.find((d) => d.key === activeDomain)?.icon}
-          <span className="font-medium text-gray-900">
-            {domainConfigs.find((d) => d.key === activeDomain)?.label}
-          </span>
-          <span className="text-sm text-gray-500">
-            ({activeDomain ? stats[activeDomain] : 0}개)
-          </span>
-        </div>
-        <p className="text-sm text-gray-600">
-          {domainConfigs.find((d) => d.key === activeDomain)?.description}
-        </p>
       </div>
     </div>
   );

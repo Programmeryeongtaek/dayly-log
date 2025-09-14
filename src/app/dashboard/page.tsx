@@ -172,10 +172,10 @@ const DashboardPage = () => {
         {/* 환영 메시지 */}
         <div className="bg-gradient-to-r flex flex-col gap-1 from-accent-600 to-accent-500 text-white rounded-xl p-6">
           <h1 className="text-2xl font-bold mb-2">
-            안녕하세요, {profile?.name || profile?.nickname || "사용자"}님!
+            안녕하세요, {profile?.name || profile?.nickname || '사용자'}님!
           </h1>
           <p className="text-accent-100 text-lg">
-            {format(currentDate, "yyyy년 M월", { locale: ko })} 현황
+            {format(currentDate, 'yyyy년 M월', { locale: ko })} 현황
           </p>
         </div>
 
@@ -189,7 +189,7 @@ const DashboardPage = () => {
               <Plus className="w-6 h-6 text-white" />
             </div>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              가계부 내역
+              가계부 작성
             </span>
           </Link>
 
@@ -201,7 +201,7 @@ const DashboardPage = () => {
               <Target className="w-6 h-6 text-white" />
             </div>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              목표 설정
+              목표 작성
             </span>
           </Link>
 
@@ -213,9 +213,9 @@ const DashboardPage = () => {
               <MessageSquare className="w-6 h-6 text-white" />
             </div>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              성찰 질문
+              질문 작성
             </span>
-          </Link>
+          </button>
 
           <Link
             href="/reflections/new"
@@ -225,7 +225,7 @@ const DashboardPage = () => {
               <Calendar className="w-6 h-6 text-white" />
             </div>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              일상 회고
+              회고 작성
             </span>
           </Link>
         </div>
@@ -356,12 +356,12 @@ const DashboardPage = () => {
                         <div className="flex items-center gap-2">
                           <div
                             className={`p-1 rounded ${
-                              goal.type === "increase_income"
-                                ? "bg-green-100 text-green-600"
-                                : "bg-red-100 text-red-600"
+                              goal.type === 'increase_income'
+                                ? 'bg-green-100 text-green-600'
+                                : 'bg-red-100 text-red-600'
                             }`}
                           >
-                            {goal.type === "increase_income" ? (
+                            {goal.type === 'increase_income' ? (
                               <TrendingUp className="w-3 h-3" />
                             ) : (
                               <TrendingDown className="w-3 h-3" />
@@ -382,8 +382,8 @@ const DashboardPage = () => {
                         <div
                           className={`h-2 rounded-full transition-all duration-300 ${
                             goal.progress.isComplete
-                              ? "bg-green-500"
-                              : "bg-green-500"
+                              ? 'bg-green-500'
+                              : 'bg-green-500'
                           }`}
                           style={{
                             width: `${Math.min(100, goal.progress.overallProgress)}%`,
