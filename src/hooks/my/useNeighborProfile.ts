@@ -27,17 +27,10 @@ interface UseNeighborProfileParams {
   enabled?: boolean;
 }
 
-interface UseNeighborProfileReturn {
-  profile: NeighborProfileData | null;
-  loading: boolean;
-  error: string | null;
-  refetch: () => Promise<void>;
-}
-
 export const useNeighborProfile = ({ 
   neighborId, 
   enabled = true 
-}: UseNeighborProfileParams): UseNeighborProfileReturn => {
+}: UseNeighborProfileParams) => {
   const [profile, setProfile] = useState<NeighborProfileData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
