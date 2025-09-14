@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useReflections } from "@/hooks/reflections/useReflections";
-import { useEffect, useMemo, useState } from "react";
-import Modal from "../common/Modal";
+import { useReflections } from '@/hooks/reflections/useReflections';
+import { useEffect, useMemo, useState } from 'react';
+import Modal from '../common/Modal';
 import {
   ChevronLeft,
   ChevronRight,
@@ -10,9 +10,9 @@ import {
   Heart,
   Lightbulb,
   X,
-} from "lucide-react";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
+} from 'lucide-react';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 interface KeywordReflectionsModalProps {
   isOpen: boolean;
@@ -41,14 +41,14 @@ const KeywordReflectionsModal = ({
   const { keywordReflections, gratitudeReflections, reflectionReflections } =
     useMemo(() => {
       const filtered = reflections.filter((reflection) =>
-        reflection.keywords?.some((keyword) => keyword.name === keywordName),
+        reflection.keywords?.some((keyword) => keyword.name === keywordName)
       );
 
       const gratitude = filtered.filter(
-        (r) => r.category?.name === "gratitude",
+        (r) => r.category?.name === 'gratitude'
       );
       const reflection = filtered.filter(
-        (r) => r.category?.name === "reflection",
+        (r) => r.category?.name === 'reflection'
       );
 
       return {
@@ -64,13 +64,13 @@ const KeywordReflectionsModal = ({
   // 네비게이션 핸들러
   const handlePrevious = () => {
     setCurrentIndex((prev) =>
-      prev === 0 ? keywordReflections.length - 1 : prev - 1,
+      prev === 0 ? keywordReflections.length - 1 : prev - 1
     );
   };
 
   const handleNext = () => {
     setCurrentIndex((prev) =>
-      prev === keywordReflections.length - 1 ? 0 : prev + 1,
+      prev === keywordReflections.length - 1 ? 0 : prev + 1
     );
   };
 
@@ -84,20 +84,20 @@ const KeywordReflectionsModal = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
 
-      if (e.key === "ArrowLeft") {
+      if (e.key === 'ArrowLeft') {
         e.preventDefault();
         handlePrevious();
-      } else if (e.key === "ArrowRight") {
+      } else if (e.key === 'ArrowRight') {
         e.preventDefault();
         handleNext();
-      } else if (e.key === "Escape") {
+      } else if (e.key === 'Escape') {
         e.preventDefault();
         handleClose();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
   // 모달이 열릴 때 인덱스 초기화
@@ -116,7 +116,7 @@ const KeywordReflectionsModal = ({
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
         <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
           {/* 헤더 */}
-          <div className="flex flex-col p-4 border-b border-gray-200">
+          <div className="flex flex-col p-4 border-b border-accent-500">
             <div className="flex justify-between">
               <div className="flex items-center gap-2">
                 {/* 카테고리 통계 */}
@@ -144,7 +144,7 @@ const KeywordReflectionsModal = ({
                 <button
                   onClick={handlePrevious}
                   disabled={keywordReflections.length <= 1}
-                  className="hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="hover:text-accent-500 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:cursor-pointer"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
@@ -157,19 +157,21 @@ const KeywordReflectionsModal = ({
                 <button
                   onClick={handleNext}
                   disabled={keywordReflections.length <= 1}
-                  className="hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="hover:text-accent-500 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:cursor-pointer"
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
               </div>
 
-              <div className="flex items-center justify-end">
-                <span className="text-sm text-gray-500">
-                  {currentIndex + 1} / {keywordReflections.length}
-                </span>
+              <div className="flex items-center justify-end gap-1">
+                <p className="flex gap-2 text-md bg-accent-50 px-4 py-1 rounded-lg">
+                  <span>{currentIndex + 1}</span>
+                  <span>/</span>
+                  <span>{keywordReflections.length}</span>
+                </p>
                 <button
                   onClick={handleClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-accent-100 rounded-full text-accent-500 transition-colors hover:cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -182,7 +184,7 @@ const KeywordReflectionsModal = ({
             {/* 회고 타입과 날짜 */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                {currentReflection.category?.name === "gratitude" ? (
+                {currentReflection.category?.name === 'gratitude' ? (
                   <>
                     <Heart className="w-5 h-5 text-orange-600" />
                     <span className="text-orange-600 font-medium">감사</span>
@@ -195,7 +197,7 @@ const KeywordReflectionsModal = ({
                 )}
               </div>
               <span className="text-sm text-gray-500">
-                {format(new Date(currentReflection.date), "yyyy. MM. dd.", {
+                {format(new Date(currentReflection.date), 'yyyy. MM. dd.', {
                   locale: ko,
                 })}
               </span>
@@ -225,8 +227,8 @@ const KeywordReflectionsModal = ({
                         key={keyword.id}
                         className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                           keyword.name === keywordName
-                            ? "ring-2 ring-accent-500"
-                            : ""
+                            ? 'ring-2 ring-accent-500'
+                            : ''
                         }`}
                         style={{
                           backgroundColor: `${keyword.color}20`,
@@ -262,8 +264,8 @@ const KeywordReflectionsModal = ({
                       onClick={() => setCurrentIndex(index)}
                       className={`w-2 h-2 rounded-full transition-colors ${
                         index === currentIndex
-                          ? "bg-accent-600"
-                          : "bg-gray-300 hover:bg-gray-400"
+                          ? 'bg-accent-600'
+                          : 'bg-gray-300 hover:bg-gray-400'
                       }`}
                     />
                   ))}

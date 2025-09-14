@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useKeywords } from "@/hooks/reflections/useKeywords";
-import { useReflectionCategories } from "@/hooks/reflections/useReflectionCategories";
-import { Keyword } from "@/types/reflections";
-import { useMemo, useState } from "react";
-import Modal from "../common/Modal";
-import { Hash, Trash2, X } from "lucide-react";
+import { useKeywords } from '@/hooks/reflections/useKeywords';
+import { useReflectionCategories } from '@/hooks/reflections/useReflectionCategories';
+import { Keyword } from '@/types/reflections';
+import { useMemo, useState } from 'react';
+import Modal from '../common/Modal';
+import { Hash, Trash2, X } from 'lucide-react';
 
 interface KeywordManagementModalProps {
   isOpen: boolean;
@@ -21,12 +21,12 @@ const KeywordManagementModal = ({
   const { keywords, keywordStats, deleteKeyword, isLoading } =
     useKeywords(userId);
   const { gratitudeCategory, reflectionCategory } = useReflectionCategories();
-  const [selectedCategory] = useState<"all">("all");
+  const [selectedCategory] = useState<'all'>('all');
 
   // 카테고리별 크워드 분ㅇ류 및 사용되지 않는 키워드 필터링
   const { unusedKeywords } = useMemo(() => {
     const statsMap = new Map(
-      keywordStats.map((stat) => [stat.keyword.id, stat.usageCount]),
+      keywordStats.map((stat) => [stat.keyword.id, stat.usageCount])
     );
 
     const unused = keywords.filter((keyword) => {
@@ -36,10 +36,10 @@ const KeywordManagementModal = ({
 
     const categorized = {
       gratitude: unused.filter(
-        (k) => gratitudeCategory && k.category_id === gratitudeCategory.id,
+        (k) => gratitudeCategory && k.category_id === gratitudeCategory.id
       ),
       reflection: unused.filter(
-        (k) => reflectionCategory && k.category_id === reflectionCategory.id,
+        (k) => reflectionCategory && k.category_id === reflectionCategory.id
       ),
     };
 
@@ -56,7 +56,7 @@ const KeywordManagementModal = ({
       try {
         await deleteKeyword(keyword.id);
       } catch {
-        alert("키워드 삭제 중 오류가 발생했습니다.");
+        alert('키워드 삭제 중 오류가 발생했습니다.');
       }
     }
   };
@@ -65,7 +65,7 @@ const KeywordManagementModal = ({
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <div className="flex flex-col max-h-[80vh]">
         {/* 헤더 */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-accent-500">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gray-100 rounded-lg">
               <Hash className="w-5 h-5 text-accent-600" />
@@ -74,9 +74,9 @@ const KeywordManagementModal = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent-100 rounded-full transition-colors hover:cursor-pointer"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-accent-500" />
           </button>
         </div>
 
@@ -121,8 +121,8 @@ const KeywordManagementModal = ({
                     <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded ">
                       {gratitudeCategory &&
                       keyword.category_id === gratitudeCategory.id
-                        ? "감사"
-                        : "성찰"}
+                        ? '감사'
+                        : '성찰'}
                     </span>
                   </div>
                   <button
@@ -137,14 +137,14 @@ const KeywordManagementModal = ({
             </div>
           ) : (
             <div className="text-center py-12">
-              <Hash className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <Hash className="w-16 h-16 text-accent-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-600 mb-2">
                 삭제할 수 있는 키워드가 없습니다.
               </h3>
               <p className="text-gray-500">
-                {selectedCategory === "all"
-                  ? "모든 키워드가 사용 중입니다."
-                  : `${selectedCategory === "gratitude" ? "감사" : "성찰"} 카테고리에 사용되지 않은 키워드가 없습니다.`}
+                {selectedCategory === 'all'
+                  ? '모든 키워드가 사용 중입니다.'
+                  : `${selectedCategory === 'gratitude' ? '감사' : '성찰'} 카테고리에 사용되지 않은 키워드가 없습니다.`}
               </p>
             </div>
           )}

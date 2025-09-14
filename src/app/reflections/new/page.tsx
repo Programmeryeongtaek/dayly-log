@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import AuthGuard from "@/components/auth/AuthGuard";
-import ReflectionForm from "@/components/reflections/ReflectionForm";
-import { useAuth } from "@/hooks/auth";
-import { useReflections } from "@/hooks/reflections/useReflections";
-import { ReflectionFormData } from "@/types/reflections";
-import { ArrowLeft, BookOpen } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import AuthGuard from '@/components/auth/AuthGuard';
+import ReflectionForm from '@/components/reflections/ReflectionForm';
+import { useAuth } from '@/hooks/auth';
+import { useReflections } from '@/hooks/reflections/useReflections';
+import { ReflectionFormData } from '@/types/reflections';
+import { ArrowLeft, BookOpen } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const NewReflectionPage = () => {
   const router = useRouter();
@@ -27,18 +27,18 @@ const NewReflectionPage = () => {
       { ...formData, user_id: user.id },
       {
         onSuccess: () => {
-          router.push("/reflections");
+          router.push('/reflections');
         },
         onError: (error) => {
-          console.error("회고 작성 실패:", error);
-          setError("회고 작성 중 오류가 발생했습니다. 다시 시도해주세요.");
+          console.error('회고 작성 실패:', error);
+          setError('회고 작성 중 오류가 발생했습니다. 다시 시도해주세요.');
         },
-      },
+      }
     );
   };
 
   const handleCancel = () => {
-    if (confirm("작성을 취소하시겠습니까? 작성된 내용이 사라집니다.")) {
+    if (confirm('작성을 취소하시겠습니까? 작성된 내용이 사라집니다.')) {
       router.back();
     }
   };
@@ -50,7 +50,7 @@ const NewReflectionPage = () => {
           <div className="bg-white rounded-lg p-8 shadow-sm border">
             <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-600 mb-2">
-              로그인이 필요합니다
+              로그인이 필요합니다.
             </h3>
             <p className="text-gray-500 mb-6">
               회고를 작성하려면 먼저 로그인해주세요.
@@ -69,15 +69,15 @@ const NewReflectionPage = () => {
 
   return (
     <AuthGuard>
-      <div className="max-w-4xl mx-auto p-4 space-y-6">
+      <div className="flex flex-col gap-6 py-8 max-w-4xl mx-auto px-4">
         {/* 브레드크럼 네비게이션 */}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Link
-            href="/reflections"
-            className="flex items-center gap-1 hover:text-gray-900 transition-colors"
+        <div>
+          <button
+            onClick={router.back}
+            className="flex items-center transition-colors hover:text-accent-500 hover:cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
+            <ArrowLeft className="w-5 h-5" />
+          </button>
         </div>
 
         {/* 에러 메시지 */}

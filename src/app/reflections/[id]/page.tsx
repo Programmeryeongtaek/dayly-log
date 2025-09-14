@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import AuthGuard from "@/components/auth/AuthGuard";
-import { useAuth } from "@/hooks/auth";
-import { useReflections } from "@/hooks/reflections/useReflections";
-import { supabase } from "@/lib/supabase";
-import { ReflectionWithKeywords } from "@/types/reflections";
-import { format } from "date-fns";
+import AuthGuard from '@/components/auth/AuthGuard';
+import { useAuth } from '@/hooks/auth';
+import { useReflections } from '@/hooks/reflections/useReflections';
+import { supabase } from '@/lib/supabase';
+import { ReflectionWithKeywords } from '@/types/reflections';
+import { format } from 'date-fns';
 import {
   ArrowLeft,
   Calendar,
@@ -17,10 +17,10 @@ import {
   Share2,
   Trash2,
   User,
-} from "lucide-react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+} from 'lucide-react';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export interface KeywordRelation {
   keyword: {
@@ -43,7 +43,7 @@ const ReflectionDetailPage = () => {
   });
 
   const [reflection, setReflection] = useState<ReflectionWithKeywords | null>(
-    null,
+    null
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +56,7 @@ const ReflectionDetailPage = () => {
       try {
         setIsLoading(true);
         const { data, error } = await supabase
-          .from("reflections")
+          .from('reflections')
           .select(
             `
             *,
@@ -64,15 +64,15 @@ const ReflectionDetailPage = () => {
             keywords:reflection_keyword_relations(
               keyword:reflection_keywords(*)
             )
-          `,
+          `
           )
-          .eq("id", id)
+          .eq('id', id)
           .single();
 
         if (error) throw error;
 
         if (!data) {
-          setError("회고를 찾을 수 없습니다.");
+          setError('회고를 찾을 수 없습니다.');
           return;
         }
 
@@ -81,19 +81,19 @@ const ReflectionDetailPage = () => {
         const isPublic = data.is_public && data.is_neighbor_visible;
 
         if (!isOwn && !isPublic) {
-          setError("이 회고에 접근할 권한이 없습니다.");
+          setError('이 회고에 접근할 권한이 없습니다.');
           return;
         }
 
         // 데이터 변환
         const keywords =
           data.keywords?.map((rk: KeywordRelation) => rk.keyword) || [];
-        const effective_visibility: "public" | "neighbors" | "private" =
+        const effective_visibility: 'public' | 'neighbors' | 'private' =
           data.is_public && data.is_neighbor_visible
-            ? "public"
+            ? 'public'
             : data.is_public && !data.is_neighbor_visible
-              ? "neighbors"
-              : "private";
+              ? 'neighbors'
+              : 'private';
 
         setReflection({
           ...data,
@@ -102,8 +102,8 @@ const ReflectionDetailPage = () => {
           is_own: isOwn,
         });
       } catch (err) {
-        console.error("회고 조회 실패:", err);
-        setError("회고를 불러오는 중 오류가 발생했습니다.");
+        console.error('회고 조회 실패:', err);
+        setError('회고를 불러오는 중 오류가 발생했습니다.');
       } finally {
         setIsLoading(false);
       }
@@ -115,57 +115,57 @@ const ReflectionDetailPage = () => {
   const handleDelete = () => {
     if (!reflection) return;
 
-    if (confirm("정말 삭제하시겠습니까? 삭제된 회고는 복구할 수 없습니다.")) {
+    if (confirm('정말 삭제하시겠습니까? 삭제된 회고는 복구할 수 없습니다.')) {
       deleteReflection(reflection.id);
-      router.push("./reflections");
+      router.push('./reflections');
     }
   };
 
   const handleShare = async () => {
     if (!reflection) return;
 
-    if (reflection.effective_visibility === "private") {
-      alert("비공개 회고는 공유할 수 없습니다.");
+    if (reflection.effective_visibility === 'private') {
+      alert('비공개 회고는 공유할 수 없습니다.');
       return;
     }
 
     try {
       await navigator.share({
-        title: reflection.title || "회고",
-        text: reflection.content.slice(1, 100) + "...",
+        title: reflection.title || '회고',
+        text: reflection.content.slice(1, 100) + '...',
         url: window.location.href,
       });
     } catch {
       // Web Share API를 지원하지 않는 경우 URL 복사
       await navigator.clipboard.writeText(window.location.href);
-      alert("링크가 클립보드에 복사되었습니다.");
+      alert('링크가 클립보드에 복사되었습니다.');
     }
   };
 
   const getVisibilityInfo = (
-    visibility: "public" | "neighbors" | "private",
+    visibility: 'public' | 'neighbors' | 'private'
   ) => {
     switch (visibility) {
-      case "public":
+      case 'public':
         return {
           icon: Eye,
-          label: "전체 공개",
-          color: "text-green-600",
-          bgColor: "bg-green-100",
+          label: '전체 공개',
+          color: 'text-green-600',
+          bgColor: 'bg-green-100',
         };
-      case "neighbors":
+      case 'neighbors':
         return {
           icon: User,
-          label: "이웃 공개",
-          color: "text-blue-600",
-          bgColor: "bg-blue-100",
+          label: '이웃 공개',
+          color: 'text-blue-600',
+          bgColor: 'bg-blue-100',
         };
-      case "private":
+      case 'private':
         return {
           icon: Lock,
-          label: "비공개",
-          color: "text-gray-600",
-          bgColor: "bg-gray-100",
+          label: '비공개',
+          color: 'text-gray-600',
+          bgColor: 'bg-gray-100',
         };
     }
   };
@@ -176,7 +176,7 @@ const ReflectionDetailPage = () => {
         <div className="max-w-4xl mx-auto p-4 text-center py-8">
           <div className="bg-white rounded-lg p-8 shadow-sm border">
             <h3 className="text-lg font-medium text-gray-600 mb-2">
-              로그인이 필요합니다
+              로그인이 필요합니다.
             </h3>
             <p className="text-gray-500">회고를 보려면 먼저 로그인해주세요.</p>
           </div>
@@ -214,14 +214,13 @@ const ReflectionDetailPage = () => {
         <div className="max-w-4xl mx-auto p-4 text-center py-8">
           <div className="bg-white rounded-lg p-8 shadow-sm border">
             <h3 className="text-lg font-medium text-gray-600 mb-2">
-              {error || "회고를 찾을 수 없습니다"}
+              {error || '회고를 찾을 수 없습니다'}
             </h3>
             <Link
               href="/reflections"
               className="inline-flex items-center gap-2 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
-              회고 목록으로 돌아가기
+              돌아가기
             </Link>
           </div>
         </div>
@@ -229,22 +228,19 @@ const ReflectionDetailPage = () => {
     );
   }
 
-  const isGratitude = reflection.category?.name === "gratitude";
+  const isGratitude = reflection.category?.name === 'gratitude';
   const TypeIcon = isGratitude ? Heart : Lightbulb;
   const visibilityInfo = getVisibilityInfo(reflection.effective_visibility);
   const VisibilityIcon = visibilityInfo.icon;
 
   return (
     <AuthGuard>
-      <div className="max-w-4xl mx-auto p-4 space-y-4">
+      <div className="flex flex-col gap-4 px-4 py-8 max-w-4xl mx-auto">
         {/* 브레드크럼 */}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Link
-            href="/reflections"
-            className="flex items-center gap-1 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
+        <div>
+          <button onClick={() => router.back()}>
+            <ArrowLeft className="w-5 h-5 transition-colors hover:text-accent-500 hover:cursor-pointer" />
+          </button>
         </div>
 
         {/* 메인 콘텐츠 */}
@@ -264,14 +260,14 @@ const ReflectionDetailPage = () => {
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleShare}
-                  className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="text-accent-400 hover:accent-blue-500 hover:bg-accent-50 rounded-lg transition-colors hover:cursor-pointer"
                   title="공유"
                 >
                   <Share2 className="w-4 h-4" />
                 </button>
                 <Link
                   href={`/reflections/${reflection.id}/edit`}
-                  className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="text-blue-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                   title="수정"
                 >
                   <Edit2 className="w-4 h-4" />
@@ -279,7 +275,7 @@ const ReflectionDetailPage = () => {
                 <button
                   onClick={handleDelete}
                   disabled={isDeletingReflection}
-                  className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                  className="text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 hover:cursor-pointer"
                   title="삭제"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -288,22 +284,22 @@ const ReflectionDetailPage = () => {
             )}
           </div>
 
-          <div className="flex flex-col pb-2 border-b">
+          <div className="flex flex-col pb-2 border-b border-accent-400">
             <div className="flex gap-2 items-center">
               <div
-                className={`p-3 rounded-lg ${isGratitude ? "bg-orange-100" : "bg-blue-100"}`}
+                className={`p-3 rounded-lg ${isGratitude ? 'bg-orange-100' : 'bg-blue-100'}`}
               >
                 <TypeIcon
-                  className={`w-6 h-6 ${isGratitude ? "text-orange-600" : "text-blue-600"}`}
+                  className={`w-6 h-6 ${isGratitude ? 'text-orange-600' : 'text-blue-600'}`}
                 />
               </div>
               <div className="flex flex-col items-start">
-                <div className="flex items-center gap-1 text-sm text-gray-500">
+                <div className="flex items-center gap-1 text-sm text-accent-700">
                   <Calendar className="w-4 h-4" />
-                  {format(new Date(reflection.created_at), "yyyy. M. d. HH:mm")}
+                  {format(new Date(reflection.created_at), 'yyyy. M. d. HH:mm')}
                 </div>
                 <span
-                  className={`text-sm font-medium ${isGratitude ? "text-orange-600" : "text-blue-600"}`}
+                  className={`text-sm font-medium ${isGratitude ? 'text-orange-600' : 'text-blue-600'}`}
                 >
                   {reflection.category?.display_name}
                 </span>
@@ -315,9 +311,9 @@ const ReflectionDetailPage = () => {
           <div className="flex flex-col min-h-[200px] gap-2">
             <div className="flex justify-end text-sm text-gray-500">
               {reflection.updated_at !== reflection.created_at && (
-                <span>
-                  수정일:{" "}
-                  {format(new Date(reflection.updated_at), "yyyy. M. d. HH:mm")}
+                <span className="text-accent-700">
+                  수정일:{' '}
+                  {format(new Date(reflection.updated_at), 'yyyy. M. d. HH:mm')}
                 </span>
               )}
             </div>
