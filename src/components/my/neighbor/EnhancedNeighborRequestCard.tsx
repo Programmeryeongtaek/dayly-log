@@ -18,7 +18,8 @@ const EnhancedNeighborRequestCard = ({
 }: EnhancedNeighborRequestCardProps) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  const handleProfileClick = () => {
+  const handleProfileClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setIsProfileModalOpen(true);
   };
 
@@ -30,6 +31,10 @@ const EnhancedNeighborRequestCard = ({
   const handleDeclineClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDecline();
+  };
+
+  const handleModalClose = () => {
+    setIsProfileModalOpen(false);
   };
 
   return (
@@ -96,11 +101,16 @@ const EnhancedNeighborRequestCard = ({
       </div>
 
       {/* 프로필 모달 */}
-      <NeighborProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-        neighborId={request.requester_id}
-      />
+      {isProfileModalOpen && (
+        <NeighborProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={handleModalClose}
+          neighborId={request.requester_id}
+          neighborNickname={request.requester_nickname}
+          neighborName={request.requester_name}
+          isNeighbor={false}
+        />
+      )}
     </>
   );
 };

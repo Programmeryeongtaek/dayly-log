@@ -1,8 +1,8 @@
 'use client';
 
-import NeighborPostCard from '@/components/my/neighbor/NeighborPostCatd';
+import NeighborPostCard from '@/components/my/neighbor/NeighborPostCard';
 import NeighborProfileStats from '@/components/my/neighbor/NeighborProfileStats';
-import { useNeighborProfile } from '@/hooks/my/useNeighborProfile';
+import { useNeighborDetailProfile } from '@/hooks/my/useNeighborDetailProfile';
 import { AlertCircle, ArrowLeft, User } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -20,7 +20,7 @@ const NeighborDetailPage = () => {
     totalPosts,
     setActiveDomain,
     fetchNeighborProfile,
-  } = useNeighborProfile(neighborId);
+  } = useNeighborDetailProfile(neighborId);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

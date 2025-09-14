@@ -1,8 +1,8 @@
 import { NeighborInfo } from '@/types/my';
 import { Eye, Trash2, Users } from 'lucide-react';
 import { useState } from 'react';
-
 import NeighborProfileModal from './NeighborProfileModal';
+import { useRouter } from 'next/navigation';
 
 interface EnhancedNeighborCardProps {
   neighbor: NeighborInfo;
@@ -16,9 +16,15 @@ const EnhancedNeighborCard = ({
   onRemove,
   loading,
 }: EnhancedNeighborCardProps) => {
+  const router = useRouter();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  const handleProfileClick = () => {
+  const handleCardClick = () => {
+    router.push(`/my/neighbors/${neighbor.user_id}`);
+  };
+
+  const handleProfileClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setIsProfileModalOpen(true);
   };
 
@@ -28,6 +34,13 @@ const EnhancedNeighborCard = ({
   };
 
   return (
+    <div className="group p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-accent-500 transition-all duration-200 hover:cursor-pointer">
+      <div className="flex items-center justify-between">
+        {/* 프로필 영역 */}
+        <div
+          className="flex items-center space-x-3 flex-1 mr-4"
+          onClick={handleCardClick}
+        >
           <div className="w-12 h-12 bg-gradient-to-br from-accent-100 to-accent-200 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform">
             <Users className="w-6 h-6 text-accent-600" />
           </div>
@@ -67,7 +80,7 @@ const EnhancedNeighborCard = ({
         onClose={() => setIsProfileModalOpen(false)}
         neighborId={neighbor.user_id}
       />
-    </>
+    </div>
   );
 };
 
