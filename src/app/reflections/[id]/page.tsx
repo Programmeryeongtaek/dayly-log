@@ -176,7 +176,7 @@ const ReflectionDetailPage = () => {
         <div className="max-w-4xl mx-auto p-4 text-center py-8">
           <div className="bg-white rounded-lg p-8 shadow-sm border">
             <h3 className="text-lg font-medium text-gray-600 mb-2">
-              로그인이 필요합니다
+              로그인이 필요합니다.
             </h3>
             <p className="text-gray-500">회고를 보려면 먼저 로그인해주세요.</p>
           </div>
@@ -220,8 +220,7 @@ const ReflectionDetailPage = () => {
               href="/reflections"
               className="inline-flex items-center gap-2 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
-              회고 목록으로 돌아가기
+              돌아가기
             </Link>
           </div>
         </div>
@@ -236,15 +235,12 @@ const ReflectionDetailPage = () => {
 
   return (
     <AuthGuard>
-      <div className="max-w-4xl mx-auto p-4 space-y-4">
+      <div className="flex flex-col gap-4 px-4 py-8 max-w-4xl mx-auto">
         {/* 브레드크럼 */}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Link
-            href="/reflections"
-            className="flex items-center gap-1 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
+        <div>
+          <button onClick={() => router.back()}>
+            <ArrowLeft className="w-5 h-5 transition-colors hover:text-accent-500 hover:cursor-pointer" />
+          </button>
         </div>
 
         {/* 메인 콘텐츠 */}
@@ -264,14 +260,14 @@ const ReflectionDetailPage = () => {
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleShare}
-                  className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="text-accent-400 hover:accent-blue-500 hover:bg-accent-50 rounded-lg transition-colors hover:cursor-pointer"
                   title="공유"
                 >
                   <Share2 className="w-4 h-4" />
                 </button>
                 <Link
                   href={`/reflections/${reflection.id}/edit`}
-                  className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="text-blue-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                   title="수정"
                 >
                   <Edit2 className="w-4 h-4" />
@@ -279,7 +275,7 @@ const ReflectionDetailPage = () => {
                 <button
                   onClick={handleDelete}
                   disabled={isDeletingReflection}
-                  className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                  className="text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 hover:cursor-pointer"
                   title="삭제"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -288,7 +284,7 @@ const ReflectionDetailPage = () => {
             )}
           </div>
 
-          <div className="flex flex-col pb-2 border-b">
+          <div className="flex flex-col pb-2 border-b border-accent-400">
             <div className="flex gap-2 items-center">
               <div
                 className={`p-3 rounded-lg ${isGratitude ? "bg-orange-100" : "bg-blue-100"}`}
@@ -298,7 +294,7 @@ const ReflectionDetailPage = () => {
                 />
               </div>
               <div className="flex flex-col items-start">
-                <div className="flex items-center gap-1 text-sm text-gray-500">
+                <div className="flex items-center gap-1 text-sm text-accent-700">
                   <Calendar className="w-4 h-4" />
                   {format(new Date(reflection.created_at), "yyyy. M. d. HH:mm")}
                 </div>
@@ -315,7 +311,7 @@ const ReflectionDetailPage = () => {
           <div className="flex flex-col min-h-[200px] gap-2">
             <div className="flex justify-end text-sm text-gray-500">
               {reflection.updated_at !== reflection.created_at && (
-                <span>
+                <span className="text-accent-700">
                   수정일:{" "}
                   {format(new Date(reflection.updated_at), "yyyy. M. d. HH:mm")}
                 </span>

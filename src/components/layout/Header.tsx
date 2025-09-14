@@ -171,7 +171,7 @@ export default function Header() {
                   {isUserMenuOpen && (
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                       <Link
-                        href="/profile"
+                        href="/my"
                         onClick={() => setIsUserMenuOpen(false)}
                         className="flex items-center gap-3 px-4 py-2 text-base text-gray-700 hover:bg-gray-50 transition-colors"
                       >
@@ -267,7 +267,7 @@ export default function Header() {
                     </span>
                     <div className="flex gap-2 mt-1">
                       <Link
-                        href="/profile"
+                        href="/my"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="text-sm text-accent-600 hover:text-accent-800"
                       >

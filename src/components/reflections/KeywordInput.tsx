@@ -58,33 +58,25 @@ const KeywordInput = ({
   const isMaxReached = keywords.length >= maxKeywords;
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-2">
       {/* 입력창 */}
-      <div
-        className={`min-h-[42px] px-3 py-2 border rounded-lg cursor-text transition-colors ${
-          isFocused
-            ? "border-accent-500 ring-2 ring-accent-200"
-            : "border-gray-300 hover:border-gray-400"
-        }`}
+      <input
+        ref={inputRef}
+        type="text"
+        value={inputValue}
         onClick={handleContainerClick}
-      >
-        <input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder={
-            isMaxReached
-              ? `최대 ${maxKeywords}개의 키워드를 작성할 수 있습니다.`
-              : placeholder
-          }
-          disabled={isMaxReached}
-          className="w-full outline-none bg-transparent text-sm placeholder-gray-500 disabled:placeholder-red-500"
-        />
-      </div>
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        placeholder={
+          isMaxReached
+            ? `최대 ${maxKeywords}개의 키워드를 작성할 수 있습니다.`
+            : placeholder
+        }
+        disabled={isMaxReached}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm disabled:placeholder-red-500"
+      />
 
       {/* 키워드 목록 */}
       {keywords.length > 0 && (
@@ -101,7 +93,7 @@ const KeywordInput = ({
                   e.stopPropagation();
                   removeKeyword(index);
                 }}
-                className="hover:bg-accent-200 rounded-full p-0.5 transition-colors"
+                className="hover:bg-accent-200 rounded-full p-0.5 transition-colors hover:cursor-pointer"
               >
                 <X className="w-3 h-3" />
               </button>

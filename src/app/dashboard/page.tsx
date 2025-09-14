@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/auth";
 import { useGoals } from "@/hooks/goals/useGoals";
 import { useQuestions } from "@/hooks/questions/useQuestions";
-import { QuestionKeyword } from "@/types/questions";
+import { QuestionFormData, QuestionKeyword } from "@/types/questions";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import {
@@ -19,15 +19,20 @@ import {
   MessageSquare,
   Hash,
   Clock,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import AuthGuard from "@/components/auth/AuthGuard";
 import DashboardReflectionWidget from "@/components/reflections/DashboardReflectionWidget";
 import DashboardBudgetWidget from "@/components/budget/DashboardBudgetWidget";
+import Modal from "@/components/common/Modal";
+import QuestionForm from "@/components/questions/QuestionForm";
 
 const DashboardPage = () => {
   const { user, profile, isLoading: isAuthLoading } = useAuth();
+  const { createQuestion, isCreatingQuestion } = useQuestions();
   const [currentDate] = useState(new Date());
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // 사용자 ID가 있을 때만 데이터 쿼리 활성화
   const shouldFetchData = !isAuthLoading && !!user?.id;
@@ -51,6 +56,16 @@ const DashboardPage = () => {
     userId: shouldFetchData ? user?.id : undefined,
     filters: {}, // 전체 기간
   });
+
+  const handleSubmitQuestion = (formData: QuestionFormData) => {
+    if (!user?.id) return;
+
+    createQuestion({
+      ...formData,
+      user_id: user.id,
+    });
+    setShowCreateModal(false);
+  };
 
   // 목표 통계
   const goalStats = useMemo(() => {
@@ -189,7 +204,7 @@ const DashboardPage = () => {
               <Plus className="w-6 h-6 text-white" />
             </div>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              가계부 내역
+              가계부 작성
             </span>
           </Link>
 
@@ -201,21 +216,21 @@ const DashboardPage = () => {
               <Target className="w-6 h-6 text-white" />
             </div>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              목표 설정
+              목표 작성
             </span>
           </Link>
 
-          <Link
-            href="/questions/new"
-            className="flex flex-col items-center p-4 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors group"
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex flex-col items-center p-4 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors group hover:cursor-pointer"
           >
             <div className="p-3 bg-blue-500 rounded-full group-hover:bg-blue-600 transition-colors">
               <MessageSquare className="w-6 h-6 text-white" />
             </div>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              성찰 질문
+              질문 작성
             </span>
-          </Link>
+          </button>
 
           <Link
             href="/reflections/new"
@@ -225,7 +240,7 @@ const DashboardPage = () => {
               <Calendar className="w-6 h-6 text-white" />
             </div>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              일상 회고
+              회고 작성
             </span>
           </Link>
         </div>
@@ -595,6 +610,29 @@ const DashboardPage = () => {
           <DashboardReflectionWidget />
         </div>
       </div>
+
+      {/* 질문 생성 모달 */}
+      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
+        <Modal.Header className="border-b-2 border-accent-400 pb-4">
+          <div className="flex items-center justify-between">
+            <Modal.Title>
+              <p className="text-accent-400">질문 작성</p>
+            </Modal.Title>
+            <X
+              className="w-5 h-5 hover:cursor-pointer"
+              onClick={() => setShowCreateModal(false)}
+            />
+          </div>
+        </Modal.Header>
+
+        <Modal.Body>
+          <QuestionForm
+            onSubmit={handleSubmitQuestion}
+            onCancel={() => setShowCreateModal(false)}
+            isLoading={isCreatingQuestion}
+          />
+        </Modal.Body>
+      </Modal>
     </AuthGuard>
   );
 };

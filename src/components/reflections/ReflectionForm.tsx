@@ -82,7 +82,7 @@ const ReflectionForm = ({
           <button
             type="button"
             onClick={onCancel}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 rounded-full hover:bg-accent-50 text-gray-800 hover:text-accent-500 transition-colors hover:cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -90,7 +90,7 @@ const ReflectionForm = ({
 
         {/* 도움말 */}
         {mode === "create" && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+          <div className="bg-gray-50 border border-accent-200 rounded-lg p-2">
             <h3 className="font-medium text-accent-400 mb-2">Tip</h3>
             <ul className="text-sm text-accent-500 space-y-1">
               <li>
@@ -129,17 +129,17 @@ const ReflectionForm = ({
         {/* 카테고리 선택 */}
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-700">
-            타입 *
+            타입 <strong className="text-red-500">*</strong>
           </label>
           <div className="grid grid-cols-2 gap-3">
             {gratitudeCategory && (
               <button
                 type="button"
                 onClick={() => handleCategoryChange(gratitudeCategory.id)}
-                className={`p-4 rounded-lg border-2 transition-all ${
+                className={`p-4 rounded-lg border-2 transition-all hover:cursor-pointer ${
                   formData.category_id === gratitudeCategory.id
                     ? "border-orange-300 bg-orange-50"
-                    : "border-gray-200 hover:border-gray-300"
+                    : "border-gray-200 hover:border-accent-300 hover:bg-accent-50"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -162,10 +162,10 @@ const ReflectionForm = ({
               <button
                 type="button"
                 onClick={() => handleCategoryChange(reflectionCategory.id)}
-                className={`p-4 rounded-lg border-2 transition-all ${
+                className={`p-4 rounded-lg border-2 transition-all hover:cursor-pointer ${
                   formData.category_id === reflectionCategory.id
                     ? "border-blue-300 bg-blue-50"
-                    : "border-gray-200 hover:border-gray-300"
+                    : "border-gray-200 hover:border-accent-300 hover:bg-accent-50"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -196,7 +196,7 @@ const ReflectionForm = ({
             value={formData.date}
             onChange={(e) => updateField("date", e.target.value)}
             max={format(new Date(), "yyyy-MM-dd")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 hover:cursor-pointer"
             required
           />
         </div>
@@ -211,7 +211,7 @@ const ReflectionForm = ({
             value={formData.title || ""}
             onChange={(e) => updateField("title", e.target.value || null)}
             placeholder={`오늘의 ${selectedCategory?.display_name || "회고"}...`}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
           />
         </div>
 
@@ -229,7 +229,7 @@ const ReflectionForm = ({
                 : "오늘 느낀 것, 배운 것, 깨달은 것을 정리해보세요..."
             }
             rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 resize-none"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
             required
           />
           <div className="flex justify-between text-xs text-gray-500">
@@ -262,7 +262,7 @@ const ReflectionForm = ({
             공개 범위
           </label>
           <div className="space-y-2">
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 hover:cursor-pointer hover:text-accent-500">
               <input
                 type="radio"
                 name="visibility"
@@ -271,12 +271,12 @@ const ReflectionForm = ({
                   updateField("is_public", true);
                   updateField("is_neighbor_visible", true);
                 }}
-                className="w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 focus:ring-accent-500"
+                className="w-4 h-4 text-accent-600 bg-accent-100 border-accent-300 focus:outline-none focus:ring-accent-500"
               />
               <span className="text-sm">전체</span>
             </label>
 
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 hover:cursor-pointer hover:text-accent-500">
               <input
                 type="radio"
                 name="visibility"
@@ -285,12 +285,12 @@ const ReflectionForm = ({
                   updateField("is_public", false);
                   updateField("is_neighbor_visible", true);
                 }}
-                className="w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 focus:ring-accent-500"
+                className="w-4 h-4 text-accent-600 bg-accent-100 border-accent-300 focus:outline-none focus:ring-accent-500"
               />
               <span className="text-sm">이웃</span>
             </label>
 
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 hover:cursor-pointer hover:text-accent-500">
               <input
                 type="radio"
                 name="visibility"
@@ -299,7 +299,7 @@ const ReflectionForm = ({
                   updateField("is_public", false);
                   updateField("is_neighbor_visible", false);
                 }}
-                className="w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 focus:ring-accent-500"
+                className="w-4 h-4 text-accent-600 bg-accent-100 border-accent-300 focus:outline-none focus:ring-accent-500"
               />
               <span className="text-sm">비공개</span>
             </label>
@@ -309,16 +309,9 @@ const ReflectionForm = ({
         {/* 버튼 */}
         <div className="flex gap-3 pt-4">
           <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            취소
-          </button>
-          <button
             type="submit"
             disabled={!isFormValid || isSubmitting}
-            className="flex-1 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 hover:cursor-pointer"
           >
             {isSubmitting ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -326,6 +319,13 @@ const ReflectionForm = ({
               <Save className="w-4 h-4" />
             )}
             {mode === "create" ? "작성" : "수정"}
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors hover:cursor-pointer"
+          >
+            취소
           </button>
         </div>
       </form>

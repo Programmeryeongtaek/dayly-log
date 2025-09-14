@@ -65,7 +65,7 @@ const KeywordManagementModal = ({
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <div className="flex flex-col max-h-[80vh]">
         {/* 헤더 */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-accent-500">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gray-100 rounded-lg">
               <Hash className="w-5 h-5 text-accent-600" />
@@ -74,9 +74,9 @@ const KeywordManagementModal = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent-100 rounded-full transition-colors hover:cursor-pointer"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-accent-500" />
           </button>
         </div>
 
@@ -137,7 +137,7 @@ const KeywordManagementModal = ({
             </div>
           ) : (
             <div className="text-center py-12">
-              <Hash className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <Hash className="w-16 h-16 text-accent-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-600 mb-2">
                 삭제할 수 있는 키워드가 없습니다.
               </h3>
