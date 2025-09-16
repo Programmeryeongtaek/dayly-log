@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import { GoalFormData } from "@/types/goals";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface CreateChallengeData {
@@ -30,10 +29,16 @@ export const useChallenge = () => {
       }
 
       // 목표 타입 결정
-      const goalType =
-        data.categoryType === "income" ? "increase_income" : "reduce_expense";
+      const goalType = data.categoryType === "income" ? "increase_income" : "reduce_expense";
 
-      const goalData: GoalFormData & { user_id: string } = {
+      // 카테고리 ID 조회
+      const categoryId = await getCategoryIdByName(
+        data.category, 
+        data.categoryType, 
+        data.userId
+      );
+
+      const goalData = {
         user_id: data.userId,
         title: data.title,
         description: data.description || null,
@@ -43,33 +48,30 @@ export const useChallenge = () => {
         target_count: data.enableCountGoal ? Number(data.targetCount) : null,
         target_date: data.targetDate,
         challenge_mode: challengeMode,
-        category_id: null, // TODO:카테고리별 목표가 필요하다면 추후 구현
+        category_id: categoryId,
+        current_amount: 0,
+        current_count: 0,
+        status: "active" as const,
+        created_from_date: new Date().toISOString().split("T")[0],
       };
 
       const { data: result, error } = await supabase
         .from("goals")
-        .insert([
-          {
-            ...goalData,
-            current_amount: 0,
-            current_count: 0,
-            status: "active",
-            created_from_date: new Date().toISOString().split("T")[0],
-          },
-        ])
-        .select(
-          `
+        .insert([goalData])
+        .select(`
           *,
           category:categories(*)
-        `,
-        )
+        `)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("목표 생성 에러:", error);
+        throw error;
+      }
+      
       return result;
     },
     onSuccess: () => {
-      // goals 관련 쿼리들 무효화
       queryClient.invalidateQueries({ queryKey: ["goals"] });
     },
   });
@@ -79,4 +81,39 @@ export const useChallenge = () => {
     isCreatingChallenge: createChallengeMutation.isPending,
     createChallengeError: createChallengeMutation.error,
   };
+};
+
+const getCategoryIdByName = async (
+  categoryName: string, 
+  categoryType: "income" | "expense", 
+  userId: string
+): Promise<string | null> => {
+  try {
+    // 두 타입 모두 한 번에 조회
+    const { data: categories, error } = await supabase
+      .from("categories")
+      .select("id, type")
+      .eq("user_id", userId)
+      .eq("name", categoryName)
+      .in("type", [`${categoryType}_fixed`, `${categoryType}_variable`]);
+
+    if (error) {
+      console.error("카테고리 조회 에러:", error);
+      return null;
+    }
+
+    if (!categories || categories.length === 0) {
+      console.warn(`카테고리를 찾을 수 없습니다: ${categoryName} (${categoryType})`);
+      return null;
+    }
+
+    const fixedCategory = categories.find(cat => cat.type === `${categoryType}_fixed`);
+    const variableCategory = categories.find(cat => cat.type === `${categoryType}_variable`);
+
+    return fixedCategory?.id || variableCategory?.id || null;
+
+  } catch (error) {
+    console.error("카테고리 ID 조회 실패:", error);
+    return null;
+  }
 };
