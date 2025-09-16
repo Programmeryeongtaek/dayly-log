@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { ReflectionWithKeywords } from "@/types/reflections/ui";
+import { ReflectionWithKeywords } from '@/types/reflections/ui';
 import {
   getReflectionTypeBgColor,
   getReflectionTypeColor,
   getReflectionTypeLabel,
   getVisibilityLabel,
   getVisibilityStatus,
-} from "@/utils/reflections/helpers";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
-import { Calendar, Edit, Heart, Lightbulb, Trash2 } from "lucide-react";
-import Link from "next/link";
+} from '@/utils/reflections/helpers';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { Calendar, Edit, Heart, Lightbulb, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 
 interface ReflectionCardProps {
   reflection: ReflectionWithKeywords;
@@ -24,7 +24,7 @@ const ReflectionCard = ({
   onEdit,
   onDelete,
 }: ReflectionCardProps) => {
-  const isGratitude = reflection.category?.name === "gratitude";
+  const isGratitude = reflection.category?.name === 'gratitude';
   const TypeIcon = isGratitude ? Heart : Lightbulb;
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -35,6 +35,7 @@ const ReflectionCard = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     onDelete(reflection.id);
   };
 
@@ -47,10 +48,10 @@ const ReflectionCard = ({
       <div className="flex justify-between mb-3">
         <div className="flex items-center gap-2">
           <div
-            className={`p-2 rounded-lg ${getReflectionTypeBgColor(reflection.category?.name || "gratitude")}`}
+            className={`p-2 rounded-lg ${getReflectionTypeBgColor(reflection.category?.name || 'gratitude')}`}
           >
             <TypeIcon
-              className={`w-4 h-4 ${getReflectionTypeColor(reflection.category?.name || "gratitude")}`}
+              className={`w-4 h-4 ${getReflectionTypeColor(reflection.category?.name || 'gratitude')}`}
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -58,27 +59,27 @@ const ReflectionCard = ({
               <span
                 title={getVisibilityLabel(
                   reflection.is_public,
-                  reflection.is_neighbor_visible,
+                  reflection.is_neighbor_visible
                 )}
               >
                 {getVisibilityStatus(
                   reflection.is_public,
-                  reflection.is_neighbor_visible,
+                  reflection.is_neighbor_visible
                 )}
               </span>
               <span
-                className={`text-sm font-medium ${getReflectionTypeColor(reflection.category?.name || "gratitude")}`}
+                className={`text-sm font-medium ${getReflectionTypeColor(reflection.category?.name || 'gratitude')}`}
               >
                 {reflection.category?.display_name ||
                   getReflectionTypeLabel(
-                    reflection.category?.name || "gratitude",
+                    reflection.category?.name || 'gratitude'
                   )}
               </span>
             </div>
 
             <div className="flex items-center gap-2 text-xs text-gray-500">
               <Calendar className="w-3 h-3" />
-              {format(new Date(reflection.date), "yyyy. M. d.", {
+              {format(new Date(reflection.date), 'yyyy. M. d.', {
                 locale: ko,
               })}
             </div>
@@ -113,7 +114,7 @@ const ReflectionCard = ({
             {reflection.title}
           </h3>
         ) : (
-          <h3 className="text-lg font-medium min-h-[18px]">{""}</h3>
+          <h3 className="text-lg font-medium min-h-[18px]">{''}</h3>
         )}
 
         {/* 내용 */}

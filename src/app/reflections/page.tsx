@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import AuthGuard from "@/components/auth/AuthGuard";
-import ReflectionCard from "@/components/reflections/ReflectionCard";
-import { useAuth } from "@/hooks/auth";
-import { useKeywords } from "@/hooks/reflections/useKeywords";
-import { useReflections } from "@/hooks/reflections/useReflections";
-import { DateRangePeriod, ReflectionFilters } from "@/types/reflections";
-import { format, subMonths, subWeeks, subYears } from "date-fns";
+import AuthGuard from '@/components/auth/AuthGuard';
+import ReflectionCard from '@/components/reflections/ReflectionCard';
+import { useAuth } from '@/hooks/auth';
+import { useKeywords } from '@/hooks/reflections/useKeywords';
+import { useReflections } from '@/hooks/reflections/useReflections';
+import { DateRangePeriod, ReflectionFilters } from '@/types/reflections';
+import { format, subMonths, subWeeks, subYears } from 'date-fns';
 import {
   BarChart3,
   BookOpen,
@@ -16,10 +16,10 @@ import {
   Plus,
   RefreshCw,
   Search,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
 const ReflectionsPage = () => {
   const router = useRouter();
@@ -27,16 +27,16 @@ const ReflectionsPage = () => {
 
   // 기본 필터 상태
   const [filters, setFilters] = useState<ReflectionFilters>({
-    type: "all",
+    type: 'all',
     keywords: [],
-    searchTerm: "",
-    visibility: "all",
+    searchTerm: '',
+    visibility: 'all',
   });
 
   // 임의 기간 설정 상태
   const [showCustomPeriod, setShowCustomPeriod] = useState(false);
-  const [customStartDate, setCustomStartDate] = useState("");
-  const [customEndDate, setCustomEndDate] = useState("");
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
 
   // 전체 통계용 (필터 없음)
   const { statistics: totalStats } = useReflections({
@@ -57,34 +57,34 @@ const ReflectionsPage = () => {
     const today = new Date();
     return [
       {
-        label: "전체",
-        value: "all",
-        startDate: "",
-        endDate: "",
+        label: '전체',
+        value: 'all',
+        startDate: '',
+        endDate: '',
       },
       {
-        label: "최근 1주일",
-        value: "1week",
-        startDate: format(subWeeks(today, 1), "yyyy-MM-dd"),
-        endDate: format(today, "yyyy-MM-dd"),
+        label: '최근 1주일',
+        value: '1week',
+        startDate: format(subWeeks(today, 1), 'yyyy-MM-dd'),
+        endDate: format(today, 'yyyy-MM-dd'),
       },
       {
-        label: "최근 1개월",
-        value: "1month",
-        startDate: format(subMonths(today, 1), "yyyy-MM-dd"),
-        endDate: format(today, "yyyy-MM-dd"),
+        label: '최근 1개월',
+        value: '1month',
+        startDate: format(subMonths(today, 1), 'yyyy-MM-dd'),
+        endDate: format(today, 'yyyy-MM-dd'),
       },
       {
-        label: "최근 3개월",
-        value: "3months",
-        startDate: format(subMonths(today, 3), "yyyy-MM-dd"),
-        endDate: format(today, "yyyy-MM-dd"),
+        label: '최근 3개월',
+        value: '3months',
+        startDate: format(subMonths(today, 3), 'yyyy-MM-dd'),
+        endDate: format(today, 'yyyy-MM-dd'),
       },
       {
-        label: "최근 1년",
-        value: "1year",
-        startDate: format(subYears(today, 1), "yyyy-MM-dd"),
-        endDate: format(today, "yyyy-MM-dd"),
+        label: '최근 1년',
+        value: '1year',
+        startDate: format(subYears(today, 1), 'yyyy-MM-dd'),
+        endDate: format(today, 'yyyy-MM-dd'),
       },
     ];
   }, []);
@@ -106,7 +106,7 @@ const ReflectionsPage = () => {
   };
 
   const handlePeriodChange = (period: string) => {
-    if (period === "custom") {
+    if (period === 'custom') {
       // 임의기간 클릭 시
       if (showCustomPeriod || isCustomPeriod()) {
         // 이미 임의기간이 활성화되어 있으면 해제
@@ -130,7 +130,7 @@ const ReflectionsPage = () => {
     setShowCustomPeriod(false);
 
     const preset = periodPresets.find((p) => p.value === period);
-    if (preset && preset.value !== "all") {
+    if (preset && preset.value !== 'all') {
       // 같은 기간을 다시 클릭하면 해제
       if (filters.startDate === preset.startDate) {
         handleFiltersChange({
@@ -158,10 +158,10 @@ const ReflectionsPage = () => {
     }
   };
 
-  const handleTypeChange = (type: "all" | "gratitude" | "reflection") => {
+  const handleTypeChange = (type: 'all' | 'gratitude' | 'reflection') => {
     // 같은 타입을 다시 클릭하면 전체로 변경
-    if (filters.type === type && type !== "all") {
-      handleFiltersChange({ type: "all" });
+    if (filters.type === type && type !== 'all') {
+      handleFiltersChange({ type: 'all' });
     } else {
       handleFiltersChange({ type });
     }
@@ -187,21 +187,21 @@ const ReflectionsPage = () => {
 
   const clearFilters = () => {
     setFilters({
-      type: "all",
+      type: 'all',
       keywords: [],
-      searchTerm: "",
-      visibility: "all",
+      searchTerm: '',
+      visibility: 'all',
     });
     setShowCustomPeriod(false);
-    setCustomStartDate("");
-    setCustomEndDate("");
+    setCustomStartDate('');
+    setCustomEndDate('');
   };
 
   const hasActiveFilters =
-    filters.type !== "all" ||
+    filters.type !== 'all' ||
     (filters.keywords?.length ?? 0) > 0 ||
     filters.searchTerm ||
-    filters.visibility !== "all" ||
+    filters.visibility !== 'all' ||
     filters.startDate ||
     filters.endDate;
 
@@ -210,17 +210,17 @@ const ReflectionsPage = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("정말 삭제하시겠습니까?")) {
+    if (confirm('정말 삭제하시겠습니까?')) {
       deleteReflection(id);
     }
   };
 
   // 현재 선택된 기간 표시
   const getCurrentPeriodLabel = () => {
-    if (!filters.startDate) return "전체";
+    if (!filters.startDate) return '전체';
     const preset = periodPresets.find((p) => p.startDate === filters.startDate);
     if (preset) return preset.label;
-    return "임의기간";
+    return '임의기간';
   };
 
   if (!user?.id) {
@@ -306,7 +306,7 @@ const ReflectionsPage = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              value={filters.searchTerm || ""}
+              value={filters.searchTerm || ''}
               onChange={(e) =>
                 handleFiltersChange({ searchTerm: e.target.value })
               }
@@ -342,23 +342,23 @@ const ReflectionsPage = () => {
                   key={preset.value}
                   onClick={() => handlePeriodChange(preset.value)}
                   className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors hover:cursor-pointer ${
-                    (preset.value === "all" &&
+                    (preset.value === 'all' &&
                       !filters.startDate &&
                       !showCustomPeriod) ||
                     preset.startDate === filters.startDate
-                      ? "bg-accent-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-accent-100"
+                      ? 'bg-accent-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-accent-100'
                   }`}
                 >
                   {preset.label}
                 </button>
               ))}
               <button
-                onClick={() => handlePeriodChange("custom")}
+                onClick={() => handlePeriodChange('custom')}
                 className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors hover:cursor-pointer ${
                   showCustomPeriod || isCustomPeriod()
-                    ? "bg-accent-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-accent-100"
+                    ? 'bg-accent-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-accent-100'
                 }`}
               >
                 임의기간
@@ -418,17 +418,17 @@ const ReflectionsPage = () => {
             </label>
             <div className="flex gap-2">
               {[
-                { value: "all" as const, label: "전체" },
-                { value: "gratitude" as const, label: "감사" },
-                { value: "reflection" as const, label: "성찰" },
+                { value: 'all' as const, label: '전체' },
+                { value: 'gratitude' as const, label: '감사' },
+                { value: 'reflection' as const, label: '성찰' },
               ].map((type) => (
                 <button
                   key={type.value}
                   onClick={() => handleTypeChange(type.value)}
                   className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors hover:cursor-pointer ${
                     filters.type === type.value
-                      ? "bg-accent-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-accent-100"
+                      ? 'bg-accent-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-accent-100'
                   }`}
                 >
                   {type.label}
@@ -450,15 +450,15 @@ const ReflectionsPage = () => {
                     onClick={() => handleKeywordToggle(keyword.name)}
                     className={`px-2 py-1 rounded-md text-xs font-medium transition-colors hover:cursor-pointer ${
                       filters.keywords?.includes(keyword.name)
-                        ? "text-white"
-                        : "hover:opacity-80"
+                        ? 'text-white'
+                        : 'hover:opacity-80'
                     }`}
                     style={{
                       backgroundColor: filters.keywords?.includes(keyword.name)
                         ? keyword.color
                         : `${keyword.color}20`,
                       color: filters.keywords?.includes(keyword.name)
-                        ? "white"
+                        ? 'white'
                         : keyword.color,
                     }}
                   >
@@ -476,7 +476,7 @@ const ReflectionsPage = () => {
             <div className="flex items-center gap-2">
               <Search className="w-5 h-5 text-accent-600" />
               <h2 className="text-lg font-semibold text-gray-900">
-                {hasActiveFilters ? "검색 결과" : "전체"}
+                {hasActiveFilters ? '검색 결과' : '전체'}
               </h2>
             </div>
             {hasActiveFilters && (
@@ -495,11 +495,11 @@ const ReflectionsPage = () => {
                     <span>{getCurrentPeriodLabel()}</span>
                   </>
                 )}
-                {filters.type !== "all" && (
+                {filters.type !== 'all' && (
                   <>
                     <span>•</span>
                     <span>
-                      {filters.type === "gratitude" ? "감사" : "성찰"}
+                      {filters.type === 'gratitude' ? '감사' : '성찰'}
                     </span>
                   </>
                 )}
@@ -574,13 +574,13 @@ const ReflectionsPage = () => {
               </div>
               <h3 className="text-xl font-medium text-gray-600 mb-2">
                 {hasActiveFilters
-                  ? "필터 조건에 맞는 회고가 없습니다."
-                  : "아직 작성한 회고가 없습니다."}
+                  ? '필터 조건에 맞는 회고가 없습니다.'
+                  : '아직 작성한 회고가 없습니다.'}
               </h3>
               <p className="text-gray-500 mb-6">
                 {hasActiveFilters
-                  ? "다른 필터 조건으로 시도해보세요."
-                  : "첫 번째 회고를 작성해서 성장의 여정을 시작해보세요."}
+                  ? '다른 필터 조건으로 시도해보세요.'
+                  : '첫 번째 회고를 작성해서 성장의 여정을 시작해보세요.'}
               </p>
 
               {hasActiveFilters ? (
