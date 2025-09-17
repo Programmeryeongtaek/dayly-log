@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 interface InfoSectionProps {
   title: string;
@@ -35,13 +35,13 @@ export const InfoItem = ({
   important = false,
 }: InfoItemProps) => {
   return (
-    <div className={'flex justify-between items-center'}>
+    <div className={"flex justify-between items-center"}>
       <span className="text-gray-600 font-medium">{label}</span>
       <span
         className={`${
           important
-            ? 'text-lg font-bold text-accent-600'
-            : 'text-gray-900 font-semibold'
+            ? "text-lg font-bold text-accent-600"
+            : "text-gray-900 font-semibold"
         }`}
       >
         {value}

@@ -2,8 +2,8 @@ import {
   getDaysLeft,
   getStatusColorClass,
   getStatusText,
-} from '@/utils/goals/goalsHelpers';
-import { CheckCircle, Clock, Pause, X, Target } from 'lucide-react';
+} from "@/utils/goals/goalsHelpers";
+import { CheckCircle, Clock, Pause, X, Target } from "lucide-react";
 
 interface StatusBadgeProps {
   status: string;
@@ -19,13 +19,13 @@ const StatusBadge = ({ status, targetDate, className }: StatusBadgeProps) => {
   // 아이콘 선택
   const getStatusIcon = () => {
     switch (status) {
-      case 'active':
+      case "active":
         return <Target className="w-4 h-4" />;
-      case 'completed':
+      case "completed":
         return <CheckCircle className="w-4 h-4" />;
-      case 'paused':
+      case "paused":
         return <Pause className="w-4 h-4" />;
-      case 'cancelled':
+      case "cancelled":
         return <X className="w-4 h-4" />;
       default:
         return <Target className="w-4 h-4" />;
@@ -34,7 +34,7 @@ const StatusBadge = ({ status, targetDate, className }: StatusBadgeProps) => {
 
   // 긴급도에 따른 추가 배지
   const getUrgencyBadge = () => {
-    if (status !== 'active' || !daysLeft) return null;
+    if (status !== "active" || !daysLeft) return null;
 
     if (daysLeft <= 3 && daysLeft > 0) {
       return (

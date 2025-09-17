@@ -2,21 +2,21 @@ const StatCard = ({
   icon,
   title,
   value,
-  color = 'accent',
+  color = "accent",
   subtitle,
 }: {
   icon: React.ReactNode;
   title: string;
   value: number | string;
-  color?: 'accent' | 'green' | 'yellow' | 'purple' | 'red';
+  color?: "accent" | "green" | "yellow" | "purple" | "red";
   subtitle?: string;
 }) => {
   const colorClasses = {
-    accent: 'from-accent-500 to-accent-400 text-white',
-    green: 'from-green-500 to-emerald-400 text-white',
-    yellow: 'from-yellow-500 to-orange-400 text-white',
-    purple: 'from-purple-500 to-pink-400 text-white',
-    red: 'from-red-500 to-pink-400 text-white',
+    accent: "from-accent-500 to-accent-400 text-white",
+    green: "from-green-500 to-emerald-400 text-white",
+    yellow: "from-yellow-500 to-orange-400 text-white",
+    purple: "from-purple-500 to-pink-400 text-white",
+    red: "from-red-500 to-pink-400 text-white",
   };
 
   return (

@@ -29,13 +29,14 @@ export const useChallenge = () => {
       }
 
       // 목표 타입 결정
-      const goalType = data.categoryType === "income" ? "increase_income" : "reduce_expense";
+      const goalType =
+        data.categoryType === "income" ? "increase_income" : "reduce_expense";
 
       // 카테고리 ID 조회
       const categoryId = await getCategoryIdByName(
-        data.category, 
-        data.categoryType, 
-        data.userId
+        data.category,
+        data.categoryType,
+        data.userId,
       );
 
       const goalData = {
@@ -44,11 +45,11 @@ export const useChallenge = () => {
         description: data.description || null,
         reason: data.reason || null,
         type: goalType,
-        target_amount: data.enableAmountGoal ? 
-          (data.categoryType === 'expense'
+        target_amount: data.enableAmountGoal
+          ? data.categoryType === "expense"
             ? Number(data.targetAmount)
             : Number(data.targetAmount)
-          ) : null,
+          : null,
         target_count: data.enableCountGoal ? Number(data.targetCount) : null,
         target_date: data.targetDate,
         challenge_mode: challengeMode,
@@ -62,17 +63,19 @@ export const useChallenge = () => {
       const { data: result, error } = await supabase
         .from("goals")
         .insert([goalData])
-        .select(`
+        .select(
+          `
           *,
           category:categories(*)
-        `)
+        `,
+        )
         .single();
 
       if (error) {
         console.error("목표 생성 에러:", error);
         throw error;
       }
-      
+
       return result;
     },
     onSuccess: () => {
@@ -88,9 +91,9 @@ export const useChallenge = () => {
 };
 
 const getCategoryIdByName = async (
-  categoryName: string, 
-  categoryType: "income" | "expense", 
-  userId: string
+  categoryName: string,
+  categoryType: "income" | "expense",
+  userId: string,
 ): Promise<string | null> => {
   try {
     // 두 타입 모두 한 번에 조회
@@ -107,15 +110,20 @@ const getCategoryIdByName = async (
     }
 
     if (!categories || categories.length === 0) {
-      console.warn(`카테고리를 찾을 수 없습니다: ${categoryName} (${categoryType})`);
+      console.warn(
+        `카테고리를 찾을 수 없습니다: ${categoryName} (${categoryType})`,
+      );
       return null;
     }
 
-    const fixedCategory = categories.find(cat => cat.type === `${categoryType}_fixed`);
-    const variableCategory = categories.find(cat => cat.type === `${categoryType}_variable`);
+    const fixedCategory = categories.find(
+      (cat) => cat.type === `${categoryType}_fixed`,
+    );
+    const variableCategory = categories.find(
+      (cat) => cat.type === `${categoryType}_variable`,
+    );
 
     return fixedCategory?.id || variableCategory?.id || null;
-
   } catch (error) {
     console.error("카테고리 ID 조회 실패:", error);
     return null;

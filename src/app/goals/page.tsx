@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/auth';
-import { useGoals } from '@/hooks/goals/useGoals';
+import { useAuth } from "@/hooks/auth";
+import { useGoals } from "@/hooks/goals/useGoals";
 import {
   Target,
   Clock,
@@ -12,11 +12,11 @@ import {
   Trophy,
   ArrowRight,
   Star,
-} from 'lucide-react';
-import Link from 'next/link';
-import GoalCard from '@/components/goals/GoalCard';
-import StatCard from '@/components/goals/StatCard';
-import useGoalStatistics from '@/hooks/goals/useGoalStatistics';
+} from "lucide-react";
+import Link from "next/link";
+import GoalCard from "@/components/goals/GoalCard";
+import StatCard from "@/components/goals/StatCard";
+import useGoalStatistics from "@/hooks/goals/useGoalStatistics";
 
 const GoalsPage = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -149,7 +149,7 @@ const GoalsPage = () => {
                 icon={<Clock className="w-6 h-6" />}
                 title="곧 마감"
                 value={`${statistics.soonDue}개`}
-                color={statistics.soonDue > 0 ? 'yellow' : 'accent'}
+                color={statistics.soonDue > 0 ? "yellow" : "accent"}
               />
             </div>
 

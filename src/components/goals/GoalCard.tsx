@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { Goal } from '@/types/goals';
+import { Goal } from "@/types/goals";
 import {
   getChallengeMode,
   getDaysLeft,
   getGoalProgress,
   getTypeText,
-} from '@/utils/goals/goalsHelpers';
-import { useRouter } from 'next/navigation';
-import StatusBadge from './StatusBadge';
-import { Calendar, CheckCircle, Star, Target } from 'lucide-react';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+} from "@/utils/goals/goalsHelpers";
+import { useRouter } from "next/navigation";
+import StatusBadge from "./StatusBadge";
+import { Calendar, CheckCircle, Star, Target } from "lucide-react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
 const GoalCard = ({ goal }: { goal: Goal }) => {
   const router = useRouter();
   const progress = getGoalProgress(goal);
   const daysLeft = getDaysLeft(goal.target_date);
-  const isCompleted = goal.status === 'completed';
+  const isCompleted = goal.status === "completed";
 
   const handleCardClick = () => {
     router.push(`/goals/${goal.id}`);
@@ -131,8 +131,8 @@ const GoalCard = ({ goal }: { goal: Goal }) => {
                 <div
                   className={`absolute left-0 top-0 h-full rounded-full transition-all duration-1000 ease-out ${
                     progress.overallProgress >= 100
-                      ? 'bg-gradient-to-r from-green-400 to-emerald-500'
-                      : 'bg-gradient-to-r from-accent-400 to-accent-500'
+                      ? "bg-gradient-to-r from-green-400 to-emerald-500"
+                      : "bg-gradient-to-r from-accent-400 to-accent-500"
                   }`}
                   style={{
                     width: `${Math.min(progress.overallProgress, 100)}%`,
@@ -148,7 +148,7 @@ const GoalCard = ({ goal }: { goal: Goal }) => {
           {/* 날짜 정보 */}
           <div className="flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-100">
             <span>
-              시작: {format(new Date(goal.created_at), 'MM.dd', { locale: ko })}
+              시작: {format(new Date(goal.created_at), "MM.dd", { locale: ko })}
             </span>
             {goal.target_date && (
               <div className="flex items-center gap-1">
@@ -156,13 +156,13 @@ const GoalCard = ({ goal }: { goal: Goal }) => {
                 <span
                   className={
                     daysLeft !== null && daysLeft <= 7
-                      ? 'text-orange-600 font-medium'
-                      : ''
+                      ? "text-orange-600 font-medium"
+                      : ""
                   }
                 >
                   {daysLeft !== null && daysLeft > 0
                     ? `${daysLeft}일 남음`
-                    : format(new Date(goal.target_date), 'MM.dd', {
+                    : format(new Date(goal.target_date), "MM.dd", {
                         locale: ko,
                       })}
                 </span>

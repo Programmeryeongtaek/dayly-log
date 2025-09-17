@@ -1,7 +1,7 @@
-import { Goal } from '@/types/goals';
-import Modal from '../common/Modal';
-import { Target, TrendingDown, TrendingUp } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Goal } from "@/types/goals";
+import Modal from "../common/Modal";
+import { Target, TrendingDown, TrendingUp } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export interface CategoryChangeData {
   categoryName: string;
@@ -9,7 +9,7 @@ export interface CategoryChangeData {
   newCount: number;
   oldAmount: number;
   oldCount: number;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
 }
 
 interface GoalUpdateModalProps {
@@ -56,7 +56,7 @@ const GoalUpdateModal = ({
         {/* 변경사항 요약 */}
         <div className="bg-gray-50 rounded-lg p-4">
           <h4 className="font-medium text-gray-800 mb-2 flex items-center gap-2">
-            {categoryChange.type === 'income' ? (
+            {categoryChange.type === "income" ? (
               <TrendingUp className="w-4 h-4 text-green-600" />
             ) : (
               <TrendingDown className="w-4 h-4 text-red-600" />
@@ -68,19 +68,19 @@ const GoalUpdateModal = ({
             <div className="flex justify-between">
               <span className="text-gray-600">금액:</span>
               <span>
-                {categoryChange.oldAmount.toLocaleString()}원 →{' '}
+                {categoryChange.oldAmount.toLocaleString()}원 →{" "}
                 {categoryChange.newAmount.toLocaleString()}원
                 <span
                   className={`ml-1 ${
                     categoryChange.newAmount > categoryChange.oldAmount
-                      ? 'text-green-600'
-                      : 'text-red-600'
+                      ? "text-green-600"
+                      : "text-red-600"
                   }`}
                 >
                   (
                   {categoryChange.newAmount > categoryChange.oldAmount
-                    ? '+'
-                    : ''}
+                    ? "+"
+                    : ""}
                   {(
                     ((categoryChange.newAmount - categoryChange.oldAmount) /
                       categoryChange.oldAmount) *
@@ -97,12 +97,12 @@ const GoalUpdateModal = ({
                 <span
                   className={`ml-1 ${
                     categoryChange.newCount > categoryChange.oldCount
-                      ? 'text-green-600'
-                      : 'text-red-600'
+                      ? "text-green-600"
+                      : "text-red-600"
                   }`}
                 >
                   (
-                  {categoryChange.newCount > categoryChange.oldCount ? '+' : ''}
+                  {categoryChange.newCount > categoryChange.oldCount ? "+" : ""}
                   {categoryChange.newCount - categoryChange.oldCount})
                 </span>
               </span>
@@ -142,11 +142,11 @@ const GoalUpdateModal = ({
 
                 <div className="flex flex-col items-end gap-1">
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                    {goal.challenge_mode === 'both'
-                      ? '금액 + 횟수'
-                      : goal.challenge_mode === 'amount'
-                        ? '금액'
-                        : '횟수'}
+                    {goal.challenge_mode === "both"
+                      ? "금액 + 횟수"
+                      : goal.challenge_mode === "amount"
+                        ? "금액"
+                        : "횟수"}
                   </span>
                   <span className="text-xs text-blue-600">클릭하여 수정</span>
                 </div>

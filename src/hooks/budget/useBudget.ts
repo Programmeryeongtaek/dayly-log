@@ -268,17 +268,17 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
 
       const { data: categoryInfo } = await supabase
         .from("categories")
-        .select('name')
-        .eq('id', newTransaction.category_id)
+        .select("name")
+        .eq("id", newTransaction.category_id)
         .single();
 
-      const categoryName = categoryInfo?.name || '';
+      const categoryName = categoryInfo?.name || "";
 
       // 트랜잭션 추가 전 카테고리 통계 저장
       const beforeStats = await getCategoryStats(
         newTransaction.user_id,
         categoryName,
-        newTransaction.type
+        newTransaction.type,
       );
 
       const { type, ...transactionData } = newTransaction;
@@ -299,8 +299,8 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
       // 트랜잭션 추가 후 카테고리 통계 조회
       const afterStats = await getCategoryStats(
         newTransaction.user_id,
-        data.category?.name || '',
-        type
+        data.category?.name || "",
+        type,
       );
 
       return { ...data, type, beforeStats, afterStats };
@@ -312,28 +312,37 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
       // 카테고리 통계가 변경되었는지 확인
       const { beforeStats, afterStats, category } = result;
 
-      if (beforeStats && afterStats && category?.name && userId && (beforeStats.amount !== afterStats.amount || beforeStats.count !== afterStats.count)) {
+      if (
+        beforeStats &&
+        afterStats &&
+        category?.name &&
+        userId &&
+        (beforeStats.amount !== afterStats.amount ||
+          beforeStats.count !== afterStats.count)
+      ) {
         // 해당 카테고리에 연결된 목표들이 있는지 확인
         const categoryGoals = await checkCategoryGoals(
           userId,
           category.name,
-          result.type
+          result.type,
         );
 
         if (categoryGoals.length > 0) {
           // 목표 업데이트 모달 트리거 - 컴포넌트에서 처리
           // 여기서는 상태만 업데이트, 실제 모달은 컴포넌트에서 처리
-          window.dispatchEvent(new CustomEvent('goalUpdateNeeded', {
-            detail: {
-              categoryName: category.name,
-              newAmount: afterStats.amount,
-              newCount: afterStats.count,
-              oldAmount: beforeStats.amount,
-              oldCount: beforeStats.count,
-              type: result.type,
-              goals: categoryGoals
-            }
-          }))
+          window.dispatchEvent(
+            new CustomEvent("goalUpdateNeeded", {
+              detail: {
+                categoryName: category.name,
+                newAmount: afterStats.amount,
+                newCount: afterStats.count,
+                oldAmount: beforeStats.amount,
+                oldCount: beforeStats.count,
+                type: result.type,
+                goals: categoryGoals,
+              },
+            }),
+          );
         }
       }
     },
@@ -356,13 +365,14 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
         .eq("id", id)
         .single();
 
-      if (!transactionToDelete) throw new Error('삭제할 거래를 찾을 수 없습니다.');
+      if (!transactionToDelete)
+        throw new Error("삭제할 거래를 찾을 수 없습니다.");
 
       // 삭제 전 카테고리 통계 저장
       const beforeStats = await getCategoryStats(
         transactionToDelete.user_id,
-        transactionToDelete.category?.name || '',
-        type
+        transactionToDelete.category?.name || "",
+        type,
       );
 
       const { error } = await supabase.from(tableName).delete().eq("id", id);
@@ -371,37 +381,57 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
       // 삭제 후 카테고리 통계 조회
       const afterStats = await getCategoryStats(
         transactionToDelete.user_id,
-        transactionToDelete.category?.name || '',
-        type
+        transactionToDelete.category?.name || "",
+        type,
       );
 
-      return { deletedTransaction: transactionToDelete, type, beforeStats, afterStats };
+      return {
+        deletedTransaction: transactionToDelete,
+        type,
+        beforeStats,
+        afterStats,
+      };
     },
-    onSuccess: async ({ deletedTransaction, type, beforeStats, afterStats }) => {
+    onSuccess: async ({
+      deletedTransaction,
+      type,
+      beforeStats,
+      afterStats,
+    }) => {
       queryClient.invalidateQueries({ queryKey: ["budget"] });
       queryClient.invalidateQueries({ queryKey: ["goals"] });
 
       // 카테고리 통계가 변경되었는지 확인
-      if (beforeStats && afterStats && deletedTransaction?.category?.name && userId) {
-        if (beforeStats.amount !== afterStats.amount || beforeStats.count !== afterStats.count) {
+      if (
+        beforeStats &&
+        afterStats &&
+        deletedTransaction?.category?.name &&
+        userId
+      ) {
+        if (
+          beforeStats.amount !== afterStats.amount ||
+          beforeStats.count !== afterStats.count
+        ) {
           const categoryGoals = await checkCategoryGoals(
             userId,
             deletedTransaction.category.name,
-            type
+            type,
           );
 
           if (categoryGoals.length > 0) {
-            window.dispatchEvent(new CustomEvent('goalUpdateNeeded', {
-              detail: {
-                categoryName: deletedTransaction.category.name,
-                newAmount: afterStats.amount,
-                newCount: afterStats.count,
-                oldAmount: beforeStats.amount,
-                oldCount: beforeStats.count,
-                type: type,
-                goals: categoryGoals
-              }
-            }));
+            window.dispatchEvent(
+              new CustomEvent("goalUpdateNeeded", {
+                detail: {
+                  categoryName: deletedTransaction.category.name,
+                  newAmount: afterStats.amount,
+                  newCount: afterStats.count,
+                  oldAmount: beforeStats.amount,
+                  oldCount: beforeStats.count,
+                  type: type,
+                  goals: categoryGoals,
+                },
+              }),
+            );
           }
         }
       }
@@ -460,36 +490,48 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
 };
 
 // 카테고리별 통계 조회 헬퍼 함수
-const getCategoryStats = async (userId: string, categoryName: string, type: "income" | "expense") => {
-  const startOfMonth = format(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-MM-dd");
-  const endOfMonth = format(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), "yyyy-MM-dd");
-  
+const getCategoryStats = async (
+  userId: string,
+  categoryName: string,
+  type: "income" | "expense",
+) => {
+  const startOfMonth = format(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    "yyyy-MM-dd",
+  );
+  const endOfMonth = format(
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    "yyyy-MM-dd",
+  );
+
   const tableName = type === "income" ? "incomes" : "expenses";
-  
+
   const { data, error } = await supabase
     .from(tableName)
-    .select(`
+    .select(
+      `
       amount,
       category:categories!inner(name)
-    `)
+    `,
+    )
     .eq("user_id", userId)
     .eq("category.name", categoryName)
     .gte("date", startOfMonth)
     .lte("date", endOfMonth);
 
   if (error) throw error;
-  
+
   return {
     amount: data?.reduce((sum, item) => sum + item.amount, 0) || 0,
-    count: data?.length || 0
+    count: data?.length || 0,
   };
 };
 
 // 카테고리별 목표 조회 헬퍼 함수
 const checkCategoryGoals = async (
-  userId: string, 
-  categoryName: string, 
-  type: "income" | "expense"
+  userId: string,
+  categoryName: string,
+  type: "income" | "expense",
 ) => {
   const { data: categoryData } = await supabase
     .from("categories")
@@ -500,14 +542,16 @@ const checkCategoryGoals = async (
 
   if (!categoryData || categoryData.length === 0) return [];
 
-  const categoryIds = categoryData.map(cat => cat.id);
+  const categoryIds = categoryData.map((cat) => cat.id);
 
   const { data, error } = await supabase
     .from("goals")
-    .select(`
+    .select(
+      `
       *,
       category:categories(*)
-    `)
+    `,
+    )
     .eq("user_id", userId)
     .in("category_id", categoryIds)
     .eq("status", "active");

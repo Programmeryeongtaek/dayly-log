@@ -147,15 +147,15 @@ export const useReflections = ({
       const { keywords: keywordNames } = formData;
 
       // 기본값 설정
-    const dataWithDefaults = {
-      user_id: formData.user_id,
-      category_id: formData.category_id,
-      title: formData.title,
-      content: formData.content,
-      date: formData.date,
-      is_public: formData.is_public ?? true,
-      is_neighbor_visible: formData.is_neighbor_visible ?? true,
-    };
+      const dataWithDefaults = {
+        user_id: formData.user_id,
+        category_id: formData.category_id,
+        title: formData.title,
+        content: formData.content,
+        date: formData.date,
+        is_public: formData.is_public ?? true,
+        is_neighbor_visible: formData.is_neighbor_visible ?? true,
+      };
 
       // 1. 회고 생성
       const { data: reflection, error: reflectionError } = await supabase

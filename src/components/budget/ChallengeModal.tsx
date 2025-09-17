@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { addDays, addMonths, format } from 'date-fns';
-import { useState } from 'react';
-import Modal from '../common/Modal';
-import { Calendar, Target, TrendingDown, TrendingUp } from 'lucide-react';
-import { ko } from 'date-fns/locale';
+import { addDays, addMonths, format } from "date-fns";
+import { useState } from "react";
+import Modal from "../common/Modal";
+import { Calendar, Target, TrendingDown, TrendingUp } from "lucide-react";
+import { ko } from "date-fns/locale";
 
 interface ChallengeFormData {
   title: string;
@@ -24,27 +24,27 @@ interface ChallengeModalProps {
   onSubmit: (
     data: ChallengeFormData & {
       category: string;
-      categoryType: 'income' | 'expense';
-    }
+      categoryType: "income" | "expense";
+    },
   ) => void;
   challengeData: {
     name: string;
     amount: number;
     category: string;
     count?: number;
-    type: 'income' | 'expense';
+    type: "income" | "expense";
   };
   isSubmitting?: boolean;
 }
 
 // 미리 정의된 기간 옵션
 const DURATION_PRESETS = [
-  { label: '1주일', value: '1week', days: 7 },
-  { label: '2주일', value: '2weeks', days: 14 },
-  { label: '1개월', value: '1month', days: 30 },
-  { label: '3개월', value: '3months', days: 90 },
-  { label: '6개월', value: '6months', days: 180 },
-  { label: '직접 입력', value: 'custom', days: 0 },
+  { label: "1주일", value: "1week", days: 7 },
+  { label: "2주일", value: "2weeks", days: 14 },
+  { label: "1개월", value: "1month", days: 30 },
+  { label: "3개월", value: "3months", days: 90 },
+  { label: "6개월", value: "6months", days: 180 },
+  { label: "직접 입력", value: "custom", days: 0 },
 ] as const;
 
 const ChallengeModal = ({
@@ -54,29 +54,29 @@ const ChallengeModal = ({
   challengeData,
   isSubmitting = false,
 }: ChallengeModalProps) => {
-  const isIncome = challengeData.type === 'income';
+  const isIncome = challengeData.type === "income";
 
   const [formData, setFormData] = useState<ChallengeFormData>({
-    title: '',
-    description: '',
-    reason: '',
+    title: "",
+    description: "",
+    reason: "",
     enableAmountGoal: true,
     enableCountGoal: isIncome
       ? (challengeData.count || 0) >= 1
       : (challengeData.count || 0) > 1,
     targetAmount: Math.max(
       1,
-      Math.floor(challengeData.amount * 0.1)
+      Math.floor(challengeData.amount * 0.1),
     ).toString(),
     targetCount: isIncome
       ? challengeData.count
         ? Math.max(challengeData.count + 1, 2).toString()
-        : '2'
+        : "2"
       : challengeData.count
         ? Math.max(1, challengeData.count - 1).toString()
-        : '1',
-    duration: '1month',
-    targetDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
+        : "1",
+    duration: "1month",
+    targetDate: format(addMonths(new Date(), 1), "yyyy-MM-dd"),
   });
 
   const [isCustomDuration, setIsCustomDuration] = useState(false);
@@ -84,21 +84,21 @@ const ChallengeModal = ({
   // 폼 데이터 업데이트 핸들러
   const handleFormDataChange = <K extends keyof ChallengeFormData>(
     field: K,
-    value: ChallengeFormData[K]
+    value: ChallengeFormData[K],
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // 체크박스 핸들러
   const handleCheckboxChange =
-    (field: 'enableAmountGoal' | 'enableCountGoal') =>
+    (field: "enableAmountGoal" | "enableCountGoal") =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       handleFormDataChange(field, e.target.checked);
     };
 
   // 기간 선택 핸들러
   const handleDurationChange = (duration: string) => {
-    const isCustom = duration === 'custom';
+    const isCustom = duration === "custom";
     setIsCustomDuration(isCustom);
 
     if (!isCustom) {
@@ -108,7 +108,7 @@ const ChallengeModal = ({
         setFormData((prev) => ({
           ...prev,
           duration,
-          targetDate: format(targetDate, 'yyyy-MM-dd'),
+          targetDate: format(targetDate, "yyyy-MM-dd"),
         }));
       }
     } else {
@@ -158,26 +158,26 @@ const ChallengeModal = ({
   // 모달이 닫힐 때 폼 초기화
   const handleClose = () => {
     setFormData({
-      title: '',
-      description: '',
-      reason: '',
+      title: "",
+      description: "",
+      reason: "",
       enableAmountGoal: true,
       enableCountGoal: isIncome
         ? (challengeData.count || 0) >= 1
         : (challengeData.count || 0) > 1,
       targetAmount: Math.max(
         1,
-        Math.floor(challengeData.amount * 0.1)
+        Math.floor(challengeData.amount * 0.1),
       ).toString(),
       targetCount: isIncome
         ? challengeData.count
           ? Math.max(challengeData.count + 1, 2).toString()
-          : '2'
+          : "2"
         : challengeData.count
           ? Math.max(1, challengeData.count - 1).toString()
-          : '1',
-      duration: '1month',
-      targetDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
+          : "1",
+      duration: "1month",
+      targetDate: format(addMonths(new Date(), 1), "yyyy-MM-dd"),
     });
     setIsCustomDuration(false);
     onClose();
@@ -211,7 +211,7 @@ const ChallengeModal = ({
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => handleFormDataChange('title', e.target.value)}
+              onChange={(e) => handleFormDataChange("title", e.target.value)}
               placeholder="예: 카페 지출 줄이기 챌린지"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
               required
@@ -242,9 +242,9 @@ const ChallengeModal = ({
               </div>
 
               <span
-                className={`font-semibold ${isIncome ? 'text-green-600' : 'text-red-600'}`}
+                className={`font-semibold ${isIncome ? "text-green-600" : "text-red-600"}`}
               >
-                {isIncome ? '+' : '-'}
+                {isIncome ? "+" : "-"}
                 {challengeData.amount.toLocaleString()}원
               </span>
             </div>
@@ -255,7 +255,7 @@ const ChallengeModal = ({
                 <input
                   type="checkbox"
                   checked={formData.enableAmountGoal}
-                  onChange={handleCheckboxChange('enableAmountGoal')}
+                  onChange={handleCheckboxChange("enableAmountGoal")}
                   className="mt-1 w-4 h-4 text-accent-600 bg-gray-100 border-gray-300 rounded focus:ring-accent-500"
                 />
                 <div className="flex-1">
@@ -268,7 +268,7 @@ const ChallengeModal = ({
                           type="number"
                           value={formData.targetAmount}
                           onChange={(e) =>
-                            handleFormDataChange('targetAmount', e.target.value)
+                            handleFormDataChange("targetAmount", e.target.value)
                           }
                           placeholder="목표금액"
                           max={challengeData.amount}
@@ -282,21 +282,21 @@ const ChallengeModal = ({
                       <div
                         className={`text-xs ${
                           Number(formData.targetAmount) >= challengeData.amount
-                            ? 'text-red-500'
-                            : 'text-gray-400'
+                            ? "text-red-500"
+                            : "text-gray-400"
                         }`}
                       >
                         {isIncome ? (
                           // 수입
                           <>
-                            현재보다{' '}
+                            현재보다{" "}
                             {Math.round(
                               (Number(formData.targetAmount) /
                                 challengeData.amount) *
-                                100
+                                100,
                             )}
                             % 늘리기 ({challengeData.amount.toLocaleString()}원
-                            →{' '}
+                            →{" "}
                             {(
                               challengeData.amount +
                               Number(formData.targetAmount)
@@ -313,14 +313,14 @@ const ChallengeModal = ({
                           </>
                         ) : (
                           <>
-                            현재 지출의{' '}
+                            현재 지출의{" "}
                             {Math.round(
                               (Number(formData.targetAmount) /
                                 challengeData.amount) *
-                                100
+                                100,
                             )}
                             % 절약 목표 ({challengeData.amount.toLocaleString()}
-                            원 →{' '}
+                            원 →{" "}
                             {(
                               challengeData.amount -
                               Number(formData.targetAmount)
@@ -341,7 +341,7 @@ const ChallengeModal = ({
                 <input
                   type="checkbox"
                   checked={formData.enableCountGoal}
-                  onChange={handleCheckboxChange('enableCountGoal')}
+                  onChange={handleCheckboxChange("enableCountGoal")}
                   disabled={
                     isIncome
                       ? !challengeData.count || challengeData.count < 1
@@ -353,8 +353,8 @@ const ChallengeModal = ({
                         ? !challengeData.count || challengeData.count < 1
                         : !challengeData.count || challengeData.count <= 1
                     )
-                      ? 'opacity-50 cursor-not-allowed'
-                      : ''
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
                   }`}
                 />
                 <div className="flex-1">
@@ -374,7 +374,7 @@ const ChallengeModal = ({
                           type="number"
                           value={formData.targetCount}
                           onChange={(e) =>
-                            handleFormDataChange('targetCount', e.target.value)
+                            handleFormDataChange("targetCount", e.target.value)
                           }
                           placeholder="목표 횟수"
                           min={
@@ -403,7 +403,7 @@ const ChallengeModal = ({
                           ? isIncome
                             ? `현재 월 ${challengeData.count}회에서 ${formData.targetCount}회로 늘리기 (${Math.round(((Number(formData.targetCount) - challengeData.count) / challengeData.count) * 100)}% 증가)`
                             : `현재 월 ${challengeData.count}회에서 ${formData.targetCount}회로 줄이기 (${Math.round(((challengeData.count - Number(formData.targetCount)) / challengeData.count) * 100)}% 감소)`
-                          : ''}
+                          : ""}
                       </div>
                     </div>
                   )}
@@ -428,8 +428,8 @@ const ChallengeModal = ({
                     px-3 py-2 text-xs font-medium rounded-lg border transition-all duration-200
                     ${
                       formData.duration === preset.value
-                        ? 'bg-accent-100 border-accent-300 text-accent-700'
-                        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                        ? "bg-accent-100 border-accent-300 text-accent-700"
+                        : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                     }
                   `}
                 >
@@ -447,9 +447,9 @@ const ChallengeModal = ({
                   type="date"
                   value={formData.targetDate}
                   onChange={(e) =>
-                    handleFormDataChange('targetDate', e.target.value)
+                    handleFormDataChange("targetDate", e.target.value)
                   }
-                  min={format(new Date(), 'yyyy-MM-dd')}
+                  min={format(new Date(), "yyyy-MM-dd")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
                 />
               </div>
@@ -458,12 +458,12 @@ const ChallengeModal = ({
             <div className="text-sm text-gray-600 bg-blue-50 rounded-lg p-3 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-blue-600" />
               <span>
-                종료일:{' '}
+                종료일:{" "}
                 <strong>
                   {format(
                     new Date(formData.targetDate),
-                    'yyyy년 M월 d일 (EEEE)',
-                    { locale: ko }
+                    "yyyy년 M월 d일 (EEEE)",
+                    { locale: ko },
                   )}
                 </strong>
               </span>
@@ -477,7 +477,7 @@ const ChallengeModal = ({
             </label>
             <textarea
               value={formData.reason}
-              onChange={(e) => handleFormDataChange('reason', e.target.value)}
+              onChange={(e) => handleFormDataChange("reason", e.target.value)}
               placeholder="예: 매월 카페 지출이 너무 많아서 가계에 부담이 되고 있어요. 건강한 소비 습관을 만들고 싶습니다."
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm resize-none"
@@ -493,7 +493,7 @@ const ChallengeModal = ({
             <textarea
               value={formData.description}
               onChange={(e) =>
-                handleFormDataChange('description', e.target.value)
+                handleFormDataChange("description", e.target.value)
               }
               placeholder="예: 주 3회 이상 카페를 이용하지 않기, 집에서 커피 내려먹기 등 구체적인 실행 방법을 적어보세요."
               rows={2}

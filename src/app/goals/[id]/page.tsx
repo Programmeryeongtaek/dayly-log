@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import ActionButtons from '@/components/goals/ActionButton';
-import InfoSection, { InfoItem } from '@/components/goals/InfoSection';
-import ProgressBar from '@/components/goals/ProgressBar';
-import StatusBadge from '@/components/goals/StatusBadge';
-import { useAuth } from '@/hooks/auth';
-import { useGoals } from '@/hooks/goals/useGoals';
-import { supabase } from '@/lib/supabase';
+import ActionButtons from "@/components/goals/ActionButton";
+import InfoSection, { InfoItem } from "@/components/goals/InfoSection";
+import ProgressBar from "@/components/goals/ProgressBar";
+import StatusBadge from "@/components/goals/StatusBadge";
+import { useAuth } from "@/hooks/auth";
+import { useGoals } from "@/hooks/goals/useGoals";
+import { supabase } from "@/lib/supabase";
 import {
   getChallengeMode,
   getGoalProgress,
   getTypeText,
-} from '@/utils/goals/goalsHelpers';
-import { useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { ArrowLeft, Calendar, Info, Target } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+} from "@/utils/goals/goalsHelpers";
+import { useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { ArrowLeft, Calendar, Info, Target } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 
 const GoalDetailPage = () => {
   const { user } = useAuth();
@@ -35,27 +35,27 @@ const GoalDetailPage = () => {
   };
 
   const handleDelete = async () => {
-    if (!confirm('정말로 이 목표를 삭제하시겠습니까?')) {
+    if (!confirm("정말로 이 목표를 삭제하시겠습니까?")) {
       return;
     }
 
     setIsDeleting(true);
 
     try {
-      const { error } = await supabase.from('goals').delete().eq('id', goalId);
+      const { error } = await supabase.from("goals").delete().eq("id", goalId);
 
       if (error) {
-        console.error('목표 삭제 실패:', error);
-        alert('목표 삭제에 실패했습니다.');
+        console.error("목표 삭제 실패:", error);
+        alert("목표 삭제에 실패했습니다.");
         return;
       }
 
-      queryClient.invalidateQueries({ queryKey: ['goals'] });
-      alert('목표가 성공적으로 삭제되었습니다.');
-      router.push('/goals');
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
+      alert("목표가 성공적으로 삭제되었습니다.");
+      router.push("/goals");
     } catch (error) {
-      console.error('목표 삭제 오류:', error);
-      alert('목표 삭제 중 오류가 발생했습니다.');
+      console.error("목표 삭제 오류:", error);
+      alert("목표 삭제 중 오류가 발생했습니다.");
     } finally {
       setIsDeleting(false);
     }
@@ -72,7 +72,7 @@ const GoalDetailPage = () => {
           <h1 className="text-2xl font-bold text-gray-900 mb-3">목표 상세</h1>
           <p className="text-gray-600 mb-6">로그인이 필요한 서비스입니다.</p>
           <button
-            onClick={() => router.push('/auth/login')}
+            onClick={() => router.push("/auth/login")}
             className="px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
           >
             로그인하기
@@ -97,7 +97,7 @@ const GoalDetailPage = () => {
             요청한 목표가 존재하지 않거나 삭제되었습니다.
           </p>
           <button
-            onClick={() => router.push('/goals')}
+            onClick={() => router.push("/goals")}
             className="px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
           >
             목표 목록으로 돌아가기
@@ -116,7 +116,7 @@ const GoalDetailPage = () => {
         {/* 헤더 */}
         <div className="flex items-center">
           <button
-            onClick={() => router.push('/goals')}
+            onClick={() => router.push("/goals")}
             className="hover:text-accent-500 text-gray-800 hover:cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -151,7 +151,7 @@ const GoalDetailPage = () => {
                 {goal.category && (
                   <InfoItem label="" value={goal.category.name} important />
                 )}
-                <InfoItem label="" value={getTypeText(goal.type)} important />({' '}
+                <InfoItem label="" value={getTypeText(goal.type)} important />({" "}
                 <InfoItem
                   label=""
                   value={getChallengeMode(goal.challenge_mode)}
@@ -162,7 +162,7 @@ const GoalDetailPage = () => {
               {goal.category && (
                 <InfoItem
                   label={
-                    goal.type === 'reduce_expense' ? '현재 사용' : '현재 달성'
+                    goal.type === "reduce_expense" ? "현재 사용" : "현재 달성"
                   }
                   value={`${goal.current_amount?.toLocaleString()}원`}
                   important
@@ -182,19 +182,19 @@ const GoalDetailPage = () => {
                     label=""
                     value={format(
                       new Date(goal.created_from_date),
-                      'yy. MM. dd.',
+                      "yy. MM. dd.",
                       {
                         locale: ko,
-                      }
+                      },
                     )}
                     important
                   />
-                )}{' '}
+                )}{" "}
                 ~
                 {goal.target_date && (
                   <InfoItem
                     label=""
-                    value={format(new Date(goal.target_date), 'yy. MM. dd.', {
+                    value={format(new Date(goal.target_date), "yy. MM. dd.", {
                       locale: ko,
                     })}
                     important
@@ -212,7 +212,7 @@ const GoalDetailPage = () => {
               )}
 
               {goal.target_count && goal.current_count !== undefined && (
-                <div className={goal.target_amount ? 'mt-6' : ''}>
+                <div className={goal.target_amount ? "mt-6" : ""}>
                   <ProgressBar
                     current={goal.current_count}
                     target={goal.target_count}
@@ -245,13 +245,13 @@ const GoalDetailPage = () => {
             >
               <InfoItem
                 label="생성일"
-                value={format(new Date(goal.created_at), 'yy. MM. dd. HH:mm', {
+                value={format(new Date(goal.created_at), "yy. MM. dd. HH:mm", {
                   locale: ko,
                 })}
               />
               <InfoItem
                 label="마지막 수정일"
-                value={format(new Date(goal.updated_at), 'yy. MM. dd. HH:mm', {
+                value={format(new Date(goal.updated_at), "yy. MM. dd. HH:mm", {
                   locale: ko,
                 })}
               />

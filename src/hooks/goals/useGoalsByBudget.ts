@@ -1,6 +1,6 @@
-import { supabase } from '@/lib/supabase';
-import { Goal } from '@/types/goals';
-import { useQuery } from '@tanstack/react-query';
+import { supabase } from "@/lib/supabase";
+import { Goal } from "@/types/goals";
+import { useQuery } from "@tanstack/react-query";
 
 interface UseGoalsByBudgetProps {
   userId?: string;
@@ -28,14 +28,16 @@ export const useGoalsByBudget = ({
 
       if (!categoryData || categoryData.length === 0) return [];
 
-      const categoryIds = categoryData.map(cat => cat.id);
+      const categoryIds = categoryData.map((cat) => cat.id);
 
       const { data, error } = await supabase
         .from("goals")
-        .select(`
+        .select(
+          `
           *,
           category:categories(*)
-        `)
+        `,
+        )
         .eq("user_id", userId)
         .in("category_id", categoryIds)
         .eq("status", "active");

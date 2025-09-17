@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/auth';
-import { useGoals } from '@/hooks/goals/useGoals';
-import { GoalFormData } from '@/types/goals';
+import { useAuth } from "@/hooks/auth";
+import { useGoals } from "@/hooks/goals/useGoals";
+import { GoalFormData } from "@/types/goals";
 import {
   getChallengeMode,
   getStatusText,
   getTypeText,
-} from '@/utils/goals/goalsHelpers';
-import { format } from 'date-fns';
+} from "@/utils/goals/goalsHelpers";
+import { format } from "date-fns";
 import {
   BarChart3,
   Calendar,
@@ -18,9 +18,9 @@ import {
   Save,
   Target,
   X,
-} from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { FormEvent, useEffect, useState } from 'react';
+} from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
 
 interface GoalEditFormData {
   title: string;
@@ -29,8 +29,8 @@ interface GoalEditFormData {
   target_amount: string;
   target_count: string;
   target_date: string;
-  status: 'active' | 'completed' | 'paused' | 'cancelled';
-  challenge_mode: 'amount' | 'count' | 'both';
+  status: "active" | "completed" | "paused" | "cancelled";
+  challenge_mode: "amount" | "count" | "both";
 }
 
 const GoalEditPage = () => {
@@ -48,14 +48,14 @@ const GoalEditPage = () => {
   const goal = goals.find((g) => g.id === goalId);
 
   const [formData, setFormData] = useState<GoalEditFormData>({
-    title: '',
-    description: '',
-    reason: '',
-    target_amount: '',
-    target_count: '',
-    target_date: '',
-    status: 'active',
-    challenge_mode: 'amount',
+    title: "",
+    description: "",
+    reason: "",
+    target_amount: "",
+    target_count: "",
+    target_date: "",
+    status: "active",
+    challenge_mode: "amount",
   });
 
   const [errors, setErrors] = useState<Partial<GoalEditFormData>>({});
@@ -64,14 +64,14 @@ const GoalEditPage = () => {
   useEffect(() => {
     if (goal) {
       setFormData({
-        title: goal.title || '',
-        description: goal.description || '',
-        reason: goal.reason || '',
-        target_amount: goal.target_amount ? goal.target_amount.toString() : '',
-        target_count: goal.target_count ? goal.target_count.toString() : '',
+        title: goal.title || "",
+        description: goal.description || "",
+        reason: goal.reason || "",
+        target_amount: goal.target_amount ? goal.target_amount.toString() : "",
+        target_count: goal.target_count ? goal.target_count.toString() : "",
         target_date: goal.target_date
-          ? format(new Date(goal.target_date), 'yyyy-MM-dd')
-          : '',
+          ? format(new Date(goal.target_date), "yyyy-MM-dd")
+          : "",
         status: goal.status,
         challenge_mode: goal.challenge_mode,
       });
@@ -90,36 +90,36 @@ const GoalEditPage = () => {
     const newErrors: Partial<GoalEditFormData> = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = '목표 제목은 필수 입니다.';
+      newErrors.title = "목표 제목은 필수 입니다.";
     }
 
     if (
-      formData.challenge_mode === 'amount' ||
-      formData.challenge_mode === 'both'
+      formData.challenge_mode === "amount" ||
+      formData.challenge_mode === "both"
     ) {
       if (!formData.target_amount || Number(formData.target_amount) <= 0) {
-        newErrors.target_amount = '목표 금액을 올바르게 입력해주세요.';
+        newErrors.target_amount = "목표 금액을 올바르게 입력해주세요.";
       }
     }
 
     if (
-      formData.challenge_mode === 'count' ||
-      formData.challenge_mode === 'both'
+      formData.challenge_mode === "count" ||
+      formData.challenge_mode === "both"
     ) {
       if (!formData.target_count || Number(formData.target_count) <= 0) {
-        newErrors.target_count = '목표 횟수를 올바르게 입력해주세요.';
+        newErrors.target_count = "목표 횟수를 올바르게 입력해주세요.";
       }
     }
 
     if (!formData.target_date) {
-      newErrors.target_date = '목표 날짜는 필수입니다.';
+      newErrors.target_date = "목표 날짜는 필수입니다.";
     } else {
       const targetDate = new Date(formData.target_date);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       if (targetDate < today) {
-        newErrors.target_date = '목표 날짜는 오늘 이후여야 합니다.';
+        newErrors.target_date = "목표 날짜는 오늘 이후여야 합니다.";
       }
     }
 
@@ -144,10 +144,10 @@ const GoalEditPage = () => {
     };
 
     // 챌린지 모드에 따라 목표값 설정
-    if (formData.challenge_mode === 'amount') {
+    if (formData.challenge_mode === "amount") {
       updateData.target_amount = Number(formData.target_amount);
       updateData.target_count = null;
-    } else if (formData.challenge_mode === 'count') {
+    } else if (formData.challenge_mode === "count") {
       updateData.target_count = Number(formData.target_count);
       updateData.target_amount = null;
     } else {
@@ -157,11 +157,11 @@ const GoalEditPage = () => {
 
     try {
       updateGoal({ id: goalId, updates: updateData });
-      alert('목표가 성공적으로 수정되었습니다.');
+      alert("목표가 성공적으로 수정되었습니다.");
       router.push(`/goals/${goalId}`);
     } catch (error) {
-      console.error('목표 수정 실패:', error);
-      alert('목표 수정에 실패했습니다.');
+      console.error("목표 수정 실패:", error);
+      alert("목표 수정에 실패했습니다.");
     }
   };
 
@@ -213,7 +213,7 @@ const GoalEditPage = () => {
             수정하려는 목표가 존재하지 않거나 삭제되었습니다.
           </p>
           <button
-            onClick={() => router.push('/goals')}
+            onClick={() => router.push("/goals")}
             className="px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
           >
             목표 목록으로 돌아가기
@@ -264,9 +264,9 @@ const GoalEditPage = () => {
                   <input
                     type="text"
                     value={formData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    onChange={(e) => handleInputChange("title", e.target.value)}
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors hover:border-accent-300 ${
-                      errors.title ? 'border-red-500' : 'border-gray-400'
+                      errors.title ? "border-red-500" : "border-gray-400"
                     }`}
                     placeholder="목표 제목을 작성하세요."
                   />
@@ -283,7 +283,7 @@ const GoalEditPage = () => {
                   <textarea
                     value={formData.description}
                     onChange={(e) =>
-                      handleInputChange('description', e.target.value)
+                      handleInputChange("description", e.target.value)
                     }
                     rows={3}
                     className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none hover:border-accent-300"
@@ -299,7 +299,7 @@ const GoalEditPage = () => {
                   <textarea
                     value={formData.reason}
                     onChange={(e) =>
-                      handleInputChange('reason', e.target.value)
+                      handleInputChange("reason", e.target.value)
                     }
                     rows={2}
                     className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none hover:border-accent-300"
@@ -315,7 +315,7 @@ const GoalEditPage = () => {
                   <select
                     value={formData.status}
                     onChange={(e) =>
-                      handleInputChange('status', e.target.value)
+                      handleInputChange("status", e.target.value)
                     }
                     className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 hover:border-accent-300 hover:cursor-pointer"
                   >
@@ -338,13 +338,13 @@ const GoalEditPage = () => {
               <div className="flex flex-col gap-6">
                 {/* 챌린지 모드 */}
                 <div className="grid grid-cols-3 gap-4">
-                  {(['amount', 'count', 'both'] as const).map((mode) => (
+                  {(["amount", "count", "both"] as const).map((mode) => (
                     <label
                       key={mode}
                       className={`flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
                         formData.challenge_mode === mode
-                          ? 'border-accent-500 bg-accent-50'
-                          : 'border-gray-300 hover:border-accent-300'
+                          ? "border-accent-500 bg-accent-50"
+                          : "border-gray-300 hover:border-accent-300"
                       }`}
                     >
                       <input
@@ -352,7 +352,7 @@ const GoalEditPage = () => {
                         value={mode}
                         checked={formData.challenge_mode === mode}
                         onChange={(e) =>
-                          handleInputChange('challenge_mode', e.target.value)
+                          handleInputChange("challenge_mode", e.target.value)
                         }
                         className="hidden"
                       />
@@ -364,8 +364,8 @@ const GoalEditPage = () => {
                 </div>
 
                 {/* 목표 금액 */}
-                {(formData.challenge_mode === 'amount' ||
-                  formData.challenge_mode === 'both') && (
+                {(formData.challenge_mode === "amount" ||
+                  formData.challenge_mode === "both") && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       금액 <strong className="text-red-500">*</strong>
@@ -376,12 +376,12 @@ const GoalEditPage = () => {
                         type="number"
                         value={formData.target_amount}
                         onChange={(e) =>
-                          handleInputChange('target_amount', e.target.value)
+                          handleInputChange("target_amount", e.target.value)
                         }
                         className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
                           errors.target_amount
-                            ? 'border-red-500'
-                            : 'border-gray-400 hover:border-accent-400'
+                            ? "border-red-500"
+                            : "border-gray-400 hover:border-accent-400"
                         }`}
                         placeholder="목표 금액을 입력하세요."
                         min="1"
@@ -399,8 +399,8 @@ const GoalEditPage = () => {
                 )}
 
                 {/* 목표 횟수 */}
-                {(formData.challenge_mode === 'count' ||
-                  formData.challenge_mode === 'both') && (
+                {(formData.challenge_mode === "count" ||
+                  formData.challenge_mode === "both") && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       횟수 <strong className="text-red-500">*</strong>
@@ -411,12 +411,12 @@ const GoalEditPage = () => {
                         type="number"
                         value={formData.target_count}
                         onChange={(e) =>
-                          handleInputChange('target_count', e.target.value)
+                          handleInputChange("target_count", e.target.value)
                         }
                         className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors ${
                           errors.target_count
-                            ? 'border-red-500'
-                            : 'border-gray-400 hover:border-accent-400'
+                            ? "border-red-500"
+                            : "border-gray-400 hover:border-accent-400"
                         }`}
                         placeholder="목표 횟수를 입력하세요."
                         min="1"
@@ -444,12 +444,12 @@ const GoalEditPage = () => {
                       type="date"
                       value={formData.target_date}
                       onChange={(e) =>
-                        handleInputChange('target_date', e.target.value)
+                        handleInputChange("target_date", e.target.value)
                       }
                       className={`w-full pl-12 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 transition-colors hover:cursor-pointer ${
                         errors.target_date
-                          ? 'border-red-500'
-                          : 'border-gray-400 hover:border-accent-400'
+                          ? "border-red-500"
+                          : "border-gray-400 hover:border-accent-400"
                       }`}
                     />
                   </div>
@@ -477,12 +477,12 @@ const GoalEditPage = () => {
                 disabled={isUpdatingGoal}
                 className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform shadow-lg ${
                   isUpdatingGoal
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-accent-400 to-accent-600 text-white hover:shadow-xl hover:-translate-y-1 hover:cursor-pointer'
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-accent-400 to-accent-600 text-white hover:shadow-xl hover:-translate-y-1 hover:cursor-pointer"
                 }`}
               >
                 <Save className="w-4 h-4" />
-                {isUpdatingGoal ? '저장 중...' : '수정'}
+                {isUpdatingGoal ? "저장 중..." : "수정"}
               </button>
             </div>
           </form>
