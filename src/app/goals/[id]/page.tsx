@@ -1,34 +1,83 @@
 'use client';
 
+import ActionButtons from '@/components/goals/ActionButton';
+import InfoSection, { InfoItem } from '@/components/goals/InfoSection';
+import ProgressBar from '@/components/goals/ProgressBar';
+import StatusBadge from '@/components/goals/StatusBadge';
 import { useAuth } from '@/hooks/auth';
 import { useGoals } from '@/hooks/goals/useGoals';
+import { supabase } from '@/lib/supabase';
+import {
+  getChallengeMode,
+  getGoalProgress,
+  getTypeText,
+} from '@/utils/goals/goalsHelpers';
+import { useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { ArrowLeft, Calendar, Info, Target } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const GoalDetailPage = () => {
   const { user } = useAuth();
-  const { goals, isLoading } = useGoals({ userId: user?.id });
+  const { goals } = useGoals({ userId: user?.id });
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const goalId = params.id as string;
   const goal = goals.find((g) => g.id === goalId);
 
-  // 로딩 상태
-  if (isLoading) {
-    return (
-      <div>
-        <h1>목표 상세</h1>
-        <p>로딩 중...</p>
-      </div>
-    );
-  }
+  const handleEdit = () => {
+    router.push(`/goals/${goalId}/edit`);
+  };
+
+  const handleDelete = async () => {
+    if (!confirm('정말로 이 목표를 삭제하시겠습니까?')) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      const { error } = await supabase.from('goals').delete().eq('id', goalId);
+
+      if (error) {
+        console.error('목표 삭제 실패:', error);
+        alert('목표 삭제에 실패했습니다.');
+        return;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      alert('목표가 성공적으로 삭제되었습니다.');
+      router.push('/goals');
+    } catch (error) {
+      console.error('목표 삭제 오류:', error);
+      alert('목표 삭제 중 오류가 발생했습니다.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // 사용자 인증 확인
   if (!user?.id) {
     return (
-      <div>
-        <h1>목표 상세</h1>
-        <p>로그인이 필요합니다.</p>
+      <div className="min-h-screen bg-gradient-to-br from-accent-50 via-white to-blue-50 flex items-center justify-center p-4">
+        <div className="text-center bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-md border border-gray-100">
+          <div className="p-4 bg-gradient-to-br from-accent-500 to-accent-400 rounded-2xl w-fit mx-auto mb-6 shadow-lg">
+            <Target className="w-12 h-12 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">목표 상세</h1>
+          <p className="text-gray-600 mb-6">로그인이 필요한 서비스입니다.</p>
+          <button
+            onClick={() => router.push('/auth/login')}
+            className="px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+          >
+            로그인하기
+          </button>
+        </div>
       </div>
     );
   }
@@ -36,256 +85,190 @@ const GoalDetailPage = () => {
   // 목표를 찾을 수 없는 경우
   if (!goal) {
     return (
-      <div>
-        <h1>목표 상세</h1>
-        <p>목표를 찾을 수 없습니다.</p>
-        <button onClick={() => router.push('/goals')}>
-          목표 목록으로 돌아가기
-        </button>
+      <div className="min-h-screen bg-gradient-to-br from-accent-50 via-white to-blue-50 flex items-center justify-center p-4">
+        <div className="text-center bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-md border border-gray-100">
+          <div className="p-4 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl w-fit mx-auto mb-6 shadow-lg">
+            <Target className="w-12 h-12 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">
+            목표를 찾을 수 없습니다.
+          </h1>
+          <p className="text-gray-600 mb-6">
+            요청한 목표가 존재하지 않거나 삭제되었습니다.
+          </p>
+          <button
+            onClick={() => router.push('/goals')}
+            className="px-6 py-3 bg-gradient-to-r from-accent-500 to-accent-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+          >
+            목표 목록으로 돌아가기
+          </button>
+        </div>
       </div>
     );
   }
 
-  const handleEdit = () => {
-    router.push(`/goals/${goalId}/edit`);
-  };
-
-  const handleDelete = () => {
-    if (confirm('정말로 이 목표를 삭제하시겠습니까?')) {
-      // TODO: 목표 삭제 구현
-      console.log('목표 삭제:', goalId);
-      router.push('/goals');
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active':
-        return '진행 중';
-      case 'completed':
-        return '완료됨';
-      case 'paused':
-        return '일시정지';
-      case 'cancelled':
-        return '취소됨';
-      default:
-        return status;
-    }
-  };
-
-  const getTypeText = (type: string) => {
-    switch (type) {
-      case 'save_money':
-        return '돈 저축';
-      case 'reduce_expense':
-        return '지출 줄이기';
-      case 'increase_income':
-        return '수입 늘리기';
-      case 'custom':
-        return '사용자 정의';
-      default:
-        return type;
-    }
-  };
-
-  const getChallengeMode = (mode: string) => {
-    switch (mode) {
-      case 'amount':
-        return '금액';
-      case 'count':
-        return '횟수';
-      case 'both':
-        return '금액 + 횟수';
-      default:
-        return mode;
-    }
-  };
+  // 진행률 계산
+  const progress = getGoalProgress(goal);
 
   return (
-    <div>
-      <div style={{ marginBottom: '20px' }}>
-        <button onClick={() => router.push('/goals')}>
-          ← 목표 목록으로 돌아가기
-        </button>
-      </div>
-
-      <h1>{goal.title}</h1>
-
-      {/* 기본 정보 */}
-      <div style={{ marginBottom: '30px' }}>
-        <h2>기본 정보</h2>
-        <div>
-          <p>
-            <strong>설명:</strong> {goal.description || '설명 없음'}
-          </p>
-          <p>
-            <strong>이유:</strong> {goal.reason || '이유 없음'}
-          </p>
-          <p>
-            <strong>타입:</strong> {getTypeText(goal.type)}
-          </p>
-          <p>
-            <strong>상태:</strong> {getStatusText(goal.status)}
-          </p>
-          <p>
-            <strong>챌린지 모드:</strong>{' '}
-            {getChallengeMode(goal.challenge_mode)}
-          </p>
-          {goal.category && (
-            <p>
-              <strong>카테고리:</strong> {goal.category.name}
-            </p>
-          )}
+    <div className="min-h-screen bg-gradient-to-br from-accent-50 via-white to-blue-50">
+      <div className="flex flex-col gap-4 max-w-4xl mx-auto px-4 py-8">
+        {/* 헤더 */}
+        <div className="flex items-center">
+          <button
+            onClick={() => router.push('/goals')}
+            className="hover:text-accent-500 text-gray-800 hover:cursor-pointer"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
         </div>
-      </div>
 
-      {/* 목표 정보 */}
-      <div style={{ marginBottom: '30px' }}>
-        <h2>목표 정보</h2>
-        <div>
-          {goal.target_amount && (
-            <p>
-              <strong>목표 금액:</strong> {goal.target_amount.toLocaleString()}
-              원
-              {goal.current_amount !== undefined && (
-                <span> (현재: {goal.current_amount.toLocaleString()}원)</span>
+        {/* 메인 컨텐츠 */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          {/* 헤더 섹션 */}
+          <div className="bg-gradient-to-r from-accent-400 to-accent-600 py-6 px-4 text-white relative">
+            <div className="flex flex-col gap-1 mb-4">
+              <div className="flex justify-end pt-4">
+                <StatusBadge
+                  status={goal.status}
+                  targetDate={goal.target_date}
+                  className="top-2 right-2 absolute"
+                />
+              </div>
+              <h1 className="text-2xl font-bold">{goal.title}</h1>
+              {goal.description && (
+                <p className="text-white text-lg leading-relaxed">
+                  {goal.description}
+                </p>
               )}
-            </p>
-          )}
-          {goal.target_count && (
-            <p>
-              <strong>목표 횟수:</strong> {goal.target_count}회
-              {goal.current_count !== undefined && (
-                <span> (현재: {goal.current_count}회)</span>
-              )}
-            </p>
-          )}
-          {goal.target_date && (
-            <p>
-              <strong>목표 날짜:</strong>{' '}
-              {new Date(goal.target_date).toLocaleDateString()}
-            </p>
-          )}
-          {goal.created_from_date && (
-            <p>
-              <strong>시작 날짜:</strong>{' '}
-              {new Date(goal.created_from_date).toLocaleDateString()}
-            </p>
-          )}
-        </div>
-      </div>
+            </div>
+          </div>
 
-      {/* 진행률 */}
-      {goal.target_amount && goal.current_amount !== undefined && (
-        <div style={{ marginBottom: '30px' }}>
-          <h2>금액 진행률</h2>
-          <div>
-            <p>
-              진행률:{' '}
-              {((goal.current_amount / goal.target_amount) * 100).toFixed(1)}%
-            </p>
-            <div
-              style={{
-                width: '100%',
-                height: '20px',
-                backgroundColor: '#e0e0e0',
-                borderRadius: '10px',
-                overflow: 'hidden',
-              }}
+          <div className="flex flex-col gap-4">
+            {/* 기본 정보 */}
+            <InfoSection title="기본 정보" icon={<Info className="w-5 h-5" />}>
+              <div className="flex items-center justify-end gap-2 border-b border-accent-300">
+                {goal.category && (
+                  <InfoItem label="" value={goal.category.name} important />
+                )}
+                <InfoItem label="" value={getTypeText(goal.type)} important />({' '}
+                <InfoItem
+                  label=""
+                  value={getChallengeMode(goal.challenge_mode)}
+                />
+                )
+              </div>
+
+              {goal.category && (
+                <InfoItem
+                  label={
+                    goal.type === 'reduce_expense' ? '현재 사용' : '현재 달성'
+                  }
+                  value={`${goal.current_amount?.toLocaleString()}원`}
+                  important
+                />
+              )}
+              {goal.reason && <InfoItem label="" value={goal.reason} />}
+            </InfoSection>
+
+            {/* 목표 정보 */}
+            <InfoSection
+              title="목표 정보"
+              icon={<Target className="w-5 h-5" />}
             >
-              <div
-                style={{
-                  width: `${Math.min((goal.current_amount / goal.target_amount) * 100, 100)}%`,
-                  height: '100%',
-                  backgroundColor:
-                    goal.type === 'increase_income' ? '#22c55e' : '#ef4444',
-                  borderRadius: '10px',
-                }}
+              <div className="flex gap-2 items-center justify-end border-b border-accent-300">
+                {goal.created_from_date && (
+                  <InfoItem
+                    label=""
+                    value={format(
+                      new Date(goal.created_from_date),
+                      'yy. MM. dd.',
+                      {
+                        locale: ko,
+                      }
+                    )}
+                    important
+                  />
+                )}{' '}
+                ~
+                {goal.target_date && (
+                  <InfoItem
+                    label=""
+                    value={format(new Date(goal.target_date), 'yy. MM. dd.', {
+                      locale: ko,
+                    })}
+                    important
+                  />
+                )}
+              </div>
+              {goal.target_amount && goal.current_amount !== undefined && (
+                <ProgressBar
+                  current={goal.current_amount}
+                  target={goal.target_amount}
+                  type={goal.type}
+                  title="금액 달성률"
+                  unit="원"
+                />
+              )}
+
+              {goal.target_count && goal.current_count !== undefined && (
+                <div className={goal.target_amount ? 'mt-6' : ''}>
+                  <ProgressBar
+                    current={goal.current_count}
+                    target={goal.target_count}
+                    type={goal.type}
+                    title="횟수 달성률"
+                    unit="회"
+                  />
+                </div>
+              )}
+
+              {/* 종합 진행률 (둘 다 있을 때만) */}
+              {goal.target_amount && goal.target_count && (
+                <div className="mt-6 p-4 bg-gradient-to-r from-accent-100 to-accent-200 rounded-xl">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold text-gray-900">
+                      종합 달성률
+                    </span>
+                    <span className="text-3xl font-bold bg-gradient-to-r from-accent-400 to-accent-600 bg-clip-text text-transparent">
+                      {progress.overallProgress}%
+                    </span>
+                  </div>
+                </div>
+              )}
+            </InfoSection>
+
+            {/* 날짜 정보 */}
+            <InfoSection
+              title="생성 정보"
+              icon={<Calendar className="w-5 h-5" />}
+            >
+              <InfoItem
+                label="생성일"
+                value={format(new Date(goal.created_at), 'yy. MM. dd. HH:mm', {
+                  locale: ko,
+                })}
+              />
+              <InfoItem
+                label="마지막 수정일"
+                value={format(new Date(goal.updated_at), 'yy. MM. dd. HH:mm', {
+                  locale: ko,
+                })}
+              />
+            </InfoSection>
+
+            {/* 액션 버튼 */}
+            <div className="flex justify-end">
+              <ActionButtons
+                goalStatus={goal.status}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                isDeleting={isDeleting}
               />
             </div>
           </div>
         </div>
-      )}
-
-      {/* 횟수 진행률 */}
-      {goal.target_count && goal.current_count !== undefined && (
-        <div style={{ marginBottom: '30px' }}>
-          <h2>횟수 진행률</h2>
-          <div>
-            <p>
-              진행률:{' '}
-              {((goal.current_count / goal.target_count) * 100).toFixed(1)}%
-            </p>
-            <div
-              style={{
-                width: '100%',
-                height: '20px',
-                backgroundColor: '#e0e0e0',
-                borderRadius: '10px',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  width: `${Math.min((goal.current_count / goal.target_count) * 100, 100)}%`,
-                  height: '100%',
-                  backgroundColor:
-                    goal.type === 'increase_income' ? '#22c55e' : '#ef4444',
-                  borderRadius: '10px',
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 날짜 정보 */}
-      <div style={{ marginBottom: '30px' }}>
-        <h2>날짜 정보</h2>
-        <div>
-          <p>
-            <strong>생성일:</strong>{' '}
-            {new Date(goal.created_at).toLocaleDateString()}
-          </p>
-          <p>
-            <strong>수정일:</strong>{' '}
-            {new Date(goal.updated_at).toLocaleDateString()}
-          </p>
-        </div>
       </div>
-
-      {/* 액션 버튼들 */}
-      {goal.status === 'active' && (
-        <div style={{ marginBottom: '20px' }}>
-          <button
-            onClick={handleEdit}
-            style={{
-              marginRight: '10px',
-              padding: '10px 20px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-            }}
-          >
-            수정
-          </button>
-          <button
-            onClick={handleDelete}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#ef4444',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-            }}
-          >
-            삭제
-          </button>
-        </div>
-      )}
     </div>
   );
 };

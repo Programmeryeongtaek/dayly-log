@@ -268,12 +268,10 @@ const ChallengeModal = ({
                           type="number"
                           value={formData.targetAmount}
                           onChange={(e) =>
-                            handleFormDataChange("targetAmount", e.target.value)
+                            handleFormDataChange('targetAmount', e.target.value)
                           }
                           placeholder="목표금액"
-                          min="1"
-                          max={challengeData.amount - 1}
-                          step={1000}
+                          max={challengeData.amount}
                           className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 text-sm"
                           required={formData.enableAmountGoal}
                         />
