@@ -9,7 +9,6 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import {
   ArrowRight,
-  BarChart3,
   Calendar,
   Plus,
   Target,
@@ -27,6 +26,7 @@ import DashboardReflectionWidget from "@/components/reflections/DashboardReflect
 import DashboardBudgetWidget from "@/components/budget/DashboardBudgetWidget";
 import Modal from "@/components/common/Modal";
 import QuestionForm from "@/components/questions/QuestionForm";
+import { getDaysLeft, getGoalProgress } from "@/utils/goals/goalsHelpers";
 
 const DashboardPage = () => {
   const { user, profile, isLoading: isAuthLoading } = useAuth();
@@ -76,14 +76,15 @@ const DashboardPage = () => {
     // 곧 마감되는 목표들 (7일 이내)
     const soonDueGoals = activeGoals.filter((goal) => {
       if (!goal.target_date) return false;
-      const daysLeft = goal.progress.daysLeft;
-      return daysLeft <= 7 && daysLeft > 0;
+      const daysLeft = getDaysLeft(goal.target_date);
+      return daysLeft !== null && daysLeft <= 7 && daysLeft > 0;
     });
 
     // 달성률이 80% 이상인 목표들
-    const nearCompletionGoals = activeGoals.filter(
-      (goal) => goal.progress.overallProgress >= 80,
-    );
+    const nearCompletionGoals = activeGoals.filter((goal) => {
+      const progress = getGoalProgress(goal);
+      return progress.overallProgress >= 80;
+    });
 
     return {
       total: totalGoals,
@@ -156,6 +157,17 @@ const DashboardPage = () => {
   // 상위 목표들 (진행률 기준)
   const topProgressGoals = useMemo(() => {
     return activeGoals
+      .map((goal) => ({
+        ...goal,
+        progress: {
+          ...getGoalProgress(goal),
+          daysLeft: getDaysLeft(goal.target_date),
+          progressText: `진행률 ${getGoalProgress(goal).overallProgress}%`,
+          isComplete:
+            goal.status === "completed" ||
+            getGoalProgress(goal).overallProgress >= 100,
+        },
+      }))
       .sort((a, b) => b.progress.overallProgress - a.progress.overallProgress)
       .slice(0, 3);
   }, [activeGoals]);
@@ -302,7 +314,7 @@ const DashboardPage = () => {
           </div>
 
           {/* 이번 주 활동 요약 */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border">
+          {/* <div className="bg-white rounded-lg p-6 shadow-sm border">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-600">
@@ -327,7 +339,7 @@ const DashboardPage = () => {
                 <BarChart3 className="w-6 h-6 text-purple-600" />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* 위젯 그리드 */}

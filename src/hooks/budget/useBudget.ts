@@ -1,4 +1,3 @@
-import { useTransactionAlertContext } from "@/components/budget/TransactionAlertProvider";
 import { supabase } from "@/lib/supabase";
 import {
   BudgetFormData,
@@ -10,7 +9,6 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { endOfMonth, format, parseISO, startOfMonth } from "date-fns";
 import { useMemo } from "react";
-import { useGoalStatusUpdater } from "../goals/useGoalStatusUpdater";
 
 interface UseBudgetProps {
   userId?: string;
@@ -20,8 +18,6 @@ interface UseBudgetProps {
 
 export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
   const queryClient = useQueryClient();
-  const { showAlert } = useTransactionAlertContext();
-  const { checkGoalsByCategory } = useGoalStatusUpdater();
 
   // 통합 데이터 조회 (수입 + 지출)
   const {
@@ -270,6 +266,21 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
       const tableName =
         newTransaction.type === "income" ? "incomes" : "expenses";
 
+      const { data: categoryInfo } = await supabase
+        .from("categories")
+        .select("name")
+        .eq("id", newTransaction.category_id)
+        .single();
+
+      const categoryName = categoryInfo?.name || "";
+
+      // 트랜잭션 추가 전 카테고리 통계 저장
+      const beforeStats = await getCategoryStats(
+        newTransaction.user_id,
+        categoryName,
+        newTransaction.type,
+      );
+
       const { type, ...transactionData } = newTransaction;
 
       const { data, error } = await supabase
@@ -284,25 +295,55 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
         .single();
 
       if (error) throw error;
-      return { ...data, type };
+
+      // 트랜잭션 추가 후 카테고리 통계 조회
+      const afterStats = await getCategoryStats(
+        newTransaction.user_id,
+        data.category?.name || "",
+        type,
+      );
+
+      return { ...data, type, beforeStats, afterStats };
     },
-    onSuccess: async (newTransaction) => {
+    onSuccess: async (result) => {
       queryClient.invalidateQueries({ queryKey: ["budget"] });
       queryClient.invalidateQueries({ queryKey: ["goals"] });
 
-      // 알림 표시
-      if (newTransaction.category?.name && userId) {
-        // 목표 상태 확인 (알림보다 먼저 실행)
-        await checkGoalsByCategory(
+      // 카테고리 통계가 변경되었는지 확인
+      const { beforeStats, afterStats, category } = result;
+
+      if (
+        beforeStats &&
+        afterStats &&
+        category?.name &&
+        userId &&
+        (beforeStats.amount !== afterStats.amount ||
+          beforeStats.count !== afterStats.count)
+      ) {
+        // 해당 카테고리에 연결된 목표들이 있는지 확인
+        const categoryGoals = await checkCategoryGoals(
           userId,
-          newTransaction.category.name,
-          newTransaction.type,
+          category.name,
+          result.type,
         );
 
-        // 지연을 두어 TanStack Query 업데이트 후 알림 표시
-        setTimeout(() => {
-          showAlert(newTransaction.category!.name, newTransaction.type);
-        }, 100);
+        if (categoryGoals.length > 0) {
+          // 목표 업데이트 모달 트리거 - 컴포넌트에서 처리
+          // 여기서는 상태만 업데이트, 실제 모달은 컴포넌트에서 처리
+          window.dispatchEvent(
+            new CustomEvent("goalUpdateNeeded", {
+              detail: {
+                categoryName: category.name,
+                newAmount: afterStats.amount,
+                newCount: afterStats.count,
+                oldAmount: beforeStats.amount,
+                oldCount: beforeStats.count,
+                type: result.type,
+                goals: categoryGoals,
+              },
+            }),
+          );
+        }
       }
     },
   });
@@ -324,21 +365,75 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
         .eq("id", id)
         .single();
 
-      const { error } = await supabase.from(tableName).delete().eq("id", id);
+      if (!transactionToDelete)
+        throw new Error("삭제할 거래를 찾을 수 없습니다.");
 
+      // 삭제 전 카테고리 통계 저장
+      const beforeStats = await getCategoryStats(
+        transactionToDelete.user_id,
+        transactionToDelete.category?.name || "",
+        type,
+      );
+
+      const { error } = await supabase.from(tableName).delete().eq("id", id);
       if (error) throw error;
 
-      return { deletedTransaction: transactionToDelete, type };
+      // 삭제 후 카테고리 통계 조회
+      const afterStats = await getCategoryStats(
+        transactionToDelete.user_id,
+        transactionToDelete.category?.name || "",
+        type,
+      );
+
+      return {
+        deletedTransaction: transactionToDelete,
+        type,
+        beforeStats,
+        afterStats,
+      };
     },
-    onSuccess: ({ deletedTransaction, type }) => {
+    onSuccess: async ({
+      deletedTransaction,
+      type,
+      beforeStats,
+      afterStats,
+    }) => {
       queryClient.invalidateQueries({ queryKey: ["budget"] });
       queryClient.invalidateQueries({ queryKey: ["goals"] });
 
-      // 알림 표시
-      if (deletedTransaction?.category?.name && userId) {
-        setTimeout(() => {
-          showAlert(deletedTransaction.category!.name, type);
-        }, 100);
+      // 카테고리 통계가 변경되었는지 확인
+      if (
+        beforeStats &&
+        afterStats &&
+        deletedTransaction?.category?.name &&
+        userId
+      ) {
+        if (
+          beforeStats.amount !== afterStats.amount ||
+          beforeStats.count !== afterStats.count
+        ) {
+          const categoryGoals = await checkCategoryGoals(
+            userId,
+            deletedTransaction.category.name,
+            type,
+          );
+
+          if (categoryGoals.length > 0) {
+            window.dispatchEvent(
+              new CustomEvent("goalUpdateNeeded", {
+                detail: {
+                  categoryName: deletedTransaction.category.name,
+                  newAmount: afterStats.amount,
+                  newCount: afterStats.count,
+                  oldAmount: beforeStats.amount,
+                  oldCount: beforeStats.count,
+                  type: type,
+                  goals: categoryGoals,
+                },
+              }),
+            );
+          }
+        }
       }
     },
   });
@@ -392,4 +487,75 @@ export const useBudget = ({ userId, date, month }: UseBudgetProps = {}) => {
     isDeletingTransaction: deleteTransactionMutation.isPending,
     isUpdatingTransaction: updateTransactionMutation.isPending,
   };
+};
+
+// 카테고리별 통계 조회 헬퍼 함수
+const getCategoryStats = async (
+  userId: string,
+  categoryName: string,
+  type: "income" | "expense",
+) => {
+  const startOfMonth = format(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    "yyyy-MM-dd",
+  );
+  const endOfMonth = format(
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    "yyyy-MM-dd",
+  );
+
+  const tableName = type === "income" ? "incomes" : "expenses";
+
+  const { data, error } = await supabase
+    .from(tableName)
+    .select(
+      `
+      amount,
+      category:categories!inner(name)
+    `,
+    )
+    .eq("user_id", userId)
+    .eq("category.name", categoryName)
+    .gte("date", startOfMonth)
+    .lte("date", endOfMonth);
+
+  if (error) throw error;
+
+  return {
+    amount: data?.reduce((sum, item) => sum + item.amount, 0) || 0,
+    count: data?.length || 0,
+  };
+};
+
+// 카테고리별 목표 조회 헬퍼 함수
+const checkCategoryGoals = async (
+  userId: string,
+  categoryName: string,
+  type: "income" | "expense",
+) => {
+  const { data: categoryData } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("name", categoryName)
+    .in("type", [`${type}_fixed`, `${type}_variable`]);
+
+  if (!categoryData || categoryData.length === 0) return [];
+
+  const categoryIds = categoryData.map((cat) => cat.id);
+
+  const { data, error } = await supabase
+    .from("goals")
+    .select(
+      `
+      *,
+      category:categories(*)
+    `,
+    )
+    .eq("user_id", userId)
+    .in("category_id", categoryIds)
+    .eq("status", "active");
+
+  if (error) throw error;
+  return data || [];
 };

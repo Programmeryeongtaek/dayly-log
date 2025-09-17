@@ -19,10 +19,10 @@ const StatsCard = ({
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg border">
-      <div className="flex items-center space-x-3">
+    <div className="bg-white mobile:p-2 tablet:p-4 rounded-lg border">
+      <div className="flex mobile:flex-col tablet:flex-row mobile:items-center tablet:justify-center space-x-3">
         <div className={`p-2 rounded-lg ${colorClasses[color]}`}>{icon}</div>
-        <div>
+        <div className="mobile:flex mobile:items-center mobile:gap-1 tablet:flex-col tablet:gap-0">
           <p className="text-sm text-gray-600">{label}</p>
           <p className="text-xl font-bold text-gray-900">{value}</p>
           {subtext && <p className="text-xs text-gray-500">{subtext}</p>}

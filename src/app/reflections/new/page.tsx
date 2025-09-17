@@ -73,7 +73,7 @@ const NewReflectionPage = () => {
         {/* 브레드크럼 네비게이션 */}
         <div>
           <button
-            onClick={router.back}
+            onClick={() => router.back()}
             className="flex items-center transition-colors hover:text-accent-500 hover:cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />

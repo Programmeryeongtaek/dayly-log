@@ -2,7 +2,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import Header from "@/components/layout/Header";
-import TransactionAlertProvider from "@/components/budget/TransactionAlertProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -25,13 +24,11 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-gray-50 min-h-screen`}>
         <Providers>
-          <TransactionAlertProvider>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              {/* // TODO: Footer 추가 */}
-            </div>
-          </TransactionAlertProvider>
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            {/* // TODO: Footer 추가 */}
+          </div>
         </Providers>
       </body>
     </html>
