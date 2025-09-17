@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 import {
   ArrowRight,
   BarChart3,
@@ -14,7 +14,7 @@ import {
   Hash,
   PlayCircle,
   Sparkles,
-} from "lucide-react";
+} from 'lucide-react';
 
 export default function Home() {
   return (
@@ -30,7 +30,7 @@ export default function Home() {
                 DaylyLog
               </h1>
               <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
-                매일의 기록이 만드는{" "}
+                매일의 기록이 만드는{' '}
                 <span className="font-bold text-accent-600">특별한 변화</span>
                 <br />
                 <span className="text-wrap">
@@ -95,7 +95,7 @@ export default function Home() {
                     <div className="h-2 bg-gray-200 rounded-full">
                       <div
                         className="h-2 bg-green-500 rounded-full"
-                        style={{ width: "76%" }}
+                        style={{ width: '76%' }}
                       ></div>
                     </div>
                     <div className="text-center text-lg font-bold text-green-600">
@@ -126,7 +126,7 @@ export default function Home() {
                     <div className="h-2 bg-gray-200 rounded-full">
                       <div
                         className="h-2 bg-green-500 rounded-full"
-                        style={{ width: "85%" }}
+                        style={{ width: '85%' }}
                       ></div>
                     </div>
                     <div className="flex items-center gap-1 text-sm text-green-600">
@@ -156,7 +156,7 @@ export default function Home() {
                     <div className="h-2 bg-gray-200 rounded-full">
                       <div
                         className="h-2 bg-blue-500 rounded-full"
-                        style={{ width: "75%" }}
+                        style={{ width: '75%' }}
                       ></div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -172,8 +172,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 통계 */}
-            <div className="pt-8 grid grid-cols-3 gap-8 max-w-md mx-auto">
+            {/* 통계 TODO: 실제 후기 및 통계 데이터 사용*/}
+            {/* <div className="pt-8 grid grid-cols-3 gap-8 max-w-md mx-auto">
               <div className="text-center">
                 <div className="text-2xl font-bold text-accent-600">1,000+</div>
                 <div className="text-sm text-gray-600">활성 사용자</div>
@@ -188,7 +188,7 @@ export default function Home() {
                 <div className="text-2xl font-bold text-accent-400">98%</div>
                 <div className="text-sm text-gray-600">사용자 만족도</div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -409,7 +409,7 @@ export default function Home() {
                     <div className="w-12 h-12 bg-gradient-to-r from-accent-400 to-accent-300 rounded-full flex-shrink-0"></div>
                     <div className="min-w-0">
                       <div className="text-white font-semibold">
-                        민지님이 목표를 달성했어요!
+                        OO님이 목표를 달성했어요!
                       </div>
                       <div className="text-accent-200 text-sm">
                         독서 목표 100% 완료
@@ -420,7 +420,7 @@ export default function Home() {
                     <div className="w-12 h-12 bg-gradient-to-r from-accent-300 to-accent-400 rounded-full flex-shrink-0"></div>
                     <div className="min-w-0">
                       <div className="text-white font-semibold">
-                        수현님이 질문에 답변했어요
+                        OO님이 질문에 답변했어요
                       </div>
                       <div className="text-accent-200 text-sm">
                         가장 감사한 순간은...
@@ -431,7 +431,7 @@ export default function Home() {
                     <div className="w-12 h-12 bg-gradient-to-r from-accent-400 to-accent-500 rounded-full flex-shrink-0"></div>
                     <div className="min-w-0">
                       <div className="text-white font-semibold">
-                        지훈님이 회고를 작성했어요
+                        OO님이 회고를 작성했어요
                       </div>
                       <div className="text-accent-200 text-sm">
                         오늘의 소중한 경험
@@ -446,7 +446,7 @@ export default function Home() {
       </section>
 
       {/* 사용자 후기 */}
-      <section className="py-20 bg-white/70">
+      {/* <section className="py-20 bg-white/70">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
@@ -525,13 +525,13 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* 마지막 CTA */}
       <section className="py-20 bg-gradient-to-br from-accent-900 to-accent-800">
         <div className="max-w-4xl mx-auto text-center px-4">
           <h2 className="text-5xl font-bold text-white mb-6">
-            변화는{" "}
+            변화는{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-accent-300">
               오늘
             </span>
