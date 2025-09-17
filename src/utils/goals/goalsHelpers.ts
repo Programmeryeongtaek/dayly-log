@@ -59,14 +59,30 @@ export const getGoalProgress = (goal: {
   current_amount?: number;
   target_count?: number | null;
   current_count?: number;
+  type: string;
 }) => {
-  const amountProgress = goal.target_amount && goal.current_amount !== undefined 
-    ? calculateProgress(goal.current_amount, goal.target_amount) 
-    : 0;
-  
-  const countProgress = goal.target_count && goal.current_count !== undefined 
-    ? calculateProgress(goal.current_count, goal.target_count) 
-    : 0;
+  let amountProgress = 0;
+  let countProgress = 0;
+
+  if (goal.target_amount && goal.current_amount !== undefined) {
+    if (goal.type === 'reduce_expense') {
+      // 지출 목표: 현재 사용량이 목표보다 적을수록 좋음
+      amountProgress = goal.current_amount <= goal.target_amount ? 100 :
+        Math.max(0, Math.round((1 - (goal.current_amount / goal.target_amount)) * 100));
+    } else {
+      // 수입 목표
+      amountProgress = Math.round((goal.current_amount / goal.target_amount) * 100);
+    }
+  }
+
+    if (goal.target_count && goal.current_count !== undefined) {
+    if (goal.type === 'reduce_expense') {
+      countProgress = goal.current_count <= goal.target_count ? 100 :
+        Math.max(0, Math.round((1 - (goal.current_count / goal.target_count)) * 100));
+    } else {
+      countProgress = Math.round((goal.current_count / goal.target_count) * 100);
+    }
+  }
   
   // 종합 진행률 (둘 다 있으면 평균, 하나만 있으면 그것을 사용)
   let overallProgress = 0;

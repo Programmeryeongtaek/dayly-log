@@ -44,7 +44,11 @@ export const useChallenge = () => {
         description: data.description || null,
         reason: data.reason || null,
         type: goalType,
-        target_amount: data.enableAmountGoal ? Number(data.targetAmount) : null,
+        target_amount: data.enableAmountGoal ? 
+          (data.categoryType === 'expense'
+            ? Number(data.targetAmount)
+            : Number(data.targetAmount)
+          ) : null,
         target_count: data.enableCountGoal ? Number(data.targetCount) : null,
         target_date: data.targetDate,
         challenge_mode: challengeMode,
