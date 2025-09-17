@@ -29,6 +29,7 @@ export interface GoalFormData {
   target_amount?: number | null;
   target_count?: number | null;
   target_date?: string | null;
+  status: "active" | "completed" | "paused" | "cancelled";
   challenge_mode: "amount" | "count" | "both";
   category_id?: string | null;
 }
