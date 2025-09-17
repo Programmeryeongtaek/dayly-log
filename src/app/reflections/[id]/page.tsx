@@ -67,7 +67,7 @@ const ReflectionDetailPage = () => {
           `,
           )
           .eq("id", id)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
 
@@ -112,12 +112,21 @@ const ReflectionDetailPage = () => {
     fetchReflection();
   }, [id, user?.id]);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!reflection) return;
 
     if (confirm("정말 삭제하시겠습니까? 삭제된 회고는 복구할 수 없습니다.")) {
-      deleteReflection(reflection.id);
-      router.push("./reflections");
+      try {
+        await new Promise((resolve, reject) => {
+          deleteReflection(reflection.id, {
+            onSuccess: resolve,
+            onError: reject,
+          });
+        });
+        router.push("/reflections");
+      } catch (error) {
+        console.error("삭제 실패:", error);
+      }
     }
   };
 

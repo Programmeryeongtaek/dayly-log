@@ -144,13 +144,17 @@ export const useReflections = ({
   // 회고 생성
   const createReflectionMutation = useMutation({
     mutationFn: async (formData: ReflectionFormData & { user_id: string }) => {
-      const { keywords: keywordNames, ...reflectionData } = formData;
+      const { keywords: keywordNames } = formData;
 
       // 기본값 설정
       const dataWithDefaults = {
-        ...reflectionData,
-        is_public: reflectionData.is_public ?? true,
-        is_neighbor_visible: reflectionData.is_neighbor_visible ?? true,
+        user_id: formData.user_id,
+        category_id: formData.category_id,
+        title: formData.title,
+        content: formData.content,
+        date: formData.date,
+        is_public: formData.is_public ?? true,
+        is_neighbor_visible: formData.is_neighbor_visible ?? true,
       };
 
       // 1. 회고 생성

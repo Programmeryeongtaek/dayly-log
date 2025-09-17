@@ -35,6 +35,7 @@ const ReflectionCard = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     onDelete(reflection.id);
   };
 
