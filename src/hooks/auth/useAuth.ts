@@ -41,6 +41,34 @@ export const useAuth = () => {
         .eq("id", session.user.id)
         .maybeSingle();
 
+      // 프로필이 없으면 자동 생성
+      if (!data && !error) {
+        const { data: newProfile, error: createError } = await supabase
+          .from("profiles")
+          .insert([{
+            id: session.user.id,
+            email: session.user.email!,
+            name: session.user.user_metadata?.name || 'Unknown User',
+            nickname: session.user.user_metadata?.nickname || null,
+          }])
+          .select()
+          .single();
+
+        if (!createError) {
+          // 기본 카테고리 생성
+          await supabase.from('categories').insert([{
+            user_id: session.user.id,
+            name: '통신비',
+            type: 'expense_fixed',
+            is_default: true,
+          }]). select();
+
+          return newProfile;
+        } else {
+          console.error('프로필 생성 실패:', createError);
+        }
+      }
+
       if (error) {
         console.error("프로필 조회 에러:", error);
         throw error;
